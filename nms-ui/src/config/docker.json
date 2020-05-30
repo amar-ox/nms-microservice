@@ -1,0 +1,5 @@
+{
+  "nms.ui.http.address": "nms-ui",
+  "nms.ui.http.port": 8080,
+  "ui-service": "nms-ui"
+}

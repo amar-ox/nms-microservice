@@ -1,0 +1,59 @@
+package io.nms.central.microservice.dss.impl;
+
+import io.nms.central.microservice.common.service.JdbcRepositoryWrapper;
+import io.nms.central.microservice.dss.DataStreamingService;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
+
+/**
+ * JDBC implementation of {@link io.vertx.blueprint.microservice.product.ProductService}.
+ *
+ * @author Eric Zhao
+ */
+public class DataStreamingServiceImpl extends JdbcRepositoryWrapper implements DataStreamingService {
+
+  private static final int PAGE_LIMIT = 10;
+
+  public DataStreamingServiceImpl(Vertx vertx, JsonObject config) {
+    super(vertx, config);
+  }
+
+  @Override
+  public DataStreamingService initializePersistence(Handler<AsyncResult<Void>> resultHandler) {
+    client.getConnection(connHandler(resultHandler, connection -> {
+      connection.execute(CREATE_STATEMENT, r -> {
+        resultHandler.handle(r);
+        connection.close();
+      });
+    }));
+    return this;
+  }
+
+  @Override
+  public DataStreamingService test(String ping, Handler<AsyncResult<JsonObject>> resultHandler) {
+	JsonObject result = new JsonObject().put("ping", ping).put("pong", ping);
+	resultHandler.handle(Future.succeededFuture(result));
+    return this;
+  }
+
+  // SQL statements
+
+  private static final String CREATE_STATEMENT = "CREATE TABLE IF NOT EXISTS `product` (\n" +
+    "  `productId` VARCHAR(60) NOT NULL,\n" +
+    "  `sellerId` varchar(30) NOT NULL,\n" +
+    "  `name` varchar(255) NOT NULL,\n" +
+    "  `price` double NOT NULL,\n" +
+    "  `illustration` MEDIUMTEXT NOT NULL,\n" +
+    "  `type` varchar(45) NOT NULL,\n" +
+    "  PRIMARY KEY (`productId`),\n" +
+    "  KEY `index_seller` (`sellerId`) )";
+  private static final String INSERT_STATEMENT = "INSERT INTO product (`productId`, `sellerId`, `name`, `price`, `illustration`, `type`) VALUES (?, ?, ?, ?, ?, ?)";
+  private static final String FETCH_STATEMENT = "SELECT * FROM product WHERE productId = ?";
+  private static final String FETCH_ALL_STATEMENT = "SELECT * FROM product";
+  private static final String FETCH_WITH_PAGE_STATEMENT = "SELECT * FROM product LIMIT ?, ?";
+  private static final String DELETE_STATEMENT = "DELETE FROM product WHERE productId = ?";
+  private static final String DELETE_ALL_STATEMENT = "DELETE FROM product";
+}
