@@ -1,0 +1,7 @@
+{
+  "api.name": "topology",
+  "topology.http.address": "topology-microservice",
+  "topology.http.port": 8085,  
+  "host": "mongo",
+  "db_name": "nms"
+}

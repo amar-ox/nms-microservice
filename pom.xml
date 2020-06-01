@@ -16,6 +16,7 @@
 
     <!-- service components -->    
     <module>data-streaming-microservice</module>    
+    <module>topology-microservice</module>    
     <module>nms-ui</module>    
   </modules>
 

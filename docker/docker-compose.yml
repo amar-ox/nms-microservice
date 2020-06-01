@@ -67,7 +67,17 @@ services:
       - mysql
       - logstash
     expose:
-      - "8282"
+      - "8082"
+  topology-microservice:
+    image: nms/topology-microservice
+    links:
+      - mongo
+      - logstash
+    depends_on:
+      - mongo
+      - logstash
+    expose:
+      - "8085"
   api-gateway:
     image: nms/api-gateway
     ports:

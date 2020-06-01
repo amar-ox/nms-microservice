@@ -5,7 +5,7 @@ ENV VERTICLE_FILE target/data-streaming-microservice-fat.jar
 # Set the location of the verticles
 ENV VERTICLE_HOME /opt/verticles
 
-EXPOSE 8282
+EXPOSE 8082
 
 COPY $VERTICLE_FILE $VERTICLE_HOME/
 COPY src/config/docker.json $VERTICLE_HOME/

@@ -48,15 +48,5 @@ public interface DataStreamingService {
    */
   @Fluent
   DataStreamingService initializePersistence(Handler<AsyncResult<Void>> resultHandler);
-
-  /**
-   * Add a product to the persistence.
-   *
-   * @param product       a product entity that we want to add
-   * @param resultHandler the result handler will be called as soon as the product has been added. The async result indicates
-   *                      whether the operation was successful or not.
-   */
-  @Fluent
-  DataStreamingService test(String ping, Handler<AsyncResult<JsonObject>> resultHandler);
   
 }

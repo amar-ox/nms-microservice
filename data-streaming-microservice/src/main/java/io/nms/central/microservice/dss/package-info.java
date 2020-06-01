@@ -1,7 +1,7 @@
 /**
  * Indicates that this module contains classes that need to be generated / processed.
  */
-@ModuleGen(name = "vertx-blueprint-dss", groupPackage = "io.nms.central.microservice.dss")
+@ModuleGen(name = "nms-cnetral-dss", groupPackage = "io.nms.central.microservice.dss")
 
 package io.nms.central.microservice.dss;
 

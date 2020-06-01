@@ -42,7 +42,6 @@ import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
 import io.vertx.serviceproxy.HelperUtils;
 
 import io.nms.central.microservice.dss.DataStreamingService;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 /*
@@ -117,11 +116,6 @@ public class DataStreamingServiceVertxProxyHandler extends ProxyHandler {
       switch (action) {
         case "initializePersistence": {
           service.initializePersistence(HelperUtils.createHandler(msg));
-          break;
-        }
-        case "test": {
-          service.test((java.lang.String)json.getValue("ping"),
-                        HelperUtils.createHandler(msg));
           break;
         }
         default: throw new IllegalStateException("Invalid action: " + action);

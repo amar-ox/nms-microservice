@@ -32,13 +32,6 @@ public class DataStreamingServiceImpl extends JdbcRepositoryWrapper implements D
     return this;
   }
 
-  @Override
-  public DataStreamingService test(String ping, Handler<AsyncResult<JsonObject>> resultHandler) {
-	JsonObject result = new JsonObject().put("ping", ping).put("pong", ping);
-	resultHandler.handle(Future.succeededFuture(result));
-    return this;
-  }
-
   // SQL statements
 
   private static final String CREATE_STATEMENT = "CREATE TABLE IF NOT EXISTS `product` (\n" +
