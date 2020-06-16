@@ -33,15 +33,16 @@ import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
 import io.vertx.serviceproxy.ProxyUtils;
 
+import io.nms.central.microservice.topology.TopologyService;
+import io.nms.central.microservice.topology.model.Vltp;
+import io.nms.central.microservice.topology.model.Vlink;
+import io.nms.central.microservice.topology.model.Vsubnet;
 import java.util.List;
-import io.nms.central.microservice.topology.model.Ctp;
-import io.nms.central.microservice.topology.model.LinkConn;
-import io.nms.central.microservice.topology.model.Ltp;
-import io.nms.central.microservice.topology.model.Node;
+import io.nms.central.microservice.topology.model.VlinkConn;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.nms.central.microservice.topology.model.Topology;
-import io.nms.central.microservice.topology.model.Link;
+import io.nms.central.microservice.topology.model.Vnode;
+import io.nms.central.microservice.topology.model.Vctp;
 /*
   Generated Proxy code - DO NOT EDIT
   @author Roger the Robot
@@ -68,16 +69,35 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
   }
 
   @Override
-  public  void addNode(Node node, Handler<AsyncResult<Void>> resultHandler){
+  public  TopologyService initializePersistence(Handler<AsyncResult<List<Integer>>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
+      return this;
     }
     JsonObject _json = new JsonObject();
-    _json.put("node", node == null ? null : node.toJson());
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "addNode");
+    _deliveryOptions.addHeader("action", "initializePersistence");
+    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(ProxyUtils.convertList(res.result().body().getList())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService addVsubnet(Vsubnet vsubnet, Handler<AsyncResult<Void>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vsubnet", vsubnet == null ? null : vsubnet.toJson());
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "addVsubnet");
     _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
@@ -85,82 +105,145 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
         resultHandler.handle(Future.succeededFuture(res.result().body()));
       }
     });
+    return this;
   }
   @Override
-  public  void getNode(String nodeId, Handler<AsyncResult<Node>> resultHandler){
+  public  TopologyService getVsubnet(String vsubnetId, Handler<AsyncResult<Vsubnet>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
+      return this;
     }
     JsonObject _json = new JsonObject();
-    _json.put("nodeId", nodeId);
+    _json.put("vsubnetId", vsubnetId);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "getNode");
+    _deliveryOptions.addHeader("action", "getVsubnet");
     _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
       } else {
-        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new Node(res.result().body())));
+        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new Vsubnet(res.result().body())));
       }
     });
+    return this;
   }
   @Override
-  public  void getNodes(List<String> nodeIds, Handler<AsyncResult<List<Node>>> resultHandler){
+  public  TopologyService deleteVsubnet(String vsubnetId, Handler<AsyncResult<Void>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
+      return this;
     }
     JsonObject _json = new JsonObject();
-    _json.put("nodeIds", new JsonArray(nodeIds));
+    _json.put("vsubnetId", vsubnetId);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "getNodes");
+    _deliveryOptions.addHeader("action", "deleteVsubnet");
+    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getAllVsubnets(Handler<AsyncResult<List<Vsubnet>>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getAllVsubnets");
     _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
       } else {
         resultHandler.handle(Future.succeededFuture(res.result().body().stream()
           .map(o -> { if (o == null) return null;
-              return o instanceof Map ? new Node(new JsonObject((Map) o)) : new Node((JsonObject) o);
+              return o instanceof Map ? new Vsubnet(new JsonObject((Map) o)) : new Vsubnet((JsonObject) o);
             })
           .collect(Collectors.toList())));
       }
     });
+    return this;
   }
   @Override
-  public  void getAllNodes(Handler<AsyncResult<List<Node>>> resultHandler){
+  public  TopologyService addVnode(Vnode vnode, Handler<AsyncResult<Void>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vnode", vnode == null ? null : vnode.toJson());
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "addVnode");
+    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getVnode(String vnodeId, Handler<AsyncResult<Vnode>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vnodeId", vnodeId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getVnode");
+    _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new Vnode(res.result().body())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getAllVnodes(Handler<AsyncResult<List<Vnode>>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
     }
     JsonObject _json = new JsonObject();
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "getAllNodes");
+    _deliveryOptions.addHeader("action", "getAllVnodes");
     _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
       } else {
         resultHandler.handle(Future.succeededFuture(res.result().body().stream()
           .map(o -> { if (o == null) return null;
-              return o instanceof Map ? new Node(new JsonObject((Map) o)) : new Node((JsonObject) o);
+              return o instanceof Map ? new Vnode(new JsonObject((Map) o)) : new Vnode((JsonObject) o);
             })
           .collect(Collectors.toList())));
       }
     });
+    return this;
   }
   @Override
-  public  void deleteNode(String nodeId, Handler<AsyncResult<Void>> resultHandler){
+  public  TopologyService deleteVnode(String vnodeId, Handler<AsyncResult<Void>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
+      return this;
     }
     JsonObject _json = new JsonObject();
-    _json.put("nodeId", nodeId);
+    _json.put("vnodeId", vnodeId);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "deleteNode");
+    _deliveryOptions.addHeader("action", "deleteVnode");
     _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
@@ -168,18 +251,19 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
         resultHandler.handle(Future.succeededFuture(res.result().body()));
       }
     });
+    return this;
   }
   @Override
-  public  void addLtp(Ltp ltp, Handler<AsyncResult<Void>> resultHandler){
+  public  TopologyService addVltp(Vltp vltp, Handler<AsyncResult<Void>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
+      return this;
     }
     JsonObject _json = new JsonObject();
-    _json.put("ltp", ltp == null ? null : ltp.toJson());
+    _json.put("vltp", vltp == null ? null : vltp.toJson());
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "addLtp");
+    _deliveryOptions.addHeader("action", "addVltp");
     _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
@@ -187,173 +271,62 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
         resultHandler.handle(Future.succeededFuture(res.result().body()));
       }
     });
+    return this;
   }
   @Override
-  public  void getLtp(String ltpId, Handler<AsyncResult<Ltp>> resultHandler){
+  public  TopologyService getVltp(String vltpId, Handler<AsyncResult<Vltp>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
+      return this;
     }
     JsonObject _json = new JsonObject();
-    _json.put("ltpId", ltpId);
+    _json.put("vltpId", vltpId);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "getLtp");
+    _deliveryOptions.addHeader("action", "getVltp");
     _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
       } else {
-        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new Ltp(res.result().body())));
+        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new Vltp(res.result().body())));
       }
     });
+    return this;
   }
   @Override
-  public  void deleteLtp(String ltpId, Handler<AsyncResult<Void>> resultHandler){
+  public  TopologyService getAllVltps(Handler<AsyncResult<List<Vltp>>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
-    }
-    JsonObject _json = new JsonObject();
-    _json.put("ltpId", ltpId);
-
-    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "deleteLtp");
-    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
-      if (res.failed()) {
-        resultHandler.handle(Future.failedFuture(res.cause()));
-      } else {
-        resultHandler.handle(Future.succeededFuture(res.result().body()));
-      }
-    });
-  }
-  @Override
-  public  void addCtp(Ctp ctp, Handler<AsyncResult<Void>> resultHandler){
-    if (closed) {
-      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
-    }
-    JsonObject _json = new JsonObject();
-    _json.put("ctp", ctp == null ? null : ctp.toJson());
-
-    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "addCtp");
-    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
-      if (res.failed()) {
-        resultHandler.handle(Future.failedFuture(res.cause()));
-      } else {
-        resultHandler.handle(Future.succeededFuture(res.result().body()));
-      }
-    });
-  }
-  @Override
-  public  void getCtp(String ctpId, Handler<AsyncResult<Ctp>> resultHandler){
-    if (closed) {
-      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
-    }
-    JsonObject _json = new JsonObject();
-    _json.put("ctpId", ctpId);
-
-    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "getCtp");
-    _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
-      if (res.failed()) {
-        resultHandler.handle(Future.failedFuture(res.cause()));
-      } else {
-        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new Ctp(res.result().body())));
-      }
-    });
-  }
-  @Override
-  public  void deleteCtp(String ctpId, Handler<AsyncResult<Void>> resultHandler){
-    if (closed) {
-      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
-    }
-    JsonObject _json = new JsonObject();
-    _json.put("ctpId", ctpId);
-
-    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "deleteCtp");
-    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
-      if (res.failed()) {
-        resultHandler.handle(Future.failedFuture(res.cause()));
-      } else {
-        resultHandler.handle(Future.succeededFuture(res.result().body()));
-      }
-    });
-  }
-  @Override
-  public  void addLink(Link linke, Handler<AsyncResult<Void>> resultHandler){
-    if (closed) {
-      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
-    }
-    JsonObject _json = new JsonObject();
-    _json.put("linke", linke == null ? null : linke.toJson());
-
-    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "addLink");
-    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
-      if (res.failed()) {
-        resultHandler.handle(Future.failedFuture(res.cause()));
-      } else {
-        resultHandler.handle(Future.succeededFuture(res.result().body()));
-      }
-    });
-  }
-  @Override
-  public  void getLink(String linkId, Handler<AsyncResult<Link>> resultHandler){
-    if (closed) {
-      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
-    }
-    JsonObject _json = new JsonObject();
-    _json.put("linkId", linkId);
-
-    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "getLink");
-    _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
-      if (res.failed()) {
-        resultHandler.handle(Future.failedFuture(res.cause()));
-      } else {
-        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new Link(res.result().body())));
-      }
-    });
-  }
-  @Override
-  public  void getAllLinks(Handler<AsyncResult<List<Link>>> resultHandler){
-    if (closed) {
-      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
+      return this;
     }
     JsonObject _json = new JsonObject();
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "getAllLinks");
+    _deliveryOptions.addHeader("action", "getAllVltps");
     _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
       } else {
         resultHandler.handle(Future.succeededFuture(res.result().body().stream()
           .map(o -> { if (o == null) return null;
-              return o instanceof Map ? new Link(new JsonObject((Map) o)) : new Link((JsonObject) o);
+              return o instanceof Map ? new Vltp(new JsonObject((Map) o)) : new Vltp((JsonObject) o);
             })
           .collect(Collectors.toList())));
       }
     });
+    return this;
   }
   @Override
-  public  void deleteLink(String linkId, Handler<AsyncResult<Void>> resultHandler){
+  public  TopologyService deleteVltp(String vltpId, Handler<AsyncResult<Void>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
+      return this;
     }
     JsonObject _json = new JsonObject();
-    _json.put("linkId", linkId);
+    _json.put("vltpId", vltpId);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "deleteLink");
+    _deliveryOptions.addHeader("action", "deleteVltp");
     _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
@@ -361,18 +334,19 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
         resultHandler.handle(Future.succeededFuture(res.result().body()));
       }
     });
+    return this;
   }
   @Override
-  public  void addLinkConn(LinkConn linkConn, Handler<AsyncResult<Void>> resultHandler){
+  public  TopologyService addVctp(Vctp vctp, Handler<AsyncResult<Void>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
+      return this;
     }
     JsonObject _json = new JsonObject();
-    _json.put("linkConn", linkConn == null ? null : linkConn.toJson());
+    _json.put("vctp", vctp == null ? null : vctp.toJson());
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "addLinkConn");
+    _deliveryOptions.addHeader("action", "addVctp");
     _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
@@ -380,59 +354,228 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
         resultHandler.handle(Future.succeededFuture(res.result().body()));
       }
     });
+    return this;
   }
   @Override
-  public  void getLinkConn(String linkConnId, Handler<AsyncResult<LinkConn>> resultHandler){
+  public  TopologyService getVctp(String vctpId, Handler<AsyncResult<Vctp>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vctpId", vctpId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getVctp");
+    _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new Vctp(res.result().body())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getAllVctps(Handler<AsyncResult<List<Vctp>>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getAllVctps");
+    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
+          .map(o -> { if (o == null) return null;
+              return o instanceof Map ? new Vctp(new JsonObject((Map) o)) : new Vctp((JsonObject) o);
+            })
+          .collect(Collectors.toList())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService deleteVctp(String vctpId, Handler<AsyncResult<Void>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vctpId", vctpId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "deleteVctp");
+    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService addVlink(Vlink vlink, Handler<AsyncResult<Void>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vlink", vlink == null ? null : vlink.toJson());
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "addVlink");
+    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getVlink(String vlinkId, Handler<AsyncResult<Vlink>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vlinkId", vlinkId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getVlink");
+    _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new Vlink(res.result().body())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getAllVlinks(Handler<AsyncResult<List<Vlink>>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getAllVlinks");
+    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
+          .map(o -> { if (o == null) return null;
+              return o instanceof Map ? new Vlink(new JsonObject((Map) o)) : new Vlink((JsonObject) o);
+            })
+          .collect(Collectors.toList())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService deleteVlink(String vlinkId, Handler<AsyncResult<Void>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vlinkId", vlinkId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "deleteVlink");
+    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService addVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<Void>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vlinkConn", vlinkConn == null ? null : vlinkConn.toJson());
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "addVlinkConn");
+    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getVlinkConn(String vlinkConnId, Handler<AsyncResult<VlinkConn>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vlinkConnId", vlinkConnId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getVlinkConn");
+    _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new VlinkConn(res.result().body())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getAllVlinkConns(Handler<AsyncResult<List<VlinkConn>>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getAllVlinkConns");
+    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
+          .map(o -> { if (o == null) return null;
+              return o instanceof Map ? new VlinkConn(new JsonObject((Map) o)) : new VlinkConn((JsonObject) o);
+            })
+          .collect(Collectors.toList())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService deleteVlinkConn(String linkConnId, Handler<AsyncResult<Void>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
     }
     JsonObject _json = new JsonObject();
     _json.put("linkConnId", linkConnId);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "getLinkConn");
-    _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
-      if (res.failed()) {
-        resultHandler.handle(Future.failedFuture(res.cause()));
-      } else {
-        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new LinkConn(res.result().body())));
-      }
-    });
-  }
-  @Override
-  public  void getAllLinkConns(Handler<AsyncResult<List<LinkConn>>> resultHandler){
-    if (closed) {
-      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
-    }
-    JsonObject _json = new JsonObject();
-
-    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "getAllLinkConns");
-    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
-      if (res.failed()) {
-        resultHandler.handle(Future.failedFuture(res.cause()));
-      } else {
-        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
-          .map(o -> { if (o == null) return null;
-              return o instanceof Map ? new LinkConn(new JsonObject((Map) o)) : new LinkConn((JsonObject) o);
-            })
-          .collect(Collectors.toList())));
-      }
-    });
-  }
-  @Override
-  public  void deleteLinkConn(String linkConnId, Handler<AsyncResult<Void>> resultHandler){
-    if (closed) {
-      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
-    }
-    JsonObject _json = new JsonObject();
-    _json.put("linkConnId", linkConnId);
-
-    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "deleteLinkConn");
+    _deliveryOptions.addHeader("action", "deleteVlinkConn");
     _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
@@ -440,24 +583,78 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
         resultHandler.handle(Future.succeededFuture(res.result().body()));
       }
     });
+    return this;
   }
   @Override
-  public  void getTopology(int level, Handler<AsyncResult<Topology>> resultHandler){
+  public  TopologyService getVltpsByVnode(String vnodeId, Handler<AsyncResult<List<Vltp>>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return;
+      return this;
     }
     JsonObject _json = new JsonObject();
-    _json.put("level", level);
+    _json.put("vnodeId", vnodeId);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "getTopology");
-    _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
+    _deliveryOptions.addHeader("action", "getVltpsByVnode");
+    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
       } else {
-        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new Topology(res.result().body())));
+        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
+          .map(o -> { if (o == null) return null;
+              return o instanceof Map ? new Vltp(new JsonObject((Map) o)) : new Vltp((JsonObject) o);
+            })
+          .collect(Collectors.toList())));
       }
     });
+    return this;
+  }
+  @Override
+  public  TopologyService getVctpsByVltp(String vltpId, Handler<AsyncResult<List<Vctp>>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vltpId", vltpId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getVctpsByVltp");
+    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
+          .map(o -> { if (o == null) return null;
+              return o instanceof Map ? new Vctp(new JsonObject((Map) o)) : new Vctp((JsonObject) o);
+            })
+          .collect(Collectors.toList())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getVctpsByVlink(String vlinkId, Handler<AsyncResult<List<Vctp>>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vlinkId", vlinkId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getVctpsByVlink");
+    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
+          .map(o -> { if (o == null) return null;
+              return o instanceof Map ? new Vctp(new JsonObject((Map) o)) : new Vctp((JsonObject) o);
+            })
+          .collect(Collectors.toList())));
+      }
+    });
+    return this;
   }
 }

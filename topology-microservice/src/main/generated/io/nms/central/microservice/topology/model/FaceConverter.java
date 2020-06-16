@@ -14,16 +14,6 @@ public class FaceConverter {
   public static void fromJson(Iterable<java.util.Map.Entry<String, Object>> json, Face obj) {
     for (java.util.Map.Entry<String, Object> member : json) {
       switch (member.getKey()) {
-        case "error":
-          if (member.getValue() instanceof String) {
-            obj.setError((String)member.getValue());
-          }
-          break;
-        case "id":
-          if (member.getValue() instanceof String) {
-            obj.setId((String)member.getValue());
-          }
-          break;
         case "local":
           if (member.getValue() instanceof String) {
             obj.setLocal((String)member.getValue());
@@ -53,12 +43,6 @@ public class FaceConverter {
   }
 
   public static void toJson(Face obj, java.util.Map<String, Object> json) {
-    if (obj.getError() != null) {
-      json.put("error", obj.getError());
-    }
-    if (obj.getId() != null) {
-      json.put("id", obj.getId());
-    }
     if (obj.getLocal() != null) {
       json.put("local", obj.getLocal());
     }

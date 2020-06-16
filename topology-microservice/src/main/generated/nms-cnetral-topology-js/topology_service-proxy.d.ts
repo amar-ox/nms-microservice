@@ -27,43 +27,59 @@ export default class TopologyService {
 
   constructor (eb: any, address: string);
 
-  addNode(node: any, resultHandler: (err: any, result: any) => any) : void;
+  initializePersistence(resultHandler: (err: any, result: Array<number>) => any) : TopologyService;
 
-  getNode(nodeId: string, resultHandler: (err: any, result: any) => any) : void;
+  addVsubnet(vsubnet: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  getNodes(nodeIds: Array<string>, resultHandler: (err: any, result: Array<any>) => any) : void;
+  getVsubnet(vsubnetId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  getAllNodes(resultHandler: (err: any, result: Array<any>) => any) : void;
+  deleteVsubnet(vsubnetId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  deleteNode(nodeId: string, resultHandler: (err: any, result: any) => any) : void;
+  getAllVsubnets(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
-  addLtp(ltp: any, resultHandler: (err: any, result: any) => any) : void;
+  addVnode(vnode: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  getLtp(ltpId: string, resultHandler: (err: any, result: any) => any) : void;
+  getVnode(vnodeId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  deleteLtp(ltpId: string, resultHandler: (err: any, result: any) => any) : void;
+  getAllVnodes(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
-  addCtp(ctp: any, resultHandler: (err: any, result: any) => any) : void;
+  deleteVnode(vnodeId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  getCtp(ctpId: string, resultHandler: (err: any, result: any) => any) : void;
+  addVltp(vltp: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  deleteCtp(ctpId: string, resultHandler: (err: any, result: any) => any) : void;
+  getVltp(vltpId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  addLink(linke: any, resultHandler: (err: any, result: any) => any) : void;
+  getAllVltps(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
-  getLink(linkId: string, resultHandler: (err: any, result: any) => any) : void;
+  deleteVltp(vltpId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  getAllLinks(resultHandler: (err: any, result: Array<any>) => any) : void;
+  addVctp(vctp: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  deleteLink(linkId: string, resultHandler: (err: any, result: any) => any) : void;
+  getVctp(vctpId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  addLinkConn(linkConn: any, resultHandler: (err: any, result: any) => any) : void;
+  getAllVctps(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
-  getLinkConn(linkConnId: string, resultHandler: (err: any, result: any) => any) : void;
+  deleteVctp(vctpId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  getAllLinkConns(resultHandler: (err: any, result: Array<any>) => any) : void;
+  addVlink(vlink: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  deleteLinkConn(linkConnId: string, resultHandler: (err: any, result: any) => any) : void;
+  getVlink(vlinkId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  getTopology(level: number, resultHandler: (err: any, result: any) => any) : void;
+  getAllVlinks(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  deleteVlink(vlinkId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+
+  addVlinkConn(vlinkConn: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+
+  getVlinkConn(vlinkConnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+
+  getAllVlinkConns(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  deleteVlinkConn(linkConnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+
+  getVltpsByVnode(vnodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  getVctpsByVltp(vltpId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  getVctpsByVlink(vlinkId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 }

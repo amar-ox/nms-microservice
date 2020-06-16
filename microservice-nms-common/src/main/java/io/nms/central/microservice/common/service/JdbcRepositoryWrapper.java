@@ -1,16 +1,18 @@
 package io.nms.central.microservice.common.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.sql.SQLConnection;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Helper and wrapper class for JDBC repository services.
@@ -19,10 +21,11 @@ import java.util.Optional;
  */
 public class JdbcRepositoryWrapper {
 
+	private static final Logger logger = LoggerFactory.getLogger(JdbcRepositoryWrapper.class);
   protected final JDBCClient client;
 
   public JdbcRepositoryWrapper(Vertx vertx, JsonObject config) {
-    this.client = JDBCClient.createNonShared(vertx, config);
+    this.client = JDBCClient.create(vertx, config);
   }
 
   /**
@@ -68,6 +71,7 @@ public class JdbcRepositoryWrapper {
             if (resList == null || resList.isEmpty()) {
               future.complete(Optional.empty());
             } else {
+            	logger.debug("retrieveOne: "+resList.get(0).encodePrettily());
               future.complete(Optional.of(resList.get(0)));
             }
           } else {
@@ -107,6 +111,7 @@ public class JdbcRepositoryWrapper {
       connection.queryWithParams(sql, param, r -> {
         if (r.succeeded()) {
           future.complete(r.result().getRows());
+          logger.debug("retrieveMany: "+r.result().getRows().get(0).encodePrettily());
         } else {
           future.fail(r.cause());
         }
@@ -122,6 +127,7 @@ public class JdbcRepositoryWrapper {
       connection.query(sql, r -> {
         if (r.succeeded()) {
           future.complete(r.result().getRows());
+      		logger.debug("retrieveAll: "+r.result().getRows().get(0).encodePrettily());
         } else {
           future.fail(r.cause());
         }

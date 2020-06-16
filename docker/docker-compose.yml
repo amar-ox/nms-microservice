@@ -7,12 +7,13 @@ services:
     volumes:
       - ${DIR}/config-server:/usr/local/apache2/htdocs:ro
   mysql:
-    image: mysql:latest
+    image: mysql:5.6
+    restart: always
     expose:
       - "3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=666666
-      - MYSQL_DATABASE=vertx_blueprint
+      - MYSQL_ROOT_PASSWORD=rootpw
+      - MYSQL_DATABASE=nms
   mongo:
     image: mongo:latest
     expose:
@@ -61,20 +62,20 @@ services:
   data-streaming-microservice:
     image: nms/data-streaming-microservice
     links:
-      - mysql
+      - mongo
       - logstash
     depends_on:
-      - mysql
+      - mongo
       - logstash
     expose:
       - "8082"
   topology-microservice:
     image: nms/topology-microservice
     links:
-      - mongo
+      - mysql
       - logstash
     depends_on:
-      - mongo
+      - mysql
       - logstash
     expose:
       - "8085"
