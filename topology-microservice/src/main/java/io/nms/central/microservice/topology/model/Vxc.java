@@ -1,5 +1,7 @@
 package io.nms.central.microservice.topology.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -7,7 +9,7 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 
 @DataObject(generateConverter = true)
-public class VlinkConn {
+public class Vxc {
 	
 	// in SQL table
 		// common fields
@@ -18,38 +20,38 @@ public class VlinkConn {
 	private String created;
 	private String updated;
 	private String status;
-	private Map<String, Object> info;
-	
-		// vlinkConn fields
-	private int srcVctpId;
-	private int destVctpId;	
+	private Map<String, Object> info;	
+		
+		// vxc fields
+	private String type;
+	private int vnodeId;
+	private int vtrailId;
+	private int dropVctpId;
+	private int destVctpId;
+	private int srcVctpId;	
 	
 	// in object only
-	private int srcVltpId;	
-	private int destVltpId;
-	private int vlinkId;
-	
-	private int vsubnetId;	
+	private int vsubnetId;
 
 	
 	
 	/*-----------------------------------------------*/
-	public VlinkConn() {}
-	
-	public VlinkConn(int id) {
+	public Vxc() {}
+
+	public Vxc(int id) {
 		this.id = id;
 	}
-	
-	public VlinkConn(JsonObject json) {
-	    VlinkConnConverter.fromJson(json, this);
-	}
-	
-	public JsonObject toJson() {
-		JsonObject json = new JsonObject();
-		VlinkConnConverter.toJson(this, json);
-		return json;
+
+	public Vxc(JsonObject json) {
+		VxcConverter.fromJson(json, this);
 	}
 
+	public JsonObject toJson() {
+		JsonObject json = new JsonObject();
+		VxcConverter.toJson(this, json);
+		return json;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -57,7 +59,7 @@ public class VlinkConn {
 
 	@Override
 	public boolean equals(Object obj) {
-		return Objects.equals(id, ((VlinkConn) obj).id);
+		return Objects.equals(id, ((Vxc) obj).id);
 	}
 
 	@Override
@@ -66,46 +68,22 @@ public class VlinkConn {
 	}
 	
 	
-	
+
 	/*-----------------------------------------------*/
-	public int getSrcVctpId() {
-		return srcVctpId;
-	}
-
-	public void setSrcVctpId(int srcVctpId) {
-		this.srcVctpId = srcVctpId;
-	}
-
-	public int getDestVctpId() {
-		return destVctpId;
-	}
-
-	public void setDestVctpId(int destVctpId) {
-		this.destVctpId = destVctpId;
-	}
-
-	public int getSrcVltpId() {
-		return srcVltpId;
-	}
-
-	public void setSrcVltpId(int srcVltpId) {
-		this.srcVltpId = srcVltpId;
-	}
-
-	public int getDestVltpId() {
-		return destVltpId;
-	}
-
-	public void setDestVltpId(int destVltpId) {
-		this.destVltpId = destVltpId;
-	}
-	
 	public int getId() {
 		return id;
 	}
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getLabel() {
@@ -124,14 +102,6 @@ public class VlinkConn {
 		this.description = description;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 	public String getCreated() {
 		return created;
 	}
@@ -148,12 +118,12 @@ public class VlinkConn {
 		this.updated = updated;
 	}
 
-	public String getName() {
-		return name;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Map<String, Object> getInfo() {
@@ -164,6 +134,46 @@ public class VlinkConn {
 		this.info = info;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public int getVtrailId() {
+		return vtrailId;
+	}
+
+	public void setVtrailId(int vtrailId) {
+		this.vtrailId = vtrailId;
+	}
+
+	public int getVnodeId() {
+		return vnodeId;
+	}
+
+	public void setVnodeId(int vnodeId) {
+		this.vnodeId = vnodeId;
+	}
+
+	public int getDropVctpId() {
+		return dropVctpId;
+	}
+
+	public void setDropVctpId(int dropVctpId) {
+		this.dropVctpId = dropVctpId;
+	}
+
+	public int getSrcVctpId() {
+		return srcVctpId;
+	}
+
+	public void setSrcVctpId(int srcVctpId) {
+		this.srcVctpId = srcVctpId;
+	}
+
 	public int getVsubnetId() {
 		return vsubnetId;
 	}
@@ -172,11 +182,11 @@ public class VlinkConn {
 		this.vsubnetId = vsubnetId;
 	}
 
-	public int getVlinkId() {
-		return vlinkId;
+	public int getDestVctpId() {
+		return destVctpId;
 	}
 
-	public void setVlinkId(int vlinkId) {
-		this.vlinkId = vlinkId;
+	public void setDestVctpId(int destVctpId) {
+		this.destVctpId = destVctpId;
 	}
 }

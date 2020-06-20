@@ -234,6 +234,30 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
+  public  TopologyService getVnodesByVsubnet(String vsubnetId, Handler<AsyncResult<List<Vnode>>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vsubnetId", vsubnetId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getVnodesByVsubnet");
+    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
+          .map(o -> { if (o == null) return null;
+              return o instanceof Map ? new Vnode(new JsonObject((Map) o)) : new Vnode((JsonObject) o);
+            })
+          .collect(Collectors.toList())));
+      }
+    });
+    return this;
+  }
+  @Override
   public  TopologyService deleteVnode(String vnodeId, Handler<AsyncResult<Void>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
@@ -469,6 +493,30 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
     _deliveryOptions.addHeader("action", "getAllVlinks");
+    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
+          .map(o -> { if (o == null) return null;
+              return o instanceof Map ? new Vlink(new JsonObject((Map) o)) : new Vlink((JsonObject) o);
+            })
+          .collect(Collectors.toList())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getVlinksByVsubnet(String vsubnetId, Handler<AsyncResult<List<Vlink>>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("vsubnetId", vsubnetId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getVlinksByVsubnet");
     _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));

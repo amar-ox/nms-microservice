@@ -1,12 +1,16 @@
 package io.nms.central.microservice.gateway;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import io.nms.central.microservice.common.RestAPIVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
@@ -19,6 +23,7 @@ import io.vertx.ext.auth.oauth2.providers.KeycloakAuth;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.OAuth2AuthHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.UserSessionHandler;
@@ -52,6 +57,21 @@ public class APIGatewayVerticle extends RestAPIVerticle {
     Router router = Router.router(vertx);
     // cookie and session handler
     enableLocalSession(router);
+    
+    Set<String> allowedHeaders = new HashSet<>();
+	allowedHeaders.add("x-requested-with");
+	allowedHeaders.add("Access-Control-Allow-Origin");
+	allowedHeaders.add("Origin");
+	allowedHeaders.add("Content-Type");
+	allowedHeaders.add("Accept");
+	allowedHeaders.add("X-PINGARUNER");
+
+	CorsHandler corsHandler = CorsHandler
+			.create("http://localhost:8081")
+			.allowedHeaders(allowedHeaders);
+	
+	Arrays.asList(HttpMethod.values()).stream().forEach(method -> corsHandler.allowedMethod(method));
+	router.route().handler(corsHandler);
 
     // body handler
     router.route().handler(BodyHandler.create());

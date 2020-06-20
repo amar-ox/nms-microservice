@@ -195,6 +195,24 @@
     /**
 
      @public
+     @param vsubnetId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.getVnodesByVsubnet =  function(vsubnetId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"vsubnetId":__args[0]}, {"action":"getVnodesByVsubnet"}, function(err, result) { __args[1](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
      @param vnodeId {string} 
      @param resultHandler {function} 
      @return {TopologyService}
@@ -401,6 +419,24 @@
           throw new Error('Proxy is closed');
         }
         j_eb.send(j_address, {}, {"action":"getAllVlinks"}, function(err, result) { __args[0](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
+     @param vsubnetId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.getVlinksByVsubnet =  function(vsubnetId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"vsubnetId":__args[0]}, {"action":"getVlinksByVsubnet"}, function(err, result) { __args[1](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };

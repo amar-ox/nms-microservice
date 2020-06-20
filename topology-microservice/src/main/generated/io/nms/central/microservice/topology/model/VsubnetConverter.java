@@ -25,13 +25,28 @@ public class VsubnetConverter {
           }
           break;
         case "id":
-          if (member.getValue() instanceof String) {
-            obj.setId((String)member.getValue());
+          if (member.getValue() instanceof Number) {
+            obj.setId(((Number)member.getValue()).intValue());
+          }
+          break;
+        case "info":
+          if (member.getValue() instanceof JsonObject) {
+            java.util.Map<String, java.lang.Object> map = new java.util.LinkedHashMap<>();
+            ((Iterable<java.util.Map.Entry<String, Object>>)member.getValue()).forEach(entry -> {
+              if (entry.getValue() instanceof Object)
+                map.put(entry.getKey(), entry.getValue());
+            });
+            obj.setInfo(map);
           }
           break;
         case "label":
           if (member.getValue() instanceof String) {
             obj.setLabel((String)member.getValue());
+          }
+          break;
+        case "name":
+          if (member.getValue() instanceof String) {
+            obj.setName((String)member.getValue());
           }
           break;
         case "updated":
@@ -74,11 +89,17 @@ public class VsubnetConverter {
     if (obj.getDescription() != null) {
       json.put("description", obj.getDescription());
     }
-    if (obj.getId() != null) {
-      json.put("id", obj.getId());
+    json.put("id", obj.getId());
+    if (obj.getInfo() != null) {
+      JsonObject map = new JsonObject();
+      obj.getInfo().forEach((key, value) -> map.put(key, value));
+      json.put("info", map);
     }
     if (obj.getLabel() != null) {
       json.put("label", obj.getLabel());
+    }
+    if (obj.getName() != null) {
+      json.put("name", obj.getName());
     }
     if (obj.getUpdated() != null) {
       json.put("updated", obj.getUpdated());

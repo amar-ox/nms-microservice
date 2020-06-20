@@ -48,6 +48,7 @@ var TopologyService = function(j_val) {
   var __super_addVnode = this.addVnode;
   var __super_getVnode = this.getVnode;
   var __super_getAllVnodes = this.getAllVnodes;
+  var __super_getVnodesByVsubnet = this.getVnodesByVsubnet;
   var __super_deleteVnode = this.deleteVnode;
   var __super_addVltp = this.addVltp;
   var __super_getVltp = this.getVltp;
@@ -60,6 +61,7 @@ var TopologyService = function(j_val) {
   var __super_addVlink = this.addVlink;
   var __super_getVlink = this.getVlink;
   var __super_getAllVlinks = this.getAllVlinks;
+  var __super_getVlinksByVsubnet = this.getVlinksByVsubnet;
   var __super_deleteVlink = this.deleteVlink;
   var __super_addVlinkConn = this.addVlinkConn;
   var __super_getVlinkConn = this.getVlinkConn;
@@ -254,6 +256,30 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_getAllVnodes != 'undefined') {
       return __super_getAllVnodes.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vsubnetId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getVnodesByVsubnet =  function(vsubnetId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getVnodesByVsubnet(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getVnodesByVsubnet != 'undefined') {
+      return __super_getVnodesByVsubnet.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -539,6 +565,30 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_getAllVlinks != 'undefined') {
       return __super_getAllVlinks.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vsubnetId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getVlinksByVsubnet =  function(vsubnetId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getVlinksByVsubnet(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getVlinksByVsubnet != 'undefined') {
+      return __super_getVlinksByVsubnet.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };

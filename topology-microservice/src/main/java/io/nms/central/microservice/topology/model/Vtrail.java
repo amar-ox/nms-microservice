@@ -1,5 +1,6 @@
 package io.nms.central.microservice.topology.model;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -7,8 +8,8 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 
 @DataObject(generateConverter = true)
-public class Vctp {
-		
+public class Vtrail {
+	
 	// in SQL table
 		// common fields
 	private int id;
@@ -18,33 +19,34 @@ public class Vctp {
 	private String created;
 	private String updated;
 	private String status;
-	private Map<String, Object> info; // contains connection info (vlan or wavelength)	
-		
-		// vctp fields
-	private int vltpId;
+	private Map<String, Object> info;	
 	
+		// vtrail fields
+	private int srcVctpId;
+	private int destVctpId;
+
 	// in object only
-	private int vlinkId;
-	
+	private List<Vxc> vxcs;
+
 	
 	
 	/*-----------------------------------------------*/
-	public Vctp() {}
+	public Vtrail() {}
 	
-	public Vctp(int id) {
+	public Vtrail(int id) {
 		this.id = id;
 	}
 	
-	public Vctp(JsonObject json) {
-	    VctpConverter.fromJson(json, this);
+	public Vtrail(JsonObject json) {
+	    VlinkConnConverter.fromJson(json, this);
 	}
 	
 	public JsonObject toJson() {
 		JsonObject json = new JsonObject();
-		VctpConverter.toJson(this, json);
+		VlinkConnConverter.toJson(this, json);
 		return json;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -52,7 +54,7 @@ public class Vctp {
 
 	@Override
 	public boolean equals(Object obj) {
-		return Objects.equals(id, ((Vctp) obj).id);
+		return Objects.equals(id, ((Vtrail) obj).id);
 	}
 
 	@Override
@@ -63,6 +65,22 @@ public class Vctp {
 	
 	
 	/*-----------------------------------------------*/
+	public int getSrcVctpId() {
+		return srcVctpId;
+	}
+
+	public void setSrcVctpId(int srcVctpId) {
+		this.srcVctpId = srcVctpId;
+	}
+
+	public int getDestVctpId() {
+		return destVctpId;
+	}
+
+	public void setDestVctpId(int destVctpId) {
+		this.destVctpId = destVctpId;
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -85,22 +103,6 @@ public class Vctp {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public int getVltpId() {
-		return vltpId;
-	}
-
-	public void setVltpId(int vltpId) {
-		this.vltpId = vltpId;
-	}
-
-	public int getVlinkId() {
-		return vlinkId;
-	}
-
-	public void setVlinkId(int vlinkId) {
-		this.vlinkId = vlinkId;
 	}
 
 	public String getStatus() {
@@ -141,5 +143,22 @@ public class Vctp {
 
 	public void setInfo(Map<String, Object> info) {
 		this.info = info;
+	}
+
+	public List<Vxc> getVxcs() {
+		return vxcs;
+	}
+
+	public void setVxcs(List<Vxc> vxcs) {
+		this.vxcs = vxcs;
+	}
+	
+	
+	public void addVxc(Vxc vxc) {
+		vxcs.add(vxc);
+	}
+	
+	public void removeVxc(Vxc vxc) {
+		vxcs.remove(vxc);
 	}
 }

@@ -2,6 +2,7 @@ package io.nms.central.microservice.topology.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import io.vertx.codegen.annotations.DataObject;
@@ -9,23 +10,31 @@ import io.vertx.core.json.JsonObject;
 
 @DataObject(generateConverter = true)
 public class Vltp {
-	private String id;
+	
+	// in SQL table
+		// common fields
+	private int id;
+	private String name;
 	private String label;
 	private String description;
-	
-	private String vnodeId;
-	private String status;		
-	private Boolean busy;
-	
 	private String created;
 	private String updated;
+	private String status;
+	private Map<String, Object> info;	
 	
-	// private List<String> hwinfo = new ArrayList<>();
-	private List<Vctp> vctps = new ArrayList<>();
+		// vltp fields
+	private int vnodeId;
+	private Boolean busy;
 	
+	// in object only
+	private List<Vctp> vctps;
+	
+	
+	
+	/*-----------------------------------------------*/
 	public Vltp() {}
 	
-	public Vltp(String id) {
+	public Vltp(int id) {
 		this.id = id;		
 	}
 	
@@ -33,19 +42,44 @@ public class Vltp {
 	    VltpConverter.fromJson(json, this);
 	}
 	
-	public String getId() {
+	public JsonObject toJson() {
+		JsonObject json = new JsonObject();
+		VltpConverter.toJson(this, json);
+		return json;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return Objects.equals(id, ((Vltp) obj).id);
+	}
+
+	
+	@Override
+	public String toString() {
+		return this.toJson().encodePrettily();
+	}
+
+	
+	
+	/*-----------------------------------------------*/
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
-	public String getVnodeId() {
+	public int getVnodeId() {
 		return vnodeId;
 	}
 
-	public void setVnodeId(String vnodeId) {
+	public void setVnodeId(int vnodeId) {
 		this.vnodeId = vnodeId;
 	}
 
@@ -113,25 +147,19 @@ public class Vltp {
 		vctps.remove(vctp);
 	}
 
-	public JsonObject toJson() {
-		JsonObject json = new JsonObject();
-		VltpConverter.toJson(this, json);
-		return json;
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
+	public String getName() {
+		return name;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return Objects.equals(id, ((Vltp) obj).id);
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	
-	@Override
-	public String toString() {
-		return this.toJson().encodePrettily();
+	public Map<String, Object> getInfo() {
+		return info;
+	}
+
+	public void setInfo(Map<String, Object> info) {
+		this.info = info;
 	}
 }

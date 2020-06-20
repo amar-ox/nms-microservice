@@ -7,7 +7,7 @@ services:
     volumes:
       - ${DIR}/config-server:/usr/local/apache2/htdocs:ro
   mysql:
-    image: mysql:5.6
+    image: mysql:5.7
     restart: always
     expose:
       - "3306"

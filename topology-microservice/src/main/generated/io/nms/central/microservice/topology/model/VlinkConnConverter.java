@@ -25,8 +25,8 @@ public class VlinkConnConverter {
           }
           break;
         case "destVctpId":
-          if (member.getValue() instanceof String) {
-            obj.setDestVctpId((String)member.getValue());
+          if (member.getValue() instanceof Number) {
+            obj.setDestVctpId(((Number)member.getValue()).intValue());
           }
           break;
         case "destVnode":
@@ -35,8 +35,13 @@ public class VlinkConnConverter {
           }
           break;
         case "id":
-          if (member.getValue() instanceof String) {
-            obj.setId((String)member.getValue());
+          if (member.getValue() instanceof Number) {
+            obj.setId(((Number)member.getValue()).intValue());
+          }
+          break;
+        case "info":
+          if (member.getValue() instanceof JsonObject) {
+            obj.setInfo(((JsonObject)member.getValue()).copy());
           }
           break;
         case "label":
@@ -44,9 +49,14 @@ public class VlinkConnConverter {
             obj.setLabel((String)member.getValue());
           }
           break;
-        case "srcVctpId":
+        case "name":
           if (member.getValue() instanceof String) {
-            obj.setSrcVctpId((String)member.getValue());
+            obj.setName((String)member.getValue());
+          }
+          break;
+        case "srcVctpId":
+          if (member.getValue() instanceof Number) {
+            obj.setSrcVctpId(((Number)member.getValue()).intValue());
           }
           break;
         case "srcVnode":
@@ -79,21 +89,21 @@ public class VlinkConnConverter {
     if (obj.getDescription() != null) {
       json.put("description", obj.getDescription());
     }
-    if (obj.getDestVctpId() != null) {
-      json.put("destVctpId", obj.getDestVctpId());
-    }
+    json.put("destVctpId", obj.getDestVctpId());
     if (obj.getDestVnode() != null) {
       json.put("destVnode", obj.getDestVnode());
     }
-    if (obj.getId() != null) {
-      json.put("id", obj.getId());
+    json.put("id", obj.getId());
+    if (obj.getInfo() != null) {
+      json.put("info", obj.getInfo());
     }
     if (obj.getLabel() != null) {
       json.put("label", obj.getLabel());
     }
-    if (obj.getSrcVctpId() != null) {
-      json.put("srcVctpId", obj.getSrcVctpId());
+    if (obj.getName() != null) {
+      json.put("name", obj.getName());
     }
+    json.put("srcVctpId", obj.getSrcVctpId());
     if (obj.getSrcVnode() != null) {
       json.put("srcVnode", obj.getSrcVnode());
     }

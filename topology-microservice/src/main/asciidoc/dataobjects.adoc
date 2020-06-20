@@ -12,12 +12,14 @@
 |[[connValue]]`@connValue`|`Number (Long)`|-
 |[[created]]`@created`|`String`|-
 |[[description]]`@description`|`String`|-
-|[[id]]`@id`|`String`|-
+|[[id]]`@id`|`Number (int)`|-
+|[[info]]`@info`|`Json object`|-
 |[[label]]`@label`|`String`|-
+|[[name]]`@name`|`String`|-
 |[[status]]`@status`|`String`|-
 |[[updated]]`@updated`|`String`|-
-|[[vlinkId]]`@vlinkId`|`String`|-
-|[[vltpId]]`@vltpId`|`String`|-
+|[[vlinkId]]`@vlinkId`|`Number (int)`|-
+|[[vltpId]]`@vltpId`|`Number (int)`|-
 |===
 
 [[Vlink]]
@@ -30,16 +32,19 @@
 ^|Name | Type ^| Description
 |[[created]]`@created`|`String`|-
 |[[description]]`@description`|`String`|-
-|[[destVltpId]]`@destVltpId`|`String`|-
-|[[destVnodeId]]`@destVnodeId`|`String`|-
-|[[id]]`@id`|`String`|-
+|[[destVltpId]]`@destVltpId`|`Number (int)`|-
+|[[destVnodeId]]`@destVnodeId`|`Number (int)`|-
+|[[id]]`@id`|`Number (int)`|-
+|[[info]]`@info`|`Json object`|-
 |[[label]]`@label`|`String`|-
+|[[name]]`@name`|`String`|-
 |[[speed]]`@speed`|`String`|-
-|[[srcVltpId]]`@srcVltpId`|`String`|-
-|[[srcVnodeId]]`@srcVnodeId`|`String`|-
+|[[srcVltpId]]`@srcVltpId`|`Number (int)`|-
+|[[srcVnodeId]]`@srcVnodeId`|`Number (int)`|-
 |[[status]]`@status`|`String`|-
 |[[updated]]`@updated`|`String`|-
 |[[vlinkConns]]`@vlinkConns`|`Array of link:dataobjects.html#VlinkConn[VlinkConn]`|-
+|[[vsubnetId]]`@vsubnetId`|`Number (int)`|-
 |===
 
 [[VlinkConn]]
@@ -52,11 +57,13 @@
 ^|Name | Type ^| Description
 |[[created]]`@created`|`String`|-
 |[[description]]`@description`|`String`|-
-|[[destVctpId]]`@destVctpId`|`String`|-
+|[[destVctpId]]`@destVctpId`|`Number (int)`|-
 |[[destVnode]]`@destVnode`|`String`|-
-|[[id]]`@id`|`String`|-
+|[[id]]`@id`|`Number (int)`|-
+|[[info]]`@info`|`Json object`|-
 |[[label]]`@label`|`String`|-
-|[[srcVctpId]]`@srcVctpId`|`String`|-
+|[[name]]`@name`|`String`|-
+|[[srcVctpId]]`@srcVctpId`|`Number (int)`|-
 |[[srcVnode]]`@srcVnode`|`String`|-
 |[[status]]`@status`|`String`|-
 |[[updated]]`@updated`|`String`|-
@@ -73,12 +80,14 @@
 |[[busy]]`@busy`|`Boolean`|-
 |[[created]]`@created`|`String`|-
 |[[description]]`@description`|`String`|-
-|[[id]]`@id`|`String`|-
+|[[id]]`@id`|`Number (int)`|-
+|[[info]]`@info`|`Json object`|-
 |[[label]]`@label`|`String`|-
+|[[name]]`@name`|`String`|-
 |[[status]]`@status`|`String`|-
 |[[updated]]`@updated`|`String`|-
 |[[vctps]]`@vctps`|`Array of link:dataobjects.html#Vctp[Vctp]`|-
-|[[vnodeId]]`@vnodeId`|`String`|-
+|[[vnodeId]]`@vnodeId`|`Number (int)`|-
 |===
 
 [[Vnode]]
@@ -91,17 +100,19 @@
 ^|Name | Type ^| Description
 |[[created]]`@created`|`String`|-
 |[[description]]`@description`|`String`|-
-|[[id]]`@id`|`String`|-
+|[[id]]`@id`|`Number (int)`|-
+|[[info]]`@info`|`Json object`|-
 |[[label]]`@label`|`String`|-
 |[[location]]`@location`|`String`|-
 |[[managed]]`@managed`|`Boolean`|-
+|[[name]]`@name`|`String`|-
 |[[posx]]`@posx`|`Number (Integer)`|-
 |[[posy]]`@posy`|`Number (Integer)`|-
 |[[status]]`@status`|`String`|-
 |[[type]]`@type`|`String`|-
 |[[updated]]`@updated`|`String`|-
 |[[vltps]]`@vltps`|`Array of link:dataobjects.html#Vltp[Vltp]`|-
-|[[vsubnetId]]`@vsubnetId`|`String`|-
+|[[vsubnetId]]`@vsubnetId`|`Number (int)`|-
 |===
 
 [[Vsubnet]]
@@ -114,8 +125,9 @@
 ^|Name | Type ^| Description
 |[[created]]`@created`|`String`|-
 |[[description]]`@description`|`String`|-
-|[[id]]`@id`|`String`|-
+|[[id]]`@id`|`Number (int)`|-
 |[[label]]`@label`|`String`|-
+|[[name]]`@name`|`String`|-
 |[[updated]]`@updated`|`String`|-
 |[[vlinks]]`@vlinks`|`Array of link:dataobjects.html#Vlink[Vlink]`|-
 |[[vnodes]]`@vnodes`|`Array of link:dataobjects.html#Vnode[Vnode]`|-

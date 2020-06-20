@@ -43,6 +43,8 @@ export default class TopologyService {
 
   getAllVnodes(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
+  getVnodesByVsubnet(vsubnetId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
   deleteVnode(vnodeId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addVltp(vltp: any, resultHandler: (err: any, result: any) => any) : TopologyService;
@@ -66,6 +68,8 @@ export default class TopologyService {
   getVlink(vlinkId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   getAllVlinks(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  getVlinksByVsubnet(vsubnetId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
   deleteVlink(vlinkId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 

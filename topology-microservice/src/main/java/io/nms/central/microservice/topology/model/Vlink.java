@@ -2,6 +2,7 @@ package io.nms.central.microservice.topology.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import io.vertx.codegen.annotations.DataObject;
@@ -10,39 +11,69 @@ import io.vertx.core.json.JsonObject;
 @DataObject(generateConverter = true)
 public class Vlink {
 	
-	private String id;
+	// in SQL table
+		// common fields
+	private int id;
+	private String name;
 	private String label;
 	private String description;
-		
-	private String srcVltpId;	
-	private String destVltpId;
-	
-	private String srcVnodeId;	
-	private String destVnodeId;	
-	// private String vsubnetId;
-	
-	private String speed;
-	private String status;	
-	
 	private String created;
 	private String updated;
+	private String status;
+	private Map<String, Object> info;	
+		
+		// vlink fields
+	private String type; 		// internal/external to subnet
+	private int srcVltpId;	
+	private int destVltpId;
 	
-	private List<VlinkConn> vlinkConns = new ArrayList<>();
+	// in object only
+	private int srcVnodeId;
+	private int destVnodeId;	
+	private int vsubnetId;
+	private List<VlinkConn> vlinkConns;
 	
+	
+	
+	/*-----------------------------------------------*/
 	public Vlink() {}
 	
-	public Vlink(String id) {
+	public Vlink(int id) {
 		this.id = id;
 	}
 	public Vlink(JsonObject json) {
 	    VlinkConverter.fromJson(json, this);
 	}
 	
-	public String getId() {
+	public JsonObject toJson() {
+		JsonObject json = new JsonObject();
+		VlinkConverter.toJson(this, json);
+		return json;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return Objects.equals(id, ((Vlink) obj).id);
+	}
+
+	@Override
+	public String toString() {
+		return this.toJson().encodePrettily();
+	}
+	
+	
+	
+	/*-----------------------------------------------*/
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -62,29 +93,21 @@ public class Vlink {
 		this.description = description;
 	}
 
-	public String getSrcVltpId() {
+	public int getSrcVltpId() {
 		return srcVltpId;
 	}
 
-	public void setSrcVltpId(String srcVltpId) {
+	public void setSrcVltpId(int srcVltpId) {
 		this.srcVltpId = srcVltpId;
 	}
 
-	public String getDestVltpId() {
+	public int getDestVltpId() {
 		return destVltpId;
 	}
 
-	public void setDestVltpId(String destVltpId) {
+	public void setDestVltpId(int destVltpId) {
 		this.destVltpId = destVltpId;
 	}	
-
-	public String getSpeed() {
-		return speed;
-	}
-
-	public void setSpeed(String speed) {
-		this.speed = speed;
-	}
 
 	public String getStatus() {
 		return status;
@@ -118,19 +141,19 @@ public class Vlink {
 		this.updated = updated;
 	}
 	
-	public String getSrcVnodeId() {
+	public int getSrcVnodeId() {
 		return srcVnodeId;
 	}
 
-	public void setSrcVnodeId(String srcVnodeId) {
+	public void setSrcVnodeId(int srcVnodeId) {
 		this.srcVnodeId = srcVnodeId;
 	}
 
-	public String getDestVnodeId() {
+	public int getDestVnodeId() {
 		return destVnodeId;
 	}
 
-	public void setDestVnodeId(String destVnodeId) {
+	public void setDestVnodeId(int destVnodeId) {
 		this.destVnodeId = destVnodeId;
 	}
 	
@@ -142,25 +165,35 @@ public class Vlink {
 		vlinkConns.remove(vlinkConn);
 	}
 
-	public JsonObject toJson() {
-		JsonObject json = new JsonObject();
-		VlinkConverter.toJson(this, json);
-		return json;
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
+	public int getVsubnetId() {
+		return vsubnetId;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return Objects.equals(id, ((Vlink) obj).id);
+	public void setVsubnetId(int vsubnetId) {
+		this.vsubnetId = vsubnetId;
 	}
 
-	@Override
-	public String toString() {
-		return this.toJson().encodePrettily();
+	public String getName() {
+		return name;
 	}
-	
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Map<String, Object> getInfo() {
+		return info;
+	}
+
+	public void setInfo(Map<String, Object> info) {
+		this.info = info;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 }

@@ -30,13 +30,23 @@ public class VltpConverter {
           }
           break;
         case "id":
-          if (member.getValue() instanceof String) {
-            obj.setId((String)member.getValue());
+          if (member.getValue() instanceof Number) {
+            obj.setId(((Number)member.getValue()).intValue());
+          }
+          break;
+        case "info":
+          if (member.getValue() instanceof JsonObject) {
+            obj.setInfo(((JsonObject)member.getValue()).copy());
           }
           break;
         case "label":
           if (member.getValue() instanceof String) {
             obj.setLabel((String)member.getValue());
+          }
+          break;
+        case "name":
+          if (member.getValue() instanceof String) {
+            obj.setName((String)member.getValue());
           }
           break;
         case "status":
@@ -60,8 +70,8 @@ public class VltpConverter {
           }
           break;
         case "vnodeId":
-          if (member.getValue() instanceof String) {
-            obj.setVnodeId((String)member.getValue());
+          if (member.getValue() instanceof Number) {
+            obj.setVnodeId(((Number)member.getValue()).intValue());
           }
           break;
       }
@@ -82,11 +92,15 @@ public class VltpConverter {
     if (obj.getDescription() != null) {
       json.put("description", obj.getDescription());
     }
-    if (obj.getId() != null) {
-      json.put("id", obj.getId());
+    json.put("id", obj.getId());
+    if (obj.getInfo() != null) {
+      json.put("info", obj.getInfo());
     }
     if (obj.getLabel() != null) {
       json.put("label", obj.getLabel());
+    }
+    if (obj.getName() != null) {
+      json.put("name", obj.getName());
     }
     if (obj.getStatus() != null) {
       json.put("status", obj.getStatus());
@@ -99,8 +113,6 @@ public class VltpConverter {
       obj.getVctps().forEach(item -> array.add(item.toJson()));
       json.put("vctps", array);
     }
-    if (obj.getVnodeId() != null) {
-      json.put("vnodeId", obj.getVnodeId());
-    }
+    json.put("vnodeId", obj.getVnodeId());
   }
 }

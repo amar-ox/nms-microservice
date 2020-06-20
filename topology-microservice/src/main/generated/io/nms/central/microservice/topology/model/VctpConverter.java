@@ -35,13 +35,23 @@ public class VctpConverter {
           }
           break;
         case "id":
-          if (member.getValue() instanceof String) {
-            obj.setId((String)member.getValue());
+          if (member.getValue() instanceof Number) {
+            obj.setId(((Number)member.getValue()).intValue());
+          }
+          break;
+        case "info":
+          if (member.getValue() instanceof JsonObject) {
+            obj.setInfo(((JsonObject)member.getValue()).copy());
           }
           break;
         case "label":
           if (member.getValue() instanceof String) {
             obj.setLabel((String)member.getValue());
+          }
+          break;
+        case "name":
+          if (member.getValue() instanceof String) {
+            obj.setName((String)member.getValue());
           }
           break;
         case "status":
@@ -55,13 +65,13 @@ public class VctpConverter {
           }
           break;
         case "vlinkId":
-          if (member.getValue() instanceof String) {
-            obj.setVlinkId((String)member.getValue());
+          if (member.getValue() instanceof Number) {
+            obj.setVlinkId(((Number)member.getValue()).intValue());
           }
           break;
         case "vltpId":
-          if (member.getValue() instanceof String) {
-            obj.setVltpId((String)member.getValue());
+          if (member.getValue() instanceof Number) {
+            obj.setVltpId(((Number)member.getValue()).intValue());
           }
           break;
       }
@@ -85,11 +95,15 @@ public class VctpConverter {
     if (obj.getDescription() != null) {
       json.put("description", obj.getDescription());
     }
-    if (obj.getId() != null) {
-      json.put("id", obj.getId());
+    json.put("id", obj.getId());
+    if (obj.getInfo() != null) {
+      json.put("info", obj.getInfo());
     }
     if (obj.getLabel() != null) {
       json.put("label", obj.getLabel());
+    }
+    if (obj.getName() != null) {
+      json.put("name", obj.getName());
     }
     if (obj.getStatus() != null) {
       json.put("status", obj.getStatus());
@@ -97,11 +111,7 @@ public class VctpConverter {
     if (obj.getUpdated() != null) {
       json.put("updated", obj.getUpdated());
     }
-    if (obj.getVlinkId() != null) {
-      json.put("vlinkId", obj.getVlinkId());
-    }
-    if (obj.getVltpId() != null) {
-      json.put("vltpId", obj.getVltpId());
-    }
+    json.put("vlinkId", obj.getVlinkId());
+    json.put("vltpId", obj.getVltpId());
   }
 }

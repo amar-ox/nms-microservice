@@ -2,7 +2,10 @@ package io.nms.central.microservice.topology.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,31 +15,63 @@ import io.vertx.core.json.JsonObject;
 
 @DataObject(generateConverter = true)
 public class Vsubnet {
-	private String id;
+	
+	// in SQL table
+		// common fields
+	private int id;
+	private String name;
 	private String label;
 	private String description;
 	private String created;
 	private String updated;
-	private List<Vnode> vnodes = new ArrayList<Vnode>();
-	private List<Vlink> vlinks = new ArrayList<Vlink>();
+	private String status;
+	private Map<String, Object> info;
 	
-	//private List<String> info = new ArrayList<String>();
-
+	// in object only
+	private List<Vnode> vnodes;
+	private List<Vlink> vlinks;
+	
+	
+	
+	/*-----------------------------------------------*/
 	public Vsubnet() {}
 
-	public Vsubnet(String id) {
+	public Vsubnet(int id) {
 		this.id = id;
 	}
 
 	public Vsubnet(JsonObject json) {
 		VsubnetConverter.fromJson(json, this);
 	}
+	public JsonObject toJson() {
+		JsonObject json = new JsonObject();
+		VsubnetConverter.toJson(this, json);
+		return json;
+	}
 
-	public String getId() {
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return Objects.equals(id, ((Vsubnet) obj).id);
+	}
+
+	@Override
+	public String toString() {
+		return this.toJson().encodePrettily();
+	}
+	
+	
+	
+	/*-----------------------------------------------*/
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -88,25 +123,28 @@ public class Vsubnet {
 		this.vlinks = vlinks;
 	}
 
-	public JsonObject toJson() {
-		JsonObject json = new JsonObject();
-		VsubnetConverter.toJson(this, json);
-		return json;
+	public String getName() {
+		return name;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.id);
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return Objects.equals(id, ((Vsubnet) obj).id);
+	public Map<String, Object> getInfo() {
+		return info;
 	}
 
-	@Override
-	public String toString() {
-		return this.toJson().encodePrettily();
+	public void setInfo(Map<String, Object> info) {
+		this.info = info;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }
 

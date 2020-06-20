@@ -2,6 +2,7 @@ package io.nms.central.microservice.topology.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import io.vertx.codegen.annotations.DataObject;
@@ -11,42 +12,70 @@ import io.vertx.core.json.JsonObject;
 @DataObject(generateConverter = true)
 public class Vnode {
 	
-	private String id;
+	// in SQL table
+		// common fields
+	private int id;
+	private String name;
 	private String label;
-	private String description;	
+	private String description;
+	private String created;
+	private String updated;
+	private String status;
+	private Map<String, Object> info;
 	
+		// vnode fields
 	private String location;
 	private Integer posx;
 	private Integer posy;
-	
-	private String  vsubnetId;
-	
+	private int vsubnetId;
 	private String type;
-	private boolean managed;	
-	private String status;	
 	
-	private String created;
-	private String updated;
+	// in object only
+	private List<Vltp> vltps;
+	private List<Vxc> vxcs;
 	
-	private List<Vltp> vltps = new ArrayList<Vltp>();
-	//private List<Vxc> vxcs = new ArrayList<>();
 	
+	
+	/*-----------------------------------------------*/
 	public Vnode() {}
 	
-	public Vnode(String id) {
+	public Vnode(int id) {
 		this.id = id;
 	}
 	
 	public Vnode(JsonObject json) {
 	    VnodeConverter.fromJson(json, this);
-		//Json.decodeValue(json.encode(), Node.class);
 	}
 	
-	public String getId() {
+	public JsonObject toJson() {
+		JsonObject json = new JsonObject();
+		VnodeConverter.toJson(this, json);
+		return json;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return Objects.equals(id, ((Vnode) obj).id);
+	}
+
+	@Override
+	public String toString() {
+		return this.toJson().encodePrettily();
+	}
+
+	
+	
+	/*-----------------------------------------------*/
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -114,11 +143,11 @@ public class Vnode {
 		this.status = status;
 	}
 
-	public String getVsubnetId() {
+	public int getVsubnetId() {
 		return vsubnetId;
 	}
 
-	public void setVsubnetId(String vsubnetId) {
+	public void setVsubnetId(int vsubnetId) {
 		this.vsubnetId = vsubnetId;
 	}
 
@@ -146,6 +175,31 @@ public class Vnode {
 		this.updated = updated;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Map<String, Object> getInfo() {
+		return info;
+	}
+
+	public void setInfo(Map<String, Object> info) {
+		this.info = info;
+	}
+
+	public List<Vxc> getVxcs() {
+		return vxcs;
+	}
+
+	public void setVxcs(List<Vxc> vxcs) {
+		this.vxcs = vxcs;
+	}
+	
+	
 	public void addVltp(Vltp vltp) {
 		vltps.add(vltp);
 	}
@@ -153,26 +207,4 @@ public class Vnode {
 	public void removeVltp(Vltp vltp) {
 		vltps.remove(vltp);
 	}
-
-	public JsonObject toJson() {
-		JsonObject json = new JsonObject();
-		VnodeConverter.toJson(this, json);
-		return json;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return Objects.equals(id, ((Vnode) obj).id);
-	}
-
-	@Override
-	public String toString() {
-		return this.toJson().encodePrettily();
-	}
-	
 }

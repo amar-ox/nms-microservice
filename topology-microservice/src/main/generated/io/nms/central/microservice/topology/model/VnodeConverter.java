@@ -25,8 +25,13 @@ public class VnodeConverter {
           }
           break;
         case "id":
-          if (member.getValue() instanceof String) {
-            obj.setId((String)member.getValue());
+          if (member.getValue() instanceof Number) {
+            obj.setId(((Number)member.getValue()).intValue());
+          }
+          break;
+        case "info":
+          if (member.getValue() instanceof JsonObject) {
+            obj.setInfo(((JsonObject)member.getValue()).copy());
           }
           break;
         case "label":
@@ -42,6 +47,11 @@ public class VnodeConverter {
         case "managed":
           if (member.getValue() instanceof Boolean) {
             obj.setManaged((Boolean)member.getValue());
+          }
+          break;
+        case "name":
+          if (member.getValue() instanceof String) {
+            obj.setName((String)member.getValue());
           }
           break;
         case "posx":
@@ -80,8 +90,8 @@ public class VnodeConverter {
           }
           break;
         case "vsubnetId":
-          if (member.getValue() instanceof String) {
-            obj.setVsubnetId((String)member.getValue());
+          if (member.getValue() instanceof Number) {
+            obj.setVsubnetId(((Number)member.getValue()).intValue());
           }
           break;
       }
@@ -99,8 +109,9 @@ public class VnodeConverter {
     if (obj.getDescription() != null) {
       json.put("description", obj.getDescription());
     }
-    if (obj.getId() != null) {
-      json.put("id", obj.getId());
+    json.put("id", obj.getId());
+    if (obj.getInfo() != null) {
+      json.put("info", obj.getInfo());
     }
     if (obj.getLabel() != null) {
       json.put("label", obj.getLabel());
@@ -109,6 +120,9 @@ public class VnodeConverter {
       json.put("location", obj.getLocation());
     }
     json.put("managed", obj.getManaged());
+    if (obj.getName() != null) {
+      json.put("name", obj.getName());
+    }
     if (obj.getPosx() != null) {
       json.put("posx", obj.getPosx());
     }
@@ -129,8 +143,6 @@ public class VnodeConverter {
       obj.getVltps().forEach(item -> array.add(item.toJson()));
       json.put("vltps", array);
     }
-    if (obj.getVsubnetId() != null) {
-      json.put("vsubnetId", obj.getVsubnetId());
-    }
+    json.put("vsubnetId", obj.getVsubnetId());
   }
 }
