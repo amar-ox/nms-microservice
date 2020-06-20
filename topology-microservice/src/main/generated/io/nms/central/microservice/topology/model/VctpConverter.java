@@ -14,16 +14,6 @@ public class VctpConverter {
   public static void fromJson(Iterable<java.util.Map.Entry<String, Object>> json, Vctp obj) {
     for (java.util.Map.Entry<String, Object> member : json) {
       switch (member.getKey()) {
-        case "connType":
-          if (member.getValue() instanceof String) {
-            obj.setConnType((String)member.getValue());
-          }
-          break;
-        case "connValue":
-          if (member.getValue() instanceof Number) {
-            obj.setConnValue(((Number)member.getValue()).longValue());
-          }
-          break;
         case "created":
           if (member.getValue() instanceof String) {
             obj.setCreated((String)member.getValue());
@@ -41,7 +31,12 @@ public class VctpConverter {
           break;
         case "info":
           if (member.getValue() instanceof JsonObject) {
-            obj.setInfo(((JsonObject)member.getValue()).copy());
+            java.util.Map<String, java.lang.Object> map = new java.util.LinkedHashMap<>();
+            ((Iterable<java.util.Map.Entry<String, Object>>)member.getValue()).forEach(entry -> {
+              if (entry.getValue() instanceof Object)
+                map.put(entry.getKey(), entry.getValue());
+            });
+            obj.setInfo(map);
           }
           break;
         case "label":
@@ -83,12 +78,6 @@ public class VctpConverter {
   }
 
   public static void toJson(Vctp obj, java.util.Map<String, Object> json) {
-    if (obj.getConnType() != null) {
-      json.put("connType", obj.getConnType());
-    }
-    if (obj.getConnValue() != null) {
-      json.put("connValue", obj.getConnValue());
-    }
     if (obj.getCreated() != null) {
       json.put("created", obj.getCreated());
     }
@@ -97,7 +86,9 @@ public class VctpConverter {
     }
     json.put("id", obj.getId());
     if (obj.getInfo() != null) {
-      json.put("info", obj.getInfo());
+      JsonObject map = new JsonObject();
+      obj.getInfo().forEach((key, value) -> map.put(key, value));
+      json.put("info", map);
     }
     if (obj.getLabel() != null) {
       json.put("label", obj.getLabel());

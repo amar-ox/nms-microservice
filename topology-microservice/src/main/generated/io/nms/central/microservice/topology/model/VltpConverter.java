@@ -36,7 +36,12 @@ public class VltpConverter {
           break;
         case "info":
           if (member.getValue() instanceof JsonObject) {
-            obj.setInfo(((JsonObject)member.getValue()).copy());
+            java.util.Map<String, java.lang.Object> map = new java.util.LinkedHashMap<>();
+            ((Iterable<java.util.Map.Entry<String, Object>>)member.getValue()).forEach(entry -> {
+              if (entry.getValue() instanceof Object)
+                map.put(entry.getKey(), entry.getValue());
+            });
+            obj.setInfo(map);
           }
           break;
         case "label":
@@ -94,7 +99,9 @@ public class VltpConverter {
     }
     json.put("id", obj.getId());
     if (obj.getInfo() != null) {
-      json.put("info", obj.getInfo());
+      JsonObject map = new JsonObject();
+      obj.getInfo().forEach((key, value) -> map.put(key, value));
+      json.put("info", map);
     }
     if (obj.getLabel() != null) {
       json.put("label", obj.getLabel());

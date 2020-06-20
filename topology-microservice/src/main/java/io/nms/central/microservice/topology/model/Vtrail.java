@@ -38,12 +38,12 @@ public class Vtrail {
 	}
 	
 	public Vtrail(JsonObject json) {
-	    VlinkConnConverter.fromJson(json, this);
+	    VtrailConverter.fromJson(json, this);
 	}
 	
 	public JsonObject toJson() {
 		JsonObject json = new JsonObject();
-		VlinkConnConverter.toJson(this, json);
+		VtrailConverter.toJson(this, json);
 		return json;
 	}
 

@@ -49,6 +49,11 @@ public class VsubnetConverter {
             obj.setName((String)member.getValue());
           }
           break;
+        case "status":
+          if (member.getValue() instanceof String) {
+            obj.setStatus((String)member.getValue());
+          }
+          break;
         case "updated":
           if (member.getValue() instanceof String) {
             obj.setUpdated((String)member.getValue());
@@ -100,6 +105,9 @@ public class VsubnetConverter {
     }
     if (obj.getName() != null) {
       json.put("name", obj.getName());
+    }
+    if (obj.getStatus() != null) {
+      json.put("status", obj.getStatus());
     }
     if (obj.getUpdated() != null) {
       json.put("updated", obj.getUpdated());

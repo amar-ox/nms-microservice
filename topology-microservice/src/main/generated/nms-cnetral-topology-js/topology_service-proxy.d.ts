@@ -53,6 +53,8 @@ export default class TopologyService {
 
   getAllVltps(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
+  getVltpsByVnode(vnodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
   deleteVltp(vltpId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addVctp(vctp: any, resultHandler: (err: any, result: any) => any) : TopologyService;
@@ -60,6 +62,8 @@ export default class TopologyService {
   getVctp(vctpId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   getAllVctps(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  getVctpsByVltp(vltpId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
   deleteVctp(vctpId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
@@ -79,11 +83,25 @@ export default class TopologyService {
 
   getAllVlinkConns(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
-  deleteVlinkConn(linkConnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+  getVlinkConnsByVlink(vlinkId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
-  getVltpsByVnode(vnodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+  deleteVlinkConn(vlinkConnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  getVctpsByVltp(vltpId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+  addVtrail(vtrail: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  getVctpsByVlink(vlinkId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+  getVtrail(vtrailId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+
+  deleteVtrail(vtrailId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+
+  getAllVtrails(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  addVxc(vxc: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+
+  getVxc(vxcId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+
+  getAllVxcs(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  getVxcsByVtrail(vtrailId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  deleteVxc(vxcId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 }

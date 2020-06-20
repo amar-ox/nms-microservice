@@ -69,29 +69,21 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		executeNoResult(params, Sql.INSERT_VSUBNET, resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService getVsubnet(String vsubnetId, Handler<AsyncResult<Vsubnet>> resultHandler) {
 		this.retrieveOne(vsubnetId, Sql.FETCH_VSUBNET_BY_ID)
-			.map(option -> option.map(json -> {
-				Vsubnet vs = new Vsubnet(json);
-				vs.setInfo(new JsonObject(json.getString("info")).getMap());
-				return vs;
-			}).orElse(null))
-			.onComplete(resultHandler);
+		.map(option -> option.map(json -> {
+			Vsubnet vsubnet = new Vsubnet(json);
+			vsubnet.setInfo(new JsonObject(json.getString("info")).getMap());
+			return vsubnet;
+		}).orElse(null))
+		.onComplete(resultHandler);
 		return this;
 	}
-
-	@Override
-	public TopologyService deleteVsubnet(String vsubnetId, Handler<AsyncResult<Void>> resultHandler) {
-		this.removeOne(vsubnetId, Sql.DELETE_VSUBNET, resultHandler);
-		return this;
-	}
-
 	@Override
 	public TopologyService getAllVsubnets(Handler<AsyncResult<List<Vsubnet>>> resultHandler) {
 		this.retrieveAll(Sql.FETCH_ALL_VSUBNETS)
-			.map(rawList -> rawList.stream()
+		.map(rawList -> rawList.stream()
 				.map(row -> {
 					Vsubnet vsubnet = new Vsubnet(row);
 					vsubnet.setInfo(new JsonObject(row.getString("info")).getMap());
@@ -99,10 +91,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				})
 				.collect(Collectors.toList())
 				)
-			.onComplete(resultHandler);
+		.onComplete(resultHandler);
 		return this;
 	}
-
+	@Override
+	public TopologyService deleteVsubnet(String vsubnetId, Handler<AsyncResult<Void>> resultHandler) {
+		this.removeOne(vsubnetId, Sql.DELETE_VSUBNET, resultHandler);
+		return this;
+	}
 
 
 	/********** Vnode **********/
@@ -123,31 +119,28 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		executeNoResult(params, Sql.INSERT_VNODE, resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService getVnode(String vnodeId, Handler<AsyncResult<Vnode>> resultHandler) {
 		JsonArray params = new JsonArray().add(vnodeId);
 		this.retrieveMany(params, Sql.FETCH_VNODE_BY_ID)
-			.map(rawList -> ModelObjectMapper.toVnodeFromJsonRows(rawList))
-			.onComplete(resultHandler);
+		.map(rawList -> ModelObjectMapper.toVnodeFromJsonRows(rawList))
+		.onComplete(resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService getAllVnodes(Handler<AsyncResult<List<Vnode>>> resultHandler) {
 		this.retrieveAll(Sql.FETCH_ALL_VNODES)
 		.map(rawList -> rawList.stream()
-			.map(row -> {
-				Vnode vnode = new Vnode(row);
-				vnode.setInfo(new JsonObject(row.getString("info")).getMap());
-				return vnode;
-			})
-			.collect(Collectors.toList())
-			)
+				.map(row -> {
+					Vnode vnode = new Vnode(row);
+					vnode.setInfo(new JsonObject(row.getString("info")).getMap());
+					return vnode;
+				})
+				.collect(Collectors.toList())
+				)
 		.onComplete(resultHandler);
 		return this;
 	}
-	
 	@Override
 	public TopologyService getVnodesByVsubnet(String vsubnetId, Handler<AsyncResult<List<Vnode>>> resultHandler) {
 		JsonArray params = new JsonArray().add(vsubnetId);
@@ -159,13 +152,11 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		.onComplete(resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService deleteVnode(String vnodeId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(vnodeId, Sql.DELETE_VNODE, resultHandler);
 		return this;
 	}
-
 
 
 	/********** Vltp **********/
@@ -183,7 +174,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		executeNoResult(params, Sql.INSERT_VLTP, resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService getVltp(String vltpId, Handler<AsyncResult<Vltp>> resultHandler) {
 		JsonArray params = new JsonArray().add(vltpId);
@@ -196,13 +186,13 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	public TopologyService getAllVltps(Handler<AsyncResult<List<Vltp>>> resultHandler) {
 		this.retrieveAll(Sql.FETCH_ALL_VLTPS)
 		.map(rawList -> rawList.stream()
-			.map(row -> {
-				Vltp vltp = new Vltp(row);
-				vltp.setInfo(new JsonObject(row.getString("info")).getMap());
-				return vltp;
-			})
-			.collect(Collectors.toList())
-			)
+				.map(row -> {
+					Vltp vltp = new Vltp(row);
+					vltp.setInfo(new JsonObject(row.getString("info")).getMap());
+					return vltp;
+				})
+				.collect(Collectors.toList())
+				)
 		.onComplete(resultHandler);
 		return this;
 	}
@@ -217,17 +207,15 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 					return vltp;
 				})
 				.collect(Collectors.toList())
-			)
-			.onComplete(resultHandler);
+				)
+		.onComplete(resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService deleteVltp(String vltpId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(vltpId, Sql.DELETE_VLTP, resultHandler);
 		return this;
 	}
-
 
 
 	/********** Vctp **********/
@@ -244,11 +232,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		executeNoResult(params, Sql.INSERT_VCTP, resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService getVctp(String vctpId, Handler<AsyncResult<Vctp>> resultHandler) {
 		this.retrieveOne(vctpId, Sql.FETCH_VCTP_BY_ID)
-		.map(option -> option.map(Vctp::new).orElse(null))
+		.map(option -> option.map(json -> {
+			Vctp vctp = new Vctp(json);
+			vctp.setInfo(new JsonObject(json.getString("info")).getMap());
+			return vctp;
+		}).orElse(null))
 		.onComplete(resultHandler);
 		return this;
 	}
@@ -263,7 +254,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				})
 				.collect(Collectors.toList())
 				)
-			.onComplete(resultHandler);
+		.onComplete(resultHandler);
 		return this;
 	}
 	@Override
@@ -278,7 +269,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				})
 				.collect(Collectors.toList())
 				)
-			.onComplete(resultHandler);
+		.onComplete(resultHandler);
 		return this;
 	}
 	@Override
@@ -286,7 +277,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		this.removeOne(vctpId, Sql.DELETE_VCTP, resultHandler);
 		return this;
 	}
-
 
 
 	/********** Vlink **********/
@@ -308,11 +298,10 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	public TopologyService getVlink(String vlinkId, Handler<AsyncResult<Vlink>> resultHandler) {
 		JsonArray params = new JsonArray().add(vlinkId);
 		this.retrieveMany(params, Sql.FETCH_VLINK_BY_ID)
-			.map(rawList -> ModelObjectMapper.toVlinkFromJsonRows(rawList))
-			.onComplete(resultHandler);
+		.map(rawList -> ModelObjectMapper.toVlinkFromJsonRows(rawList))
+		.onComplete(resultHandler);
 		return this;
 	}
-	
 	@Override
 	public TopologyService getAllVlinks(Handler<AsyncResult<List<Vlink>>> resultHandler) {
 		this.retrieveAll(Sql.FETCH_ALL_VLINKS)
@@ -327,7 +316,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		.onComplete(resultHandler);
 		return this;
 	}
-	
 	@Override
 	public TopologyService getVlinksByVsubnet(String vsubnetId, Handler<AsyncResult<List<Vlink>>> resultHandler) {
 		JsonArray params = new JsonArray().add(vsubnetId);
@@ -343,13 +331,12 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		.onComplete(resultHandler);
 		return this;
 	}
-	
+
 	@Override
 	public TopologyService deleteVlink(String vlinkId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(vlinkId, Sql.DELETE_VLINK, resultHandler);
 		return this;
 	}
-
 
 
 	/********** VlinkConn **********/
@@ -370,11 +357,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService getVlinkConn(String vlinkConnId, Handler<AsyncResult<VlinkConn>> resultHandler) {
 		this.retrieveOne(vlinkConnId, Sql.FETCH_VLINKCONN_BY_ID)
-		.map(option -> option.map(VlinkConn::new).orElse(null))
+		.map(option -> option.map(json -> {
+			VlinkConn vlinkConn = new VlinkConn(json);
+			vlinkConn.setInfo(new JsonObject(json.getString("info")).getMap());
+			return vlinkConn;
+		}).orElse(null))
 		.onComplete(resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService getAllVlinkConns(Handler<AsyncResult<List<VlinkConn>>> resultHandler) {
 		this.retrieveAll(Sql.FETCH_ALL_VLINKCONNS)
@@ -389,7 +379,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		.onComplete(resultHandler);
 		return this;
 	}
-	
 	@Override
 	public TopologyService getVlinkConnsByVlink(String vlinkId, Handler<AsyncResult<List<VlinkConn>>> resultHandler) {
 		JsonArray params = new JsonArray().add(vlinkId);
@@ -405,14 +394,13 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		.onComplete(resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService deleteVlinkConn(String vlinkConnId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(vlinkConnId, Sql.DELETE_VLINKCONN, resultHandler);
 		return this;
 	}
 
-	
+
 	/********** Vtrail **********/
 	// INSERT_VTRAIL = "INSERT INTO Vtrail (name, label, description, info, status, srcVctpId, destVctpId) "
 	@Override
@@ -428,19 +416,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		executeNoResult(params, Sql.INSERT_VTRAIL, resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService getVtrail(String vtrailId, Handler<AsyncResult<Vtrail>> resultHandler) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public TopologyService deleteVtrail(String vtrailId, Handler<AsyncResult<Void>> resultHandler) {
-		this.removeOne(vtrailId, Sql.DELETE_VTRAIL, resultHandler);
+		JsonArray params = new JsonArray().add(vtrailId);
+		this.retrieveMany(params, Sql.FETCH_VTRAIL_BY_ID)
+				.map(rawList -> ModelObjectMapper.toVtrailFromJsonRows(rawList))
+				.onComplete(resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService getAllVtrails(Handler<AsyncResult<List<Vtrail>>> resultHandler) {
 		this.retrieveAll(Sql.FETCH_ALL_VTRAILS)
@@ -455,6 +438,12 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		.onComplete(resultHandler);
 		return this;
 	}
+	@Override
+	public TopologyService deleteVtrail(String vtrailId, Handler<AsyncResult<Void>> resultHandler) {
+		this.removeOne(vtrailId, Sql.DELETE_VTRAIL, resultHandler);
+		return this;
+	}
+
 
 	/********** Vxc **********/
 	// INSERT_VXC = "INSERT INTO Vxc (name, label, description, info, status, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId) "
@@ -475,13 +464,17 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		executeNoResult(params, Sql.INSERT_VXC, resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService getVxc(String vxcId, Handler<AsyncResult<Vxc>> resultHandler) {
-		// TODO Auto-generated method stub
-		return null;
+		this.retrieveOne(vxcId, Sql.FETCH_VXC_BY_ID)
+		.map(option -> option.map(json -> {
+			Vxc vxc = new Vxc(json);
+			vxc.setInfo(new JsonObject(json.getString("info")).getMap());
+			return vxc;
+		}).orElse(null))
+		.onComplete(resultHandler);
+		return this;
 	}
-
 	@Override
 	public TopologyService getAllVxcs(Handler<AsyncResult<List<Vxc>>> resultHandler) {
 		this.retrieveAll(Sql.FETCH_ALL_VXCS)
@@ -496,7 +489,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		.onComplete(resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService getVxcsByVtrail(String vtrailId, Handler<AsyncResult<List<Vxc>>> resultHandler) {
 		JsonArray params = new JsonArray().add(vtrailId);
@@ -512,7 +504,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		.onComplete(resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService deleteVxc(String vxcId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(vxcId, Sql.DELETE_VXC, resultHandler);

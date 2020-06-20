@@ -27,7 +27,7 @@ import io.vertx.ext.web.handler.BodyHandler;
  */
 public class RestTopologyAPIVerticle extends RestAPIVerticle {
 
-	private static final Logger logger = LoggerFactory.getLogger(RestTopologyAPIVerticle.class);
+	// private static final Logger logger = LoggerFactory.getLogger(RestTopologyAPIVerticle.class);
 
 	public static final String SERVICE_NAME = "topology-rest-api";
 
@@ -35,49 +35,49 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 
 	private static final String API_ADD_SUBNET = "/subnet";  
 	private static final String API_GET_SUBNET = "/subnet/:subnetId";
-	private static final String API_DELETE_SUBNET = "/subnet/:subnetId";
 	private static final String API_GET_ALL_SUBNETS = "/subnets/all";
+	private static final String API_DELETE_SUBNET = "/subnet/:subnetId";
 
 	private static final String API_ADD_NODE = "/node";
-	private static final String API_GET_NODE = "/node/:nodeId";
-	private static final String API_DELETE_NODE = "/node/:nodeId";
+	private static final String API_GET_NODE = "/node/:nodeId";	
 	private static final String API_GET_ALL_NODES = "/nodes/all";
 	private static final String API_GET_NODES_BY_SUBNET = "/nodes/subnet/:subnetId";
+	private static final String API_DELETE_NODE = "/node/:nodeId";
 
 	private static final String API_ADD_LTP = "/ltp";
-	private static final String API_GET_LTP = "/ltp/:ltpId";
-	private static final String API_DELETE_LTP = "/ltp/:ltpId";
+	private static final String API_GET_LTP = "/ltp/:ltpId";	
 	private static final String API_GET_ALL_LTPS = "/ltps/all";
 	private static final String API_GET_LTPS_BY_NODE = "/ltps/node/:nodeId";
+	private static final String API_DELETE_LTP = "/ltp/:ltpId";
 
 	private static final String API_ADD_CTP = "/ctp";  
-	private static final String API_GET_CTP = "/ctp/:ctpId";
-	private static final String API_DELETE_CTP = "/ctp/:ctpId";
+	private static final String API_GET_CTP = "/ctp/:ctpId";	
 	private static final String API_GET_ALL_CTPS = "/ctps/all";
 	private static final String API_GET_CTPS_BY_LTP = "/ctps/ltp/:ltpId";
+	private static final String API_DELETE_CTP = "/ctp/:ctpId";
 
 	private static final String API_ADD_LINK = "/link";  
-	private static final String API_GET_LINK = "/link/:linkId";
-	private static final String API_DELETE_LINK = "/link/:linkId";
+	private static final String API_GET_LINK = "/link/:linkId";	
 	private static final String API_GET_ALL_LINKS = "/links/all";
 	private static final String API_GET_LINKS_BY_SUBNET = "/links/subnet/:subnetId";
+	private static final String API_DELETE_LINK = "/link/:linkId";
 
 	private static final String API_ADD_LINKCONN = "/linkConn";
-	private static final String API_GET_LINKCONN = "/linkConn/:linkConnId";
-	private static final String API_DELETE_LINKCONN = "/linkConn/:linkConnId";
+	private static final String API_GET_LINKCONN = "/linkConn/:linkConnId";	
 	private static final String API_GET_ALL_LINKCONNS = "/linkConns/all";
 	private static final String API_GET_LINKCONNS_BY_LINK = "/linkConns/link/:linkId";
+	private static final String API_DELETE_LINKCONN = "/linkConn/:linkConnId";
 
 	private static final String API_ADD_TRAIL = "/trail";
-	private static final String API_GET_TRAIL = "/trail/:trailId";
-	private static final String API_DELETE_TRAIL = "/trail/:trailId";
+	private static final String API_GET_TRAIL = "/trail/:trailId";	
 	private static final String API_GET_ALL_TRAILS = "/trails/all";
+	private static final String API_DELETE_TRAIL = "/trail/:trailId";
 
 	private static final String API_ADD_XC = "/xc";
 	private static final String API_GET_XC = "/xc/:xcId";
-	private static final String API_DELETE_XC = "/xc/:xcId";
 	private static final String API_GET_ALL_XCS = "/xcs/all";
 	private static final String API_GET_XCS_BY_TRAIL = "/xcs/trail/:trailId";
+	private static final String API_DELETE_XC = "/xc/:xcId";
 
 
 	private final TopologyService service;
@@ -165,23 +165,21 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		JsonObject result = new JsonObject().put("message", "subnet_added");
 		service.addVsubnet(vsubnet, resultVoidHandler(context, result));
 	}
-
 	private void apiGetSubnet(RoutingContext context) {
 		String subnetId = context.request().getParam("subnetId");
 		// logger.debug("apiGetSubnet, subnetId: "+subnetId);		
 		service.getVsubnet(subnetId, resultHandlerNonEmpty(context));
 	}
-
+	private void apiGetAllSubnets(RoutingContext context) {
+		// logger.debug("apiGetAllSubnets");
+		service.getAllVsubnets(resultHandler(context, Json::encodePrettily));
+	}
 	private void apiDeleteSubnet(RoutingContext context) {
 		String subnetId = context.request().getParam("subnetId");
 		// logger.debug("apiDeleteSubnet, subnetId: "+subnetId);		
 		service.deleteVsubnet(subnetId, deleteResultHandler(context));
 	}
-
-	private void apiGetAllSubnets(RoutingContext context) {
-		// logger.debug("apiGetAllSubnets");
-		service.getAllVsubnets(resultHandler(context, Json::encodePrettily));
-	}
+	
 
 	// Node API 
 	private void apiAddNode(RoutingContext context) {
@@ -190,26 +188,23 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		JsonObject result = new JsonObject().put("message", "node_added");
 		service.addVnode(vnode, resultVoidHandler(context, result));
 	}
-
 	private void apiGetNode(RoutingContext context) {
 		String nodeId = context.request().getParam("nodeId");
 		// logger.debug("apiGetNode, nodeId: "+nodeId);
 		service.getVnode(nodeId, resultHandlerNonEmpty(context));
 	}
-
-	private void apiDeleteNode(RoutingContext context) {
-		String nodeId = context.request().getParam("nodeId");
-		service.deleteVnode(nodeId, deleteResultHandler(context));
-	}
-
 	private void apiGetAllNodes(RoutingContext context) {
 		service.getAllVnodes(resultHandler(context, Json::encodePrettily));
 	}
-
 	private void apiGetNodesBySubnet(RoutingContext context) {	
 		String subnetId = context.request().getParam("subnetId");		
 		service.getVnodesByVsubnet(subnetId, resultHandler(context, Json::encodePrettily));
 	}
+	private void apiDeleteNode(RoutingContext context) {
+		String nodeId = context.request().getParam("nodeId");
+		service.deleteVnode(nodeId, deleteResultHandler(context));
+	}
+	
 
 	// Ltp API
 	private void apiAddLtp(RoutingContext context) {
@@ -217,50 +212,43 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		JsonObject result = new JsonObject().put("message", "ltp_added");
 		service.addVltp(ltp, resultVoidHandler(context, result));
 	}
-
 	private void apiGetLtp(RoutingContext context) {
 		String ltpId = context.request().getParam("ltpId");
 		service.getVltp(ltpId, resultHandlerNonEmpty(context));
 	}
-
+	private void apiGetLtpsByNode(RoutingContext context) {	
+		String nodeId = context.request().getParam("nodeId");		
+		service.getVltpsByVnode(nodeId, resultHandler(context, Json::encodePrettily));
+	}
+	private void apiGetAllLtps(RoutingContext context) {		
+		service.getAllVltps(resultHandler(context, Json::encodePrettily));
+	}
 	private void apiDeleteLtp(RoutingContext context) {
 		String ltpId = context.request().getParam("ltpId");
 		service.deleteVltp(ltpId, deleteResultHandler(context));
 	}
 
-	private void apiGetLtpsByNode(RoutingContext context) {	
-		String nodeId = context.request().getParam("nodeId");		
-		service.getVltpsByVnode(nodeId, resultHandler(context, Json::encodePrettily));
-	}
-
-	private void apiGetAllLtps(RoutingContext context) {		
-		service.getAllVltps(resultHandler(context, Json::encodePrettily));
-	}
-
+	
 	// Ctp API
 	private void apiAddCtp(RoutingContext context) {
 		final Vctp ctp = Json.decodeValue(context.getBodyAsString(), Vctp.class);		
 		JsonObject result = new JsonObject().put("message", "ctp_added");
 		service.addVctp(ctp, resultVoidHandler(context, result));
 	}
-
 	private void apiGetCtp(RoutingContext context) {
 		String ctpId = context.request().getParam("ctpId");
 		service.getVctp(ctpId, resultHandlerNonEmpty(context));
 	}
-
-	private void apiDeleteCtp(RoutingContext context) {
-		String ctpId = context.request().getParam("ctpId");		
-		service.deleteVctp(ctpId, deleteResultHandler(context));
-	}
-
 	private void apiGetCtpsByLtp(RoutingContext context) {
 		String ltpId = context.request().getParam("ltpId");		
 		service.getVctpsByVltp(ltpId, resultHandler(context, Json::encodePrettily));		
 	}
-
 	private void apiGetAllCtps(RoutingContext context) {		
 		service.getAllVctps(resultHandler(context, Json::encodePrettily));
+	}
+	private void apiDeleteCtp(RoutingContext context) {
+		String ctpId = context.request().getParam("ctpId");		
+		service.deleteVctp(ctpId, deleteResultHandler(context));
 	}
 
 
@@ -270,24 +258,20 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		JsonObject result = new JsonObject().put("message", "link_added");
 		service.addVlink(link, resultVoidHandler(context, result));				
 	}
-
 	private void apiGetLink(RoutingContext context) {
 		String linkId = context.request().getParam("linkId");
 		service.getVlink(linkId, resultHandlerNonEmpty(context));
 	}
-
-	private void apiDeleteLink(RoutingContext context) {
-		String linkId = context.request().getParam("linkId");		
-		service.deleteVlink(linkId, deleteResultHandler(context));	
-	}
-
 	private void apiGetAllLinks(RoutingContext context) {
 		service.getAllVlinks(resultHandler(context, Json::encodePrettily));
 	}
-
 	private void apiGetLinksBySubnet(RoutingContext context) {	
 		String subnetId = context.request().getParam("subnetId");		
 		service.getVlinksByVsubnet(subnetId, resultHandler(context, Json::encodePrettily));
+	}
+	private void apiDeleteLink(RoutingContext context) {
+		String linkId = context.request().getParam("linkId");		
+		service.deleteVlink(linkId, deleteResultHandler(context));	
 	}
 
 	// LinkConn API
@@ -296,46 +280,41 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		JsonObject result = new JsonObject().put("message", "linkConn_added");
 		service.addVlinkConn(vlinkConn, resultVoidHandler(context, result));				
 	}
-
 	private void apiGetLinkConn(RoutingContext context) {
 		String linkConnId = context.request().getParam("linkConnId");		
 		service.getVlinkConn(linkConnId, resultHandlerNonEmpty(context));
 	}
-
+	private void apiGetAllLinkConns(RoutingContext context) {
+		service.getAllVlinkConns(resultHandler(context, Json::encodePrettily));
+	}
+	private void apiGetLinkConnsByLink(RoutingContext context) {	
+		String linkId = context.request().getParam("linkId");		
+		service.getVlinkConnsByVlink(linkId, resultHandler(context, Json::encodePrettily));
+	}
 	private void apiDeleteLinkConn(RoutingContext context) {
 		String linkConnId = context.request().getParam("linkConnId");		
 		service.deleteVlinkConn(linkConnId, deleteResultHandler(context));
 	}
 
-	private void apiGetAllLinkConns(RoutingContext context) {
-		service.getAllVlinkConns(resultHandler(context, Json::encodePrettily));
-	}
-
-	private void apiGetLinkConnsByLink(RoutingContext context) {	
-		String linkId = context.request().getParam("linkId");		
-		service.getVlinkConnsByVlink(linkId, resultHandler(context, Json::encodePrettily));
-	}
-
+	
 	// Trail API
 	private void apiAddTrail(RoutingContext context) {
 		final Vtrail vtrail = Json.decodeValue(context.getBodyAsString(), Vtrail.class);			
 		JsonObject result = new JsonObject().put("message", "trail_added");
 		service.addVtrail(vtrail, resultVoidHandler(context, result));
 	}
-
 	private void apiGetTrail(RoutingContext context) {
 		String trailId = context.request().getParam("trailId");			
 		service.getVtrail(trailId, resultHandlerNonEmpty(context));
 	}
-
+	private void apiGetAllTrails(RoutingContext context) {
+		service.getAllVtrails(resultHandler(context, Json::encodePrettily));
+	}
 	private void apiDeleteTrail(RoutingContext context) {
 		String trailId = context.request().getParam("trailId");			
 		service.deleteVtrail(trailId, deleteResultHandler(context));
 	}
 
-	private void apiGetAllTrails(RoutingContext context) {
-		service.getAllVtrails(resultHandler(context, Json::encodePrettily));
-	}
 
 	// Xc API
 	private void apiAddXc(RoutingContext context) {
@@ -343,23 +322,19 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		JsonObject result = new JsonObject().put("message", "xc_added");
 		service.addVxc(vxc, resultVoidHandler(context, result));
 	}
-
 	private void apiGetXc(RoutingContext context) {
 		String xcId = context.request().getParam("xcId");
 		service.getVxc(xcId, resultHandlerNonEmpty(context));
 	}
-
-	private void apiDeleteXc(RoutingContext context) {
-		String xcId = context.request().getParam("xcId");			
-		service.deleteVxc(xcId, deleteResultHandler(context));
-	}
-
 	private void apiGetAllXcs(RoutingContext context) {
 		service.getAllVxcs(resultHandler(context, Json::encodePrettily));
 	}
-
 	private void apiGetXcsByTrail(RoutingContext context) {	
 		String trailId = context.request().getParam("trailId");			
 		service.getVxcsByVtrail(trailId, resultHandler(context, Json::encodePrettily));
+	}
+	private void apiDeleteXc(RoutingContext context) {
+		String xcId = context.request().getParam("xcId");			
+		service.deleteVxc(xcId, deleteResultHandler(context));
 	}
 }

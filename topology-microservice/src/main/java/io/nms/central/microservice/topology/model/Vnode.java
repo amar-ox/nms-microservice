@@ -127,14 +127,6 @@ public class Vnode {
 		this.posy = posy;
 	}
 
-	public boolean getManaged() {
-		return managed;
-	}
-
-	public void setManaged(boolean managed) {
-		this.managed = managed;
-	}
-
 	public String getStatus() {
 		return status;
 	}

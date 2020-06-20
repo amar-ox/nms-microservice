@@ -44,9 +44,11 @@ import io.vertx.serviceproxy.HelperUtils;
 import io.nms.central.microservice.topology.TopologyService;
 import io.nms.central.microservice.topology.model.Vltp;
 import io.nms.central.microservice.topology.model.Vlink;
+import io.nms.central.microservice.topology.model.Vxc;
 import io.nms.central.microservice.topology.model.Vsubnet;
 import java.util.List;
 import io.nms.central.microservice.topology.model.VlinkConn;
+import io.nms.central.microservice.topology.model.Vtrail;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.nms.central.microservice.topology.model.Vnode;
@@ -252,6 +254,21 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
+        case "getVltpsByVnode": {
+          service.getVltpsByVnode((java.lang.String)json.getValue("vnodeId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
         case "deleteVltp": {
           service.deleteVltp((java.lang.String)json.getValue("vltpId"),
                         HelperUtils.createHandler(msg));
@@ -279,6 +296,21 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
         }
         case "getAllVctps": {
           service.getAllVctps(res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "getVctpsByVltp": {
+          service.getVctpsByVltp((java.lang.String)json.getValue("vltpId"),
+                        res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
                             msg.reply(res.cause());
@@ -384,13 +416,101 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
+        case "getVlinkConnsByVlink": {
+          service.getVlinkConnsByVlink((java.lang.String)json.getValue("vlinkId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
         case "deleteVlinkConn": {
-          service.deleteVlinkConn((java.lang.String)json.getValue("linkConnId"),
+          service.deleteVlinkConn((java.lang.String)json.getValue("vlinkConnId"),
                         HelperUtils.createHandler(msg));
           break;
         }
-        case "getVltpsByVnode": {
-          service.getVltpsByVnode((java.lang.String)json.getValue("vnodeId"),
+        case "addVtrail": {
+          service.addVtrail(json.getJsonObject("vtrail") == null ? null : new io.nms.central.microservice.topology.model.Vtrail(json.getJsonObject("vtrail")),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "getVtrail": {
+          service.getVtrail((java.lang.String)json.getValue("vtrailId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(res.result() == null ? null : res.result().toJson());
+                        }
+                     });
+          break;
+        }
+        case "deleteVtrail": {
+          service.deleteVtrail((java.lang.String)json.getValue("vtrailId"),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "getAllVtrails": {
+          service.getAllVtrails(res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "addVxc": {
+          service.addVxc(json.getJsonObject("vxc") == null ? null : new io.nms.central.microservice.topology.model.Vxc(json.getJsonObject("vxc")),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "getVxc": {
+          service.getVxc((java.lang.String)json.getValue("vxcId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(res.result() == null ? null : res.result().toJson());
+                        }
+                     });
+          break;
+        }
+        case "getAllVxcs": {
+          service.getAllVxcs(res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "getVxcsByVtrail": {
+          service.getVxcsByVtrail((java.lang.String)json.getValue("vtrailId"),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
@@ -404,34 +524,9 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
-        case "getVctpsByVltp": {
-          service.getVctpsByVltp((java.lang.String)json.getValue("vltpId"),
-                        res -> {
-                        if (res.failed()) {
-                          if (res.cause() instanceof ServiceException) {
-                            msg.reply(res.cause());
-                          } else {
-                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
-                          }
-                        } else {
-                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
-                        }
-                     });
-          break;
-        }
-        case "getVctpsByVlink": {
-          service.getVctpsByVlink((java.lang.String)json.getValue("vlinkId"),
-                        res -> {
-                        if (res.failed()) {
-                          if (res.cause() instanceof ServiceException) {
-                            msg.reply(res.cause());
-                          } else {
-                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
-                          }
-                        } else {
-                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
-                        }
-                     });
+        case "deleteVxc": {
+          service.deleteVxc((java.lang.String)json.getValue("vxcId"),
+                        HelperUtils.createHandler(msg));
           break;
         }
         default: throw new IllegalStateException("Invalid action: " + action);

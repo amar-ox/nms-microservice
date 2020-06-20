@@ -24,8 +24,10 @@ var Vsubnet = Java.type('io.nms.central.microservice.topology.model.Vsubnet');
 var Vltp = Java.type('io.nms.central.microservice.topology.model.Vltp');
 var Vlink = Java.type('io.nms.central.microservice.topology.model.Vlink');
 var VlinkConn = Java.type('io.nms.central.microservice.topology.model.VlinkConn');
+var Vtrail = Java.type('io.nms.central.microservice.topology.model.Vtrail');
 var Vnode = Java.type('io.nms.central.microservice.topology.model.Vnode');
 var Vctp = Java.type('io.nms.central.microservice.topology.model.Vctp');
+var Vxc = Java.type('io.nms.central.microservice.topology.model.Vxc');
 
 /**
  A service interface managing products.
@@ -53,10 +55,12 @@ var TopologyService = function(j_val) {
   var __super_addVltp = this.addVltp;
   var __super_getVltp = this.getVltp;
   var __super_getAllVltps = this.getAllVltps;
+  var __super_getVltpsByVnode = this.getVltpsByVnode;
   var __super_deleteVltp = this.deleteVltp;
   var __super_addVctp = this.addVctp;
   var __super_getVctp = this.getVctp;
   var __super_getAllVctps = this.getAllVctps;
+  var __super_getVctpsByVltp = this.getVctpsByVltp;
   var __super_deleteVctp = this.deleteVctp;
   var __super_addVlink = this.addVlink;
   var __super_getVlink = this.getVlink;
@@ -66,10 +70,17 @@ var TopologyService = function(j_val) {
   var __super_addVlinkConn = this.addVlinkConn;
   var __super_getVlinkConn = this.getVlinkConn;
   var __super_getAllVlinkConns = this.getAllVlinkConns;
+  var __super_getVlinkConnsByVlink = this.getVlinkConnsByVlink;
   var __super_deleteVlinkConn = this.deleteVlinkConn;
-  var __super_getVltpsByVnode = this.getVltpsByVnode;
-  var __super_getVctpsByVltp = this.getVctpsByVltp;
-  var __super_getVctpsByVlink = this.getVctpsByVlink;
+  var __super_addVtrail = this.addVtrail;
+  var __super_getVtrail = this.getVtrail;
+  var __super_deleteVtrail = this.deleteVtrail;
+  var __super_getAllVtrails = this.getAllVtrails;
+  var __super_addVxc = this.addVxc;
+  var __super_getVxc = this.getVxc;
+  var __super_getAllVxcs = this.getAllVxcs;
+  var __super_getVxcsByVtrail = this.getVxcsByVtrail;
+  var __super_deleteVxc = this.deleteVxc;
   /**
 
    @public
@@ -94,11 +105,10 @@ var TopologyService = function(j_val) {
   };
 
   /**
-   Add a subnet to the persistence.
 
    @public
    @param vsubnet {Object} 
-   @param resultHandler {function} the result handler will be called as soon as the subnet has been added. The async result indicates whether the operation was successful or not. 
+   @param resultHandler {function} 
    @return {TopologyService}
    */
   this.addVsubnet =  function(vsubnet, resultHandler) {
@@ -382,6 +392,30 @@ var TopologyService = function(j_val) {
   /**
 
    @public
+   @param vnodeId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getVltpsByVnode =  function(vnodeId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getVltpsByVnode(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getVltpsByVnode != 'undefined') {
+      return __super_getVltpsByVnode.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
    @param vltpId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
@@ -470,6 +504,30 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_getAllVctps != 'undefined') {
       return __super_getAllVctps.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vltpId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getVctpsByVltp =  function(vltpId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getVctpsByVltp(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getVctpsByVltp != 'undefined') {
+      return __super_getVctpsByVltp.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -691,11 +749,35 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param linkConnId {string} 
+   @param vlinkId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.deleteVlinkConn =  function(linkConnId, resultHandler) {
+  this.getVlinkConnsByVlink =  function(vlinkId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getVlinkConnsByVlink(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getVlinkConnsByVlink != 'undefined') {
+      return __super_getVlinkConnsByVlink.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vlinkConnId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.deleteVlinkConn =  function(vlinkConnId, resultHandler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
       j_topologyService["deleteVlinkConn(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
@@ -715,23 +797,23 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param vnodeId {string} 
+   @param vtrail {Object} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.getVltpsByVnode =  function(vnodeId, resultHandler) {
+  this.addVtrail =  function(vtrail, resultHandler) {
     var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_topologyService["getVltpsByVnode(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_topologyService["addVtrail(io.nms.central.microservice.topology.model.Vtrail,io.vertx.core.Handler)"](__args[0]  != null ? new Vtrail(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+          __args[1](null, null);
         } else {
           __args[1](null, ar.cause());
         }
       }) ;
       return that;
-    } else if (typeof __super_getVltpsByVnode != 'undefined') {
-      return __super_getVltpsByVnode.apply(this, __args);
+    } else if (typeof __super_addVtrail != 'undefined') {
+      return __super_addVtrail.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -739,23 +821,23 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param vltpId {string} 
+   @param vtrailId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.getVctpsByVltp =  function(vltpId, resultHandler) {
+  this.getVtrail =  function(vtrailId, resultHandler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_topologyService["getVctpsByVltp(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+      j_topologyService["getVtrail(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
         if (ar.succeeded()) {
-          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+          __args[1](utils.convReturnDataObject(ar.result()), null);
         } else {
           __args[1](null, ar.cause());
         }
       }) ;
       return that;
-    } else if (typeof __super_getVctpsByVltp != 'undefined') {
-      return __super_getVctpsByVltp.apply(this, __args);
+    } else if (typeof __super_getVtrail != 'undefined') {
+      return __super_getVtrail.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -763,14 +845,132 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param vlinkId {string} 
+   @param vtrailId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.getVctpsByVlink =  function(vlinkId, resultHandler) {
+  this.deleteVtrail =  function(vtrailId, resultHandler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_topologyService["getVctpsByVlink(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+      j_topologyService["deleteVtrail(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](null, null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_deleteVtrail != 'undefined') {
+      return __super_deleteVtrail.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getAllVtrails =  function(resultHandler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_topologyService["getAllVtrails(io.vertx.core.Handler)"](function(ar) {
+        if (ar.succeeded()) {
+          __args[0](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[0](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getAllVtrails != 'undefined') {
+      return __super_getAllVtrails.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vxc {Object} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.addVxc =  function(vxc, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_topologyService["addVxc(io.nms.central.microservice.topology.model.Vxc,io.vertx.core.Handler)"](__args[0]  != null ? new Vxc(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+        if (ar.succeeded()) {
+          __args[1](null, null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_addVxc != 'undefined') {
+      return __super_addVxc.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vxcId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getVxc =  function(vxcId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getVxc(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getVxc != 'undefined') {
+      return __super_getVxc.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getAllVxcs =  function(resultHandler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_topologyService["getAllVxcs(io.vertx.core.Handler)"](function(ar) {
+        if (ar.succeeded()) {
+          __args[0](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[0](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getAllVxcs != 'undefined') {
+      return __super_getAllVxcs.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vtrailId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getVxcsByVtrail =  function(vtrailId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getVxcsByVtrail(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
         if (ar.succeeded()) {
           __args[1](utils.convReturnListSetDataObject(ar.result()), null);
         } else {
@@ -778,8 +978,32 @@ var TopologyService = function(j_val) {
         }
       }) ;
       return that;
-    } else if (typeof __super_getVctpsByVlink != 'undefined') {
-      return __super_getVctpsByVlink.apply(this, __args);
+    } else if (typeof __super_getVxcsByVtrail != 'undefined') {
+      return __super_getVxcsByVtrail.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vxcId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.deleteVxc =  function(vxcId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["deleteVxc(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](null, null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_deleteVxc != 'undefined') {
+      return __super_deleteVxc.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
