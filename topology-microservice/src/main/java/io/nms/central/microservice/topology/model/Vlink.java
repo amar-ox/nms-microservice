@@ -31,7 +31,7 @@ public class Vlink {
 	private int srcVnodeId;
 	private int destVnodeId;	
 	private int vsubnetId;
-	private List<VlinkConn> vlinkConns;
+	private List<VlinkConn> vlinkConns = new ArrayList<VlinkConn>();
 	
 	
 	

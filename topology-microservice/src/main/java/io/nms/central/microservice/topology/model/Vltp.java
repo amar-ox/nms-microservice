@@ -27,7 +27,7 @@ public class Vltp {
 	private Boolean busy;
 	
 	// in object only
-	private List<Vctp> vctps;
+	private List<Vctp> vctps = new ArrayList<Vctp>();
 	
 	
 	

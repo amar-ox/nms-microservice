@@ -46,6 +46,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		statements.add(Sql.CREATE_TABLE_VLINK);
 		statements.add(Sql.CREATE_TABLE_VCTP);
 		statements.add(Sql.CREATE_TABLE_VLINKCONN);
+		statements.add(Sql.CREATE_TABLE_VTRAIL);
+		statements.add(Sql.CREATE_TABLE_VXC);
 		client.getConnection(connHandler(resultHandler, connection -> {
 			connection.batch(statements, r -> {
 				resultHandler.handle(r);
@@ -64,8 +66,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vsubnet.getName())
 				.add(vsubnet.getLabel())
 				.add(vsubnet.getDescription())
-				.add(vsubnet.getStatus())
-				.add(new JsonObject(vsubnet.getInfo()).encode());
+				.add(new JsonObject(vsubnet.getInfo()).encode())
+				.add(vsubnet.getStatus());
 		executeNoResult(params, Sql.INSERT_VSUBNET, resultHandler);
 		return this;
 	}
@@ -283,12 +285,13 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	// INSERT_VLINK = "INSERT INTO Vlink (name, label, description, info, status, type, srcVltpId, destVltpId) "
 	@Override 
 	public TopologyService addVlink(Vlink vlink, Handler<AsyncResult<Void>> resultHandler) {
-		JsonArray params = new JsonArray()
-				.add(vlink.getLabel())
+		JsonArray params = new JsonArray()				
 				.add(vlink.getName())
+				.add(vlink.getLabel())
 				.add(vlink.getDescription())
 				.add(new JsonObject(vlink.getInfo()).encode())
 				.add(vlink.getStatus())
+				.add(vlink.getType())
 				.add(vlink.getSrcVltpId())
 				.add(vlink.getDestVltpId());
 		executeNoResult(params, Sql.INSERT_VLINK, resultHandler);

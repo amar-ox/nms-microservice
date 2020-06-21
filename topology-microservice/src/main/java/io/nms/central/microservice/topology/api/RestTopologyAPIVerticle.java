@@ -27,7 +27,7 @@ import io.vertx.ext.web.handler.BodyHandler;
  */
 public class RestTopologyAPIVerticle extends RestAPIVerticle {
 
-	// private static final Logger logger = LoggerFactory.getLogger(RestTopologyAPIVerticle.class);
+	private static final Logger logger = LoggerFactory.getLogger(RestTopologyAPIVerticle.class);
 
 	public static final String SERVICE_NAME = "topology-rest-api";
 
@@ -161,7 +161,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// Node API
 	private void apiAddSubnet(RoutingContext context) {
 		final Vsubnet vsubnet = Json.decodeValue(context.getBodyAsString(), Vsubnet.class);
-		// logger.debug("apiAddSubnet: "+vsubnet.toString());
+		logger.debug("apiAddSubnet: "+vsubnet.toString());
 		JsonObject result = new JsonObject().put("message", "subnet_added");
 		service.addVsubnet(vsubnet, resultVoidHandler(context, result));
 	}

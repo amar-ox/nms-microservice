@@ -1,5 +1,6 @@
 package io.nms.central.microservice.topology.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -26,7 +27,7 @@ public class Vtrail {
 	private int destVctpId;
 
 	// in object only
-	private List<Vxc> vxcs;
+	private List<Vxc> vxcs = new ArrayList<Vxc>();
 
 	
 	

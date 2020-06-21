@@ -24,7 +24,7 @@ docker-compose -f $DIR/docker-compose.yml stop
 # First start persistence and auth container and wait for it
 docker-compose -f $DIR/docker-compose.yml up -d elasticsearch logstash kibana mysql mongo redis keycloak-server
 echo "Waiting for persistence init..."
-sleep 30
+sleep 10
 
 # Start other containers
 docker-compose -f $DIR/docker-compose.yml up

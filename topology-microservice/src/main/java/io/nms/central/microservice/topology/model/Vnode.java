@@ -31,8 +31,8 @@ public class Vnode {
 	private String type;
 	
 	// in object only
-	private List<Vltp> vltps;
-	private List<Vxc> vxcs;
+	private List<Vltp> vltps = new ArrayList<Vltp>();
+	private List<Vxc> vxcs = new ArrayList<Vxc>();
 	
 	
 	

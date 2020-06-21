@@ -28,8 +28,8 @@ public class Vsubnet {
 	private Map<String, Object> info;
 	
 	// in object only
-	private List<Vnode> vnodes;
-	private List<Vlink> vlinks;
+	private List<Vnode> vnodes = new ArrayList<Vnode>();
+	private List<Vlink> vlinks = new ArrayList<Vlink>();
 	
 	
 	
