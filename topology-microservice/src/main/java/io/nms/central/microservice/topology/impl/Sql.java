@@ -8,10 +8,10 @@ public class Sql {
 	public static final String CREATE_TABLE_VSUBNET = "CREATE TABLE IF NOT EXISTS `Vsubnet` (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
 			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60),\n" + 
-			"    `description` VARCHAR(255),\n" +
+			"    `label` VARCHAR(60) NOT NULL,\n" + 
+			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
-			"    `status` VARCHAR(10),\n" +
+			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" + 
 			"    PRIMARY KEY (`id`)\n" + 			
@@ -19,16 +19,16 @@ public class Sql {
 	public static final String CREATE_TABLE_VNODE = "CREATE TABLE IF NOT EXISTS `Vnode` (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
 			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60),\n" + 
-			"    `description` VARCHAR(255),\n" +
+			"    `label` VARCHAR(60) NOT NULL,\n" + 
+			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
-			"    `status` VARCHAR(10),\n" +
+			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" + 
 			"    `posx` INT,\n" + 
 			"    `posy` INT,\n" + 
 			"    `location` VARCHAR(20),\n" + 
-			"    `type` VARCHAR(10),\n" +
+			"    `type` VARCHAR(10) NOT NULL,\n" +
 			"    `vsubnetId` INT NOT NULL,\n" + 
 			"    PRIMARY KEY (`id`),\n" +
 			"    FOREIGN KEY (`vsubnetId`)\n" + 
@@ -39,10 +39,10 @@ public class Sql {
 	public static final String CREATE_TABLE_VLTP = "CREATE TABLE IF NOT EXISTS Vltp (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
 			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60),\n" + 
-			"    `description` VARCHAR(255),\n" +
+			"    `label` VARCHAR(60) NOT NULL,\n" + 
+			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
-			"    `status` VARCHAR(10),\n" +
+			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +  		
 			"    `busy` BOOLEAN DEFAULT 0,\n" +
@@ -56,10 +56,10 @@ public class Sql {
 	public static final String CREATE_TABLE_VCTP = "CREATE TABLE IF NOT EXISTS Vctp (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
 			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60),\n" + 
+			"    `label` VARCHAR(60) NOT NULL,\n" + 
 			"    `description` VARCHAR(255),\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
-			"    `status` VARCHAR(10),\n" +
+			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" + 
 			"    `vltpId` INT NOT NULL,\n" +  
@@ -72,13 +72,13 @@ public class Sql {
 	public static final String CREATE_TABLE_VLINK = "CREATE TABLE IF NOT EXISTS Vlink (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
 			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60),\n" + 
+			"    `label` VARCHAR(60) NOT NULL,\n" + 
 			"    `description` VARCHAR(255),\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
-			"    `status` VARCHAR(10),\n" +
+			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
-			"    `type` VARCHAR(10),\n" + 
+			"    `type` VARCHAR(10) NOT NULL,\n" + 
 			"    `srcVltpId` INT NOT NULL,\n" + 
 			"    `destVltpId` INT NOT NULL,\n" + 
 			"    PRIMARY KEY (`id`),\n" + 
@@ -95,10 +95,10 @@ public class Sql {
 	public static final String CREATE_TABLE_VLINKCONN = "CREATE TABLE IF NOT EXISTS VlinkConn (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
 			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60),\n" + 
-			"    `description` VARCHAR(255),\n" +
+			"    `label` VARCHAR(60) NOT NULL,\n" + 
+			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
-			"    `status` VARCHAR(10),\n" +
+			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
 			"    `srcVctpId` INT NOT NULL,\n" + 
@@ -117,10 +117,10 @@ public class Sql {
 	public static final String CREATE_TABLE_VTRAIL = "CREATE TABLE IF NOT EXISTS Vtrail (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
 			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60),\n" + 
-			"    `description` VARCHAR(255),\n" +
+			"    `label` VARCHAR(60) NOT NULL,\n" + 
+			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
-			"    `status` VARCHAR(10),\n" +
+			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
 			"    `srcVctpId` INT NOT NULL,\n" + 
@@ -139,13 +139,13 @@ public class Sql {
 	public static final String CREATE_TABLE_VXC = "CREATE TABLE IF NOT EXISTS Vxc (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
 			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60),\n" + 
-			"    `description` VARCHAR(255),\n" +
+			"    `label` VARCHAR(60) NOT NULL,\n" + 
+			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
-			"    `status` VARCHAR(10),\n" +
+			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
-			"    `type` VARCHAR(10),\n" +  
+			"    `type` VARCHAR(10) NOT NULL,\n" +  
 			"    `vnodeId` INT NOT NULL,\n" +
 			"    `vtrailId` INT NOT NULL,\n" +
 			"    `srcVctpId` INT NOT NULL,\n" + 
@@ -390,5 +390,38 @@ public class Sql {
 	public static final String DELETE_VLINKCONN = "DELETE FROM VlinkConn WHERE id=?";
 	public static final String DELETE_VTRAIL = "DELETE FROM Vtrail WHERE id=?";
 	public static final String DELETE_VXC = "DELETE FROM Vxc WHERE id=?";
+	
 
+
+	/*-------------------- UPDATE ITEMS BY ID --------------------*/
+	// external references can not be modified
+	
+	public static final String UPDATE_VSUBNET = "UPDATE Vsubnet "
+			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status) "
+			+ "WHERE id = ?";
+	public static final String UPDATE_VNODE = "UPDATE Vnode "
+			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "
+			+ "posx=IFNULL(?, posx), posy=IFNULL(?, posy), location=IFNULL(?, location), type=IFNULL(?, type) "
+			+ "WHERE id = ?";
+	public static final String UPDATE_VLTP = "UPDATE Vltp "
+			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "
+			+ "busy=IFNULL(?, busy) "
+			+ "WHERE id = ?";
+	public static final String UPDATE_VCTP = "UPDATE Vctp "
+			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status) "
+			+ "WHERE id = ?";
+	public static final String UPDATE_VLINK = "UPDATE Vlink "
+			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "
+			+ "type=IFNULL(?, type) "
+			+ "WHERE id = ?";
+	public static final String UPDATE_VLINKCONN = "UPDATE VlinkConn "
+			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status) "
+			+ "WHERE id = ?";
+	public static final String UPDATE_VTRAIL = "UPDATE Vtrail "
+			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status) "
+			+ "WHERE id = ?";
+	public static final String UPDATE_VXC = "UPDATE Vxc "
+			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "
+			+ "type=IFNULL(?, type) "
+			+ "WHERE id = ?";
 }

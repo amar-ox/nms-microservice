@@ -29,7 +29,6 @@ import io.vertx.core.logging.LoggerFactory;
 public class TopologyServiceImpl extends JdbcRepositoryWrapper implements TopologyService {
 
 	private static final Logger logger = LoggerFactory.getLogger(TopologyServiceImpl.class);
-	// private static final int PAGE_LIMIT = 10;
 
 	public TopologyServiceImpl(Vertx vertx, JsonObject config) {
 		super(vertx, config);
@@ -54,6 +53,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		}));
 		return this;
 	}
+
 
 	/********** Vsubnet **********/
 	// INSERT_VSUBNET = "INSERT INTO Vsubnet (name, label, description, info, status) "
@@ -97,6 +97,18 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService deleteVsubnet(String vsubnetId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(vsubnetId, Sql.DELETE_VSUBNET, resultHandler);
+		return this;
+	}
+	// UPDATE_VSUBNET = "UPDATE Vsubnet SET label = ?, description = ?, info = ?, status = ? WHERE id = ?";
+	@Override
+	public TopologyService updateVsubnet(Vsubnet vsubnet, Handler<AsyncResult<Vsubnet>> resultHandler) {
+		JsonArray params = new JsonArray()
+				.add(vsubnet.getLabel())
+				.add(vsubnet.getDescription())
+				.add(new JsonObject(vsubnet.getInfo()).encode())
+				.add(vsubnet.getStatus())
+				.add(vsubnet.getId());
+		this.execute(params, Sql.UPDATE_VSUBNET, vsubnet, resultHandler);
 		return this;
 	}
 
@@ -157,6 +169,22 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		this.removeOne(vnodeId, Sql.DELETE_VNODE, resultHandler);
 		return this;
 	}
+	// UPDATE_VNODE = "UPDATE Vnode SET label = ?, description = ?, info = ?, status = ?, posx = ?, posy = ?, location = ?, type = ? WHERE id = ?";
+	@Override
+	public TopologyService updateVnode(Vnode vnode, Handler<AsyncResult<Vnode>> resultHandler) {
+		JsonArray params = new JsonArray()
+				.add(vnode.getLabel())
+				.add(vnode.getDescription())
+				.add(new JsonObject(vnode.getInfo()).encode())
+				.add(vnode.getStatus())
+				.add(vnode.getPosx())
+				.add(vnode.getPosy())
+				.add(vnode.getLocation())
+				.add(vnode.getType())
+				.add(vnode.getId());
+		this.execute(params, Sql.UPDATE_VNODE, vnode, resultHandler);
+		return this;
+	}
 
 
 	/********** Vltp **********/
@@ -214,6 +242,19 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService deleteVltp(String vltpId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(vltpId, Sql.DELETE_VLTP, resultHandler);
+		return this;
+	}
+	// UPDATE_VLTP = "UPDATE Vltp SET label = ?, description = ?, info = ?, status = ?, busy = ? WHERE id = ?";
+	@Override
+	public TopologyService updateVltp(Vltp vltp, Handler<AsyncResult<Vltp>> resultHandler) {
+		JsonArray params = new JsonArray()
+				.add(vltp.getLabel())
+				.add(vltp.getDescription())
+				.add(new JsonObject(vltp.getInfo()).encode())
+				.add(vltp.getStatus())
+				.add(vltp.isBusy())				
+				.add(vltp.getId());
+		this.execute(params, Sql.UPDATE_VLTP, vltp, resultHandler);
 		return this;
 	}
 
@@ -277,6 +318,18 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		this.removeOne(vctpId, Sql.DELETE_VCTP, resultHandler);
 		return this;
 	}
+	// UPDATE_VCTP = "UPDATE Vctp SET label = ?, description = ?, info = ?, status = ? WHERE id = ?";
+	@Override
+	public TopologyService updateVctp(Vctp vctp, Handler<AsyncResult<Vctp>> resultHandler) {
+		JsonArray params = new JsonArray()
+				.add(vctp.getLabel())
+				.add(vctp.getDescription())
+				.add(new JsonObject(vctp.getInfo()).encode())
+				.add(vctp.getStatus())				
+				.add(vctp.getId());
+		this.execute(params, Sql.UPDATE_VCTP, vctp, resultHandler);
+		return this;
+	}
 
 
 	/********** Vlink **********/
@@ -332,10 +385,22 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		.onComplete(resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService deleteVlink(String vlinkId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(vlinkId, Sql.DELETE_VLINK, resultHandler);
+		return this;
+	}
+	// UPDATE_VLINK = "UPDATE Vlink SET label = ?, description = ?, info = ?, status = ?, type = ? WHERE id = ?";
+	@Override
+	public TopologyService updateVlink(Vlink vlink, Handler<AsyncResult<Vlink>> resultHandler) {
+		JsonArray params = new JsonArray()
+				.add(vlink.getLabel())
+				.add(vlink.getDescription())
+				.add(new JsonObject(vlink.getInfo()).encode())
+				.add(vlink.getStatus())
+				.add(vlink.getType())
+				.add(vlink.getId());
+		this.execute(params, Sql.UPDATE_VLINK, vlink, resultHandler);
 		return this;
 	}
 
@@ -400,6 +465,18 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		this.removeOne(vlinkConnId, Sql.DELETE_VLINKCONN, resultHandler);
 		return this;
 	}
+	// UPDATE_VLINKCONN = "UPDATE VlinkConn SET label = ?, description = ?, info = ?, status = ? WHERE id = ?";
+	@Override
+	public TopologyService updateVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<VlinkConn>> resultHandler) {
+		JsonArray params = new JsonArray()
+				.add(vlinkConn.getLabel())
+				.add(vlinkConn.getDescription())
+				.add(new JsonObject(vlinkConn.getInfo()).encode())
+				.add(vlinkConn.getStatus())
+				.add(vlinkConn.getId());
+		this.execute(params, Sql.UPDATE_VLINKCONN, vlinkConn, resultHandler);
+		return this;
+	}
 
 
 	/********** Vtrail **********/
@@ -421,8 +498,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	public TopologyService getVtrail(String vtrailId, Handler<AsyncResult<Vtrail>> resultHandler) {
 		JsonArray params = new JsonArray().add(vtrailId);
 		this.retrieveMany(params, Sql.FETCH_VTRAIL_BY_ID)
-				.map(rawList -> ModelObjectMapper.toVtrailFromJsonRows(rawList))
-				.onComplete(resultHandler);
+		.map(rawList -> ModelObjectMapper.toVtrailFromJsonRows(rawList))
+		.onComplete(resultHandler);
 		return this;
 	}
 	@Override
@@ -442,6 +519,18 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService deleteVtrail(String vtrailId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(vtrailId, Sql.DELETE_VTRAIL, resultHandler);
+		return this;
+	}
+	// UPDATE_VTRAIL = "UPDATE Vtrail SET label = ?, description = ?, info = ?, status = ? WHERE id = ?";
+	@Override
+	public TopologyService updateVtrail(Vtrail vtrail, Handler<AsyncResult<Vtrail>> resultHandler) {
+		JsonArray params = new JsonArray()
+				.add(vtrail.getLabel())
+				.add(vtrail.getDescription())
+				.add(new JsonObject(vtrail.getInfo()).encode())
+				.add(vtrail.getStatus())
+				.add(vtrail.getId());
+		this.execute(params, Sql.UPDATE_VTRAIL, vtrail, resultHandler);
 		return this;
 	}
 
@@ -508,6 +597,19 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService deleteVxc(String vxcId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(vxcId, Sql.DELETE_VXC, resultHandler);
+		return this;
+	}
+	// UPDATE_VXC = "UPDATE Vxc SET label = ?, description = ?, info = ?, status = ?, type = ? WHERE id = ?";
+	@Override
+	public TopologyService updateVxc(Vxc vxc, Handler<AsyncResult<Vxc>> resultHandler) {
+		JsonArray params = new JsonArray()
+				.add(vxc.getLabel())
+				.add(vxc.getDescription())
+				.add(new JsonObject(vxc.getInfo()).encode())
+				.add(vxc.getStatus())
+				.add(vxc.getType())
+				.add(vxc.getId());
+		this.execute(params, Sql.UPDATE_VXC, vxc, resultHandler);
 		return this;
 	}
 }

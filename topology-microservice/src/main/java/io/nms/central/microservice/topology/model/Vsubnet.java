@@ -25,7 +25,7 @@ public class Vsubnet {
 	private String created;
 	private String updated;
 	private String status;
-	private Map<String, Object> info;
+	private Map<String, Object> info = new HashMap<String, Object>();
 	
 		// specific Vsubnet fields
 		// TODO?

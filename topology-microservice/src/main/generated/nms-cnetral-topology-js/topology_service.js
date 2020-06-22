@@ -45,42 +45,50 @@ var TopologyService = function(j_val) {
   var __super_initializePersistence = this.initializePersistence;
   var __super_addVsubnet = this.addVsubnet;
   var __super_getVsubnet = this.getVsubnet;
-  var __super_deleteVsubnet = this.deleteVsubnet;
   var __super_getAllVsubnets = this.getAllVsubnets;
+  var __super_deleteVsubnet = this.deleteVsubnet;
+  var __super_updateVsubnet = this.updateVsubnet;
   var __super_addVnode = this.addVnode;
   var __super_getVnode = this.getVnode;
   var __super_getAllVnodes = this.getAllVnodes;
   var __super_getVnodesByVsubnet = this.getVnodesByVsubnet;
   var __super_deleteVnode = this.deleteVnode;
+  var __super_updateVnode = this.updateVnode;
   var __super_addVltp = this.addVltp;
   var __super_getVltp = this.getVltp;
   var __super_getAllVltps = this.getAllVltps;
   var __super_getVltpsByVnode = this.getVltpsByVnode;
   var __super_deleteVltp = this.deleteVltp;
+  var __super_updateVltp = this.updateVltp;
   var __super_addVctp = this.addVctp;
   var __super_getVctp = this.getVctp;
   var __super_getAllVctps = this.getAllVctps;
   var __super_getVctpsByVltp = this.getVctpsByVltp;
   var __super_deleteVctp = this.deleteVctp;
+  var __super_updateVctp = this.updateVctp;
   var __super_addVlink = this.addVlink;
   var __super_getVlink = this.getVlink;
   var __super_getAllVlinks = this.getAllVlinks;
   var __super_getVlinksByVsubnet = this.getVlinksByVsubnet;
   var __super_deleteVlink = this.deleteVlink;
+  var __super_updateVlink = this.updateVlink;
   var __super_addVlinkConn = this.addVlinkConn;
   var __super_getVlinkConn = this.getVlinkConn;
   var __super_getAllVlinkConns = this.getAllVlinkConns;
   var __super_getVlinkConnsByVlink = this.getVlinkConnsByVlink;
   var __super_deleteVlinkConn = this.deleteVlinkConn;
+  var __super_updateVlinkConn = this.updateVlinkConn;
   var __super_addVtrail = this.addVtrail;
   var __super_getVtrail = this.getVtrail;
   var __super_deleteVtrail = this.deleteVtrail;
   var __super_getAllVtrails = this.getAllVtrails;
+  var __super_updateVtrail = this.updateVtrail;
   var __super_addVxc = this.addVxc;
   var __super_getVxc = this.getVxc;
   var __super_getAllVxcs = this.getAllVxcs;
   var __super_getVxcsByVtrail = this.getVxcsByVtrail;
   var __super_deleteVxc = this.deleteVxc;
+  var __super_updateVxc = this.updateVxc;
   /**
 
    @public
@@ -155,6 +163,29 @@ var TopologyService = function(j_val) {
   /**
 
    @public
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getAllVsubnets =  function(resultHandler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_topologyService["getAllVsubnets(io.vertx.core.Handler)"](function(ar) {
+        if (ar.succeeded()) {
+          __args[0](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[0](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getAllVsubnets != 'undefined') {
+      return __super_getAllVsubnets.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
    @param vsubnetId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
@@ -179,22 +210,23 @@ var TopologyService = function(j_val) {
   /**
 
    @public
+   @param vsubnet {Object} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.getAllVsubnets =  function(resultHandler) {
+  this.updateVsubnet =  function(vsubnet, resultHandler) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_topologyService["getAllVsubnets(io.vertx.core.Handler)"](function(ar) {
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_topologyService["updateVsubnet(io.nms.central.microservice.topology.model.Vsubnet,io.vertx.core.Handler)"](__args[0]  != null ? new Vsubnet(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[0](utils.convReturnListSetDataObject(ar.result()), null);
+          __args[1](utils.convReturnDataObject(ar.result()), null);
         } else {
-          __args[0](null, ar.cause());
+          __args[1](null, ar.cause());
         }
       }) ;
       return that;
-    } else if (typeof __super_getAllVsubnets != 'undefined') {
-      return __super_getAllVsubnets.apply(this, __args);
+    } else if (typeof __super_updateVsubnet != 'undefined') {
+      return __super_updateVsubnet.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -321,6 +353,30 @@ var TopologyService = function(j_val) {
   /**
 
    @public
+   @param vnode {Object} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.updateVnode =  function(vnode, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_topologyService["updateVnode(io.nms.central.microservice.topology.model.Vnode,io.vertx.core.Handler)"](__args[0]  != null ? new Vnode(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_updateVnode != 'undefined') {
+      return __super_updateVnode.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
    @param vltp {Object} 
    @param resultHandler {function} 
    @return {TopologyService}
@@ -433,6 +489,30 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_deleteVltp != 'undefined') {
       return __super_deleteVltp.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vltp {Object} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.updateVltp =  function(vltp, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_topologyService["updateVltp(io.nms.central.microservice.topology.model.Vltp,io.vertx.core.Handler)"](__args[0]  != null ? new Vltp(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_updateVltp != 'undefined') {
+      return __super_updateVltp.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -559,6 +639,30 @@ var TopologyService = function(j_val) {
   /**
 
    @public
+   @param vctp {Object} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.updateVctp =  function(vctp, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_topologyService["updateVctp(io.nms.central.microservice.topology.model.Vctp,io.vertx.core.Handler)"](__args[0]  != null ? new Vctp(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_updateVctp != 'undefined') {
+      return __super_updateVctp.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
    @param vlink {Object} 
    @param resultHandler {function} 
    @return {TopologyService}
@@ -671,6 +775,30 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_deleteVlink != 'undefined') {
       return __super_deleteVlink.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vlink {Object} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.updateVlink =  function(vlink, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_topologyService["updateVlink(io.nms.central.microservice.topology.model.Vlink,io.vertx.core.Handler)"](__args[0]  != null ? new Vlink(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_updateVlink != 'undefined') {
+      return __super_updateVlink.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -797,6 +925,30 @@ var TopologyService = function(j_val) {
   /**
 
    @public
+   @param vlinkConn {Object} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.updateVlinkConn =  function(vlinkConn, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_topologyService["updateVlinkConn(io.nms.central.microservice.topology.model.VlinkConn,io.vertx.core.Handler)"](__args[0]  != null ? new VlinkConn(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_updateVlinkConn != 'undefined') {
+      return __super_updateVlinkConn.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
    @param vtrail {Object} 
    @param resultHandler {function} 
    @return {TopologyService}
@@ -885,6 +1037,30 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_getAllVtrails != 'undefined') {
       return __super_getAllVtrails.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vtrail {Object} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.updateVtrail =  function(vtrail, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_topologyService["updateVtrail(io.nms.central.microservice.topology.model.Vtrail,io.vertx.core.Handler)"](__args[0]  != null ? new Vtrail(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_updateVtrail != 'undefined') {
+      return __super_updateVtrail.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -1004,6 +1180,30 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_deleteVxc != 'undefined') {
       return __super_deleteVxc.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vxc {Object} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.updateVxc =  function(vxc, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_topologyService["updateVxc(io.nms.central.microservice.topology.model.Vxc,io.vertx.core.Handler)"](__args[0]  != null ? new Vxc(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_updateVxc != 'undefined') {
+      return __super_updateVxc.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
