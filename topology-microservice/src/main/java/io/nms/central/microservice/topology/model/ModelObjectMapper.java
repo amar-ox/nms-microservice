@@ -5,13 +5,6 @@ import java.util.List;
 import io.vertx.core.json.JsonObject;
 
 public class ModelObjectMapper {
-	/* FETCH_VNODE_BY_ID = "SELECT "
-			+ "Vnode.id, Vnode.name, Vnode.label, Vnode.description, Vnode.info, Vnode.status, Vnode.created, Vnode.updated, "
-			+ "Vnode.posx, Vnode.posy, Vnode.location, Vnode.type, Vnode.vsubnetId "
-			+ "Vltp.id AS vltpId, Vltp.name AS VltpName, Vltp.label AS vltpLabel, Vltp.description AS vltpDescription, Vltp.info AS vltpInfo, "
-			+ "Vltp.status AS vltpStatus, Vltp.created AS vltpCreated, Vltp.updated AS vltpUpdated, "
-			+ "Vltp.busy AS vltpBusy, Vltp.vnodeId AS vltpVnodeId "
-			+ "FROM `Vnode` LEFT JOIN `Vltp` ON Vnode.id=Vltp.vnodeId WHERE Vnode.id = ? GROUP BY Vnode.id" */
 	public static Vnode toVnodeFromJsonRows(List<JsonObject> rows) {
 		if (rows.size() == 0) {
 			return new Vnode();
@@ -50,12 +43,6 @@ public class ModelObjectMapper {
 		return vnode;
 	}
 	
-	/* FETCH_VLTP_BY_ID = "SELECT "
-			+ "Vltp.id, Vltp.name, Vltp.label, Vltp.description, Vltp.info, Vltp.status, Vltp.created, Vltp.updated, Vltp.busy, Vltp.vnodeId, "
-			+ "Vctp.id AS vctpId, Vctp.name AS vctpName, Vctp.label AS vctpLabel, Vctp.description AS vctpDescription, "
-			+ "Vctp.info AS vctpInfo, Vctp.status AS vctpStatus, Vctp.created AS vctpCreated, Vctp.updated AS vctpUpdated"
-			+ "Vctp.vltpId AS vctpVltpId, "
-			+ "FROM `Vltp` LEFT JOIN `Vctp` ON Vltp.id=Vctp.vltpId WHERE Vltp.id = ? GROUP BY Vltp.id" */
 	public static Vltp toVltpFromJsonRows(List<JsonObject> rows) {
 		if (rows.size() == 0) {
 			return new Vltp();
@@ -91,20 +78,6 @@ public class ModelObjectMapper {
 		return vltp;
 	}
 	
-	/* FETCH_VLINK_BY_ID = "SELECT "
-			+ "Vlink.id, Vlink.name, Vlink.label, Vlink.description, Vlink.info, Vlink.status, Vlink.created, Vlink.updated, "
-			+ "Vlink.type, Vlink.srcVltpId, Vlink.destVltpId, "
-			+ "sLtp.vnodeId AS srcVnodeId, dLtp.vnodeId AS destVnodeId, "
-			+ "sLtp.id AS srcVltpId, dLtp.id AS destVltpId, "
-			+ "vlc.id AS vlcId, vlc.name AS vlcName, vlc.label AS vlcLabel, vlc.description AS vlcDescription, vlc.info AS vlcInfo, "
-			+ "vlc.status AS vlcStatus, vlc.created AS vlcCreated, vlc.updated AS vlcUpdated, "
-			+ "vlc.srcVctpId AS vlcSrcVctpId, vlc.destVctpId AS vlcDestVctpId, "
-			+ "FROM (((Vlink "
-			+ "INNER JOIN Vltp AS sLtp ON Vlink.srcVltpId=sLtp.id) "
-			+ "INNER JOIN Vltp AS dLtp ON Vlink.destVltpId=dLtp.id) "
-			+ "LEFT JOIN Vctp AS allVctps ON sLtp.id=Vctp.vltpId OR dLtp.id=Vctp.vltpId "
-			+ "LEFT JOIN VlinkConn as vlc ON allVctps.id=vlc.srcVctpId OR allVctps.id=vlc.destVctpId) "
-			+ "WHERE Vlink.id = ? GROUP BY vlcId" */
 	public static Vlink toVlinkFromJsonRows(List<JsonObject> rows) {
 		if (rows.size() == 0) {
 			return new Vlink();
@@ -144,15 +117,6 @@ public class ModelObjectMapper {
 		return vlink;
 	}
 	
-	
-	/* FETCH_VTRAIL_BY_ID = "SELECT "
-			+ "Vtrail.id, Vtrail.name, Vtrail.label, Vtrail.description, Vtrail.info, Vtrail.status, Vtrail.created, Vtrail.updated, "
-			+ "Vtrail.srcVctpId, Vtrail.destVctpId, "
-			+ "Vxc.id AS vxcId, Vxc.name AS vxcName, Vxc.label AS vxcLabel, Vxc.description AS vxcDescription, Vxc.info AS vxcInfo, "
-			+ "Vxc.status AS vxcStatus, Vxc.created AS vxcCreated, Vxc.updated AS vxcUpdated, "
-			+ "Vxc.type AS vxcType, Vxc.vtrailId AS vxcVtrailId, Vxc.srcVctpId AS vxcSrcVctpId, Vxc.destVctpId AS vxcDestVctpId, Vxc.dropVctpId AS vxcDropVctpId "
-			+ "FROM Vtrail LEFT JOIN Vxc ON Vtrail.id=Vxc.vtrailId"
-			+ "WHERE id = ? GROUP BY Vxc.id" */
 	public static Vtrail toVtrailFromJsonRows(List<JsonObject> rows) {
 		if (rows.size() == 0) {
 			return new Vtrail();

@@ -1,7 +1,10 @@
 package io.nms.central.microservice.topology.impl;
 
 public class Sql {
+
 	
+	
+	/*-------------------- TABLE CREATION --------------------*/
 	public static final String CREATE_TABLE_VSUBNET = "CREATE TABLE IF NOT EXISTS `Vsubnet` (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
 			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
@@ -171,6 +174,10 @@ public class Sql {
 			"        ON DELETE CASCADE\n" + 
 			"        ON UPDATE CASCADE\n" + 
 			")";
+
+	
+	
+	/*-------------------- INSERT ITEMS --------------------*/
 	
 	public static final String INSERT_VSUBNET = "INSERT INTO Vsubnet (name, label, description, info, status) "
 			+ "VALUES (?, ?, ?, ?, ?)";
@@ -188,14 +195,125 @@ public class Sql {
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_VXC = "INSERT INTO Vxc (name, label, description, info, status, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId) "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+
 	
+	/*-------------------- FETCH ALL ITEMS --------------------*/
 	
+	// get all Vsubnets (without Vnodes and Vlinks)
+	public static final String FETCH_ALL_VSUBNETS = "SELECT "
+			+ "id, name, label, description, info, status, created, updated "
+			+ "FROM Vsubnet";
+
+	// get all Vnodes without Vltps
+	// use: FETCH_VNODE_BY_ID to get a Vnode with its Vltps
+	public static final String FETCH_ALL_VNODES = "SELECT "
+			+ "id, name, label, description, info, status, created, updated, posx, posy, location, type, vsubnetId "
+			+ "FROM Vnode";
+
+	// get all Vltps without Vctps
+	// use: FETCH_VLTP_BY_ID to get a Vltp with its Vctps
+	public static final String FETCH_ALL_VLTPS = "SELECT "
+			+ "id, name, label, description, info, status, created, updated, busy, vnodeId "
+			+ "FROM Vltp";
+
+	// get all Vctps
+	public static final String FETCH_ALL_VCTPS = "SELECT "
+			+ "id, name, label, description, info, status, created, updated, vltpId "
+			+ "FROM Vctp"; 
+
+	// get all Vlinks without VlinkConns
+	// use: FETCH_VLINK_BY_ID to get a Vltp with its Vctps
+	public static final String FETCH_ALL_VLINKS = "SELECT "
+			+ "Vlink.id, Vlink.name, Vlink.label, Vlink.description, Vlink.info, Vlink.status, Vlink.created, Vlink.updated, "
+			+ "Vlink.type, Vlink.srcVltpId, Vlink.destVltpId, "
+			+ "s.vnodeId AS srcVnodeId, d.vnodeId AS destVnodeId "
+			+ "FROM ((Vlink INNER JOIN Vltp AS s ON Vlink.srcVltpId=s.id) INNER JOIN Vltp AS d ON Vlink.destVltpId=d.id)";
+
+	// get all VlinkConns
+	public static final String FETCH_ALL_VLINKCONNS = "SELECT "
+			+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, "
+			+ "VlinkConn.created, VlinkConn.updated, VlinkConn.srcVctpId, VlinkConn.destVctpId, "
+			+ "s.vltpId AS srcVltpId, d.vltpId AS destVltpId "
+			+ "FROM ((VlinkConn INNER JOIN Vctp AS s ON VlinkConn.srcVctpId=s.id) INNER JOIN Vctp AS d ON VlinkConn.destVctpId=d.id)";
+
+	// get all Vtrails without Vxc
+	// use: FETCH_VTRAIL_BY_ID to get a Vtrail with its Vxcs 
+	public static final String FETCH_ALL_VTRAILS = "SELECT "
+			+ "id, name, label, description, info, status, created, updated, srcVctpId, destVctpId "
+			+ "FROM Vtrail"; 
+
+	// get all Vxcs
+	public static final String FETCH_ALL_VXCS = "SELECT "
+			+ "id, name, label, description, info, status, created, updated, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId "
+			+ "FROM Vxc"; 
+
+
+
+	/*-------------------- FETCH ITEMS BY ANOTHER --------------------*/
 	
-	/*---------------------------------------*/
+	// get all the Vnodes of a Vsubnet (without Vltps)
+	// use: FETCH_VNODE_BY_ID to get a Vnode with its Vltps
+	public static final String FETCH_VNODES_BY_VSUBNET = "SELECT "
+			+ "id, name, label, description, info, status, created, updated, posx, posy, location, type, vsubnetId "
+			+ "FROM Vnode WHERE vsubnetId = ?";
+
+	// Assuming that: a link is in a subnet if its source-node is in that subnet
+	// get all the Vlinks of a Vsubnet (without VlinkConns)
+	// use: FETCH_VLINK_BY_ID to get a Vlink with its VlinkConns
+	public static final String FETCH_VLINKS_BY_VSUBNET = "SELECT "
+			+ "Vlink.id, Vlink.name, Vlink.label, Vlink.description, Vlink.info, Vlink.status, Vlink.created, Vlink.updated, "
+			+ "Vlink.type, Vlink.srcVltpId, Vlink.destVltpId, " 
+			+ "Vltp.vnodeId AS srcVnodeId, destLtp.vnodeId AS destVnodeId, "
+			+ "Vnode.vsubnetId " 
+			+ "FROM Vnode "
+			+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId "
+			+ "INNER JOIN Vlink ON Vltp.id=Vlink.srcVltpId INNER JOIN Vltp as destLtp ON Vlink.destVltpId=destLtp.id "
+			+ "WHERE Vnode.vsubnetId = ?";
+
+	// get all the Vltps of a Vnode (without Vctps)
+	// use: FETCH_VLTP_BY_ID to get a Vltp with its Vctps
+	public static final String FETCH_VLTPS_BY_VNODE = "SELECT "
+			+ "id, name, label, description, info, status, created, updated, busy, vnodeId "
+			+ "FROM Vltp WHERE vnodeId = ?";
+
+	// get all the Vctps of a Vltp
+	public static final String FETCH_VCTPS_BY_VLTP = "SELECT "
+			+ "id, name, label, description, info, status, created, updated, vltpId "
+			+ "FROM Vctp WHERE vltpId = ?";
+
+	// get all the VlinkConns that goes over a Vlink
+	public static final String FETCH_VLINKCONNS_BY_VLINK = " SELECT "
+			+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, VlinkConn.created, VlinkConn.updated, "
+			+ "VlinkConn.srcVctpId, VlinkConn.destVctpId, "
+			+ "Vlink.srcVltpId AS srcVltpId, Vlink.destVltpId AS destVltpId, Vlink.id as vlinkId " 
+			+ "FROM Vlink " 
+			+ "INNER JOIN Vltp ON Vlink.srcVltpId=Vltp.id "
+			+ "INNER JOIN Vctp ON Vltp.id=Vctp.vltpId " 
+			+ "INNER JOIN VlinkConn ON Vctp.id=VlinkConn.srcVctpId OR Vctp.id=VlinkConn.destVctpId " 
+			+ "WHERE Vlink.id = ?";
+
+	// get all the Vxcs defined in a Vnode
+	public static final String FETCH_VXC_BY_VNODE = "SELECT "
+			+ "id, name, label, description, info, status, created, updated, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId "
+			+ "FROM Vxc WHERE vnodeId = ?";
+
+	// get all the Vxcs that form the Vtrail
+	public static final String FETCH_VXC_BY_VTRAIL = "SELECT "
+			+ "id, name, label, description, info, status, created, updated, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId "
+			+ "FROM Vxc WHERE vtrailId = ?";
+
+
+
+	/*-------------------- FETCH ITEMS BY ID --------------------*/
+
+	// get a Vsubnet without Vnodes and Vlinks
+	// use: FETCH_VNODES_BY_VSUBNET and FETCH_VLINKS_BY_VSUBNET to get Vnodes and Vlinks respectively 
 	public static final String FETCH_VSUBNET_BY_ID = "SELECT "
 			+ "id, name, label, description, info, status, created, updated FROM Vsubnet "
 			+ "WHERE id = ?";
-	  
+
+	// get a Vnode and its Vltps
 	public static final String FETCH_VNODE_BY_ID = "SELECT "
 			+ "Vnode.id, Vnode.name, Vnode.label, Vnode.description, Vnode.info, Vnode.status, Vnode.created, Vnode.updated, "
 			+ "Vnode.posx, Vnode.posy, Vnode.location, Vnode.type, Vnode.vsubnetId, "
@@ -203,18 +321,21 @@ public class Sql {
 			+ "Vltp.status AS vltpStatus, Vltp.created AS vltpCreated, Vltp.updated AS vltpUpdated, "
 			+ "Vltp.busy AS vltpBusy, Vltp.vnodeId AS vltpVnodeId "
 			+ "FROM `Vnode` LEFT JOIN `Vltp` ON Vnode.id=Vltp.vnodeId WHERE Vnode.id = ?";
-	
+
+	// get a Vltp and its Vctps
 	public static final String FETCH_VLTP_BY_ID = "SELECT "
 			+ "Vltp.id, Vltp.name, Vltp.label, Vltp.description, Vltp.info, Vltp.status, Vltp.created, Vltp.updated, Vltp.busy, Vltp.vnodeId, "
 			+ "Vctp.id AS vctpId, Vctp.name AS vctpName, Vctp.label AS vctpLabel, Vctp.description AS vctpDescription, "
 			+ "Vctp.info AS vctpInfo, Vctp.status AS vctpStatus, Vctp.created AS vctpCreated, Vctp.updated AS vctpUpdated, "
 			+ "Vctp.vltpId AS vctpVltpId "
 			+ "FROM `Vltp` LEFT JOIN `Vctp` ON Vltp.id=Vctp.vltpId WHERE Vltp.id = ?";
-	
+
+	// get a Vctp
 	public static final String FETCH_VCTP_BY_ID = "SELECT "
 			+ "id, name, label, description, info, status, created, updated, vltpId "
 			+ "FROM Vctp WHERE id = ?";
-	
+
+	// get a Vlink and its VlinkConns
 	public static final String FETCH_VLINK_BY_ID = "SELECT "
 			+ "Vlink.id, Vlink.name, Vlink.label, Vlink.description, Vlink.info, Vlink.status, Vlink.created, Vlink.updated, "
 			+ "Vlink.type, Vlink.srcVltpId, Vlink.destVltpId, "
@@ -230,7 +351,8 @@ public class Sql {
 			+ "INNER JOIN Vctp AS allVctps ON sLtp.id=allVctps.vltpId OR dLtp.id=allVctps.vltpId "
 			+ "INNER JOIN VlinkConn as vlc ON allVctps.id=vlc.srcVctpId OR allVctps.id=vlc.destVctpId) "
 			+ "WHERE Vlink.id = ? GROUP BY vlcId";
-	
+
+	// get a VlinkConn
 	public static final String FETCH_VLINKCONN_BY_ID = "SELECT "
 			+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, "
 			+ "VlinkConn.created, VlinkConn.updated, VlinkConn.srcVctpId, VlinkConn.destVctpId, "
@@ -240,7 +362,8 @@ public class Sql {
 			+ "INNER JOIN Vctp AS dCtp ON dCtp.id=destVctpId INNER JOIN Vltp AS dLtp ON dLtp.id=dCtp.vltpId) "
 			+ "LEFT JOIN Vlink ON Vlink.srcVltpId=sLtp.id OR Vlink.destVltpId=dLtp.id "
 			+ "WHERE VlinkConn.id = ?";
-	
+
+	// get a Vtrail and its Vxcs
 	public static final String FETCH_VTRAIL_BY_ID = "SELECT "
 			+ "Vtrail.id, Vtrail.name, Vtrail.label, Vtrail.description, Vtrail.info, Vtrail.status, Vtrail.created, Vtrail.updated, "
 			+ "Vtrail.srcVctpId, Vtrail.destVctpId, "
@@ -249,97 +372,16 @@ public class Sql {
 			+ "Vxc.type AS vxcType, Vxc.vtrailId AS vxcVtrailId, Vxc.srcVctpId AS vxcSrcVctpId, Vxc.destVctpId AS vxcDestVctpId, Vxc.dropVctpId AS vxcDropVctpId "
 			+ "FROM Vtrail LEFT JOIN Vxc ON Vtrail.id=Vxc.vtrailId "
 			+ "WHERE Vtrail.id = ?";
-	
+
+	// get a Vxc
 	public static final String FETCH_VXC_BY_ID = "SELECT "
 			+ "id, name, label, description, info, status, created, updated, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId "
 			+ "FROM Vxc WHERE id = ?"; 
-	
-	
-	
-	/*---------------------------------------*/
-	public static final String FETCH_ALL_VSUBNETS = "SELECT "
-			+ "id, name, label, description, info, status, created, updated "
-			+ "FROM Vsubnet";
-	 
-	public static final String FETCH_ALL_VNODES = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, posx, posy, location, type, vsubnetId "
-			+ "FROM Vnode";
-	
-	public static final String FETCH_ALL_VLTPS = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, busy, vnodeId "
-			+ "FROM Vltp";
-	
-	public static final String FETCH_ALL_VCTPS = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, vltpId "
-			+ "FROM Vctp"; 
-  
-	public static final String FETCH_ALL_VLINKS = "SELECT "
-			+ "Vlink.id, Vlink.name, Vlink.label, Vlink.description, Vlink.info, Vlink.status, Vlink.created, Vlink.updated, "
-			+ "Vlink.type, Vlink.srcVltpId, Vlink.destVltpId, "
-			+ "s.vnodeId AS srcVnodeId, d.vnodeId AS destVnodeId "
-			+ "FROM ((Vlink INNER JOIN Vltp AS s ON Vlink.srcVltpId=s.id) INNER JOIN Vltp AS d ON Vlink.destVltpId=d.id)";
-	
-	public static final String FETCH_ALL_VLINKCONNS = "SELECT "
-			+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, "
-			+ "VlinkConn.created, VlinkConn.updated, VlinkConn.srcVctpId, VlinkConn.destVctpId, "
-			+ "s.vltpId AS srcVltpId, d.vltpId AS destVltpId "
-			+ "FROM ((VlinkConn INNER JOIN Vctp AS s ON VlinkConn.srcVctpId=s.id) INNER JOIN Vctp AS d ON VlinkConn.destVctpId=d.id)";
 
-	public static final String FETCH_ALL_VTRAILS = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, srcVctpId, destVctpId "
-			+ "FROM Vtrail"; 
-	
-	public static final String FETCH_ALL_VXCS = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId "
-			+ "FROM Vxc"; 
-	
-	/*---------------------------------------*/
-	
-	public static final String FETCH_VNODES_BY_VSUBNET = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, posx, posy, location, type, vsubnetId "
-			+ "FROM Vnode WHERE vsubnetId = ?";
-	
-	// ???????????????????
-	public static final String FETCH_VLINKS_BY_VSUBNET = "SELECT "
-			+ "Vlink.id, Vlink.name, Vlink.label, Vlink.description, Vlink.info, Vlink.status, Vlink.created, Vlink.updated, "
-			+ "Vlink.type, Vlink.srcVltpId, Vlink.destVltpId, " 
-			+ "s.vnodeId AS srcVnodeId, d.vnodeId AS destVnodeId, "
-			+ "Vnode.vsubnetId " 
-			+ "FROM ((Vlink "
-			+ "INNER JOIN Vltp AS s ON Vlink.srcVltpId=s.id) "
-			+ "INNER JOIN Vltp AS d ON Vlink.destVltpId=d.id) "
-			+ "RIGHT JOIN Vnode ON Vnode.id=s.vnodeId OR Vnode.id=d.vnodeId "
-			+ "WHERE Vnode.vsubnetId = ?";
-	
-	public static final String FETCH_VLTPS_BY_VNODE = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, busy, vnodeId "
-			+ "FROM Vltp WHERE vnodeId = ?";
-	
-	public static final String FETCH_VCTPS_BY_VLTP = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, vltpId "
-			+ "FROM Vctp WHERE vltpId = ?";
-	
-	// ???????????????????
-	public static final String FETCH_VLINKCONNS_BY_VLINK = " SELECT "
-			+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, VlinkConn.created, VlinkConn.updated, "
-			+ "VlinkConn.srcVctpId, VlinkConn.destVctpId, "
-			+ "sLtp.id AS srcVltpId, dLtp.id AS destVltpId, Vlink.id as vlinkId " 
-			+ "FROM ((VlinkConn "
-			+ "INNER JOIN Vctp AS sCtp ON VlinkConn.srcVctpId=sCtp.id INNER JOIN Vltp as sLtp ON sCtp.vltpId=sLtp.id) "
-			+ "INNER JOIN Vctp AS dCtp ON VlinkConn.destVctpId=dCtp.id INNER JOIN Vltp as dLtp ON dCtp.vltpId=dLtp.id)) "
-			+ "INNER JOIN Vlink ON Vlink.srcVltpId=sLtp.id AND Vlink.destVltpId=dLtp.id OR Vlink.srcVltpId=dLtp.id AND Vlink.destVltpId=sLtp.id "
-			+ "WHERE Vlink.id = ?";
-	
-	public static final String FETCH_VXC_BY_VNODE = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId "
-			+ "FROM Vxc WHERE vnodeId = ?";
-	
-	public static final String FETCH_VXC_BY_VTRAIL = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId "
-			+ "FROM Vxc WHERE vtrailId = ?";
-	
-	/*---------------------------------------*/
-	
+
+
+	/*-------------------- DELETE ITEMS BY ID --------------------*/
+
 	public static final String DELETE_VSUBNET = "DELETE FROM Vsubnet WHERE id=?";
 	public static final String DELETE_VNODE = "DELETE FROM Vnode WHERE id=?";
 	public static final String DELETE_VLTP = "DELETE FROM Vltp WHERE id=?";

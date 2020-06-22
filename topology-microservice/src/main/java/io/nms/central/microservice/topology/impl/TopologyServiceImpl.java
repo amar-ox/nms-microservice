@@ -24,9 +24,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
 /**
- * JDBC implementation of {@link io.vertx.blueprint.microservice.product.ProductService}.
  *
- * @author Eric Zhao
  */
 public class TopologyServiceImpl extends JdbcRepositoryWrapper implements TopologyService {
 

@@ -17,7 +17,7 @@ import io.vertx.core.json.JsonObject;
 public class Vsubnet {
 	
 	// in SQL table
-		// common fields
+		// common fields (to all entities)
 	private int id;
 	private String name;
 	private String label;
@@ -27,7 +27,10 @@ public class Vsubnet {
 	private String status;
 	private Map<String, Object> info;
 	
-	// in object only
+		// specific Vsubnet fields
+		// TODO?
+	
+	// in object only (obtained through SQL JOINS)
 	private List<Vnode> vnodes = new ArrayList<Vnode>();
 	private List<Vlink> vlinks = new ArrayList<Vlink>();
 	

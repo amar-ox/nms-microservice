@@ -23,14 +23,14 @@ public class Vnode {
 	private String status;
 	private Map<String, Object> info;
 	
-		// vnode fields
+		// specific Vnode fields 
 	private String location;
 	private Integer posx;
 	private Integer posy;
 	private int vsubnetId;
 	private String type;
 	
-	// in object only
+	// in object only (obtained through SQL JOINS)
 	private List<Vltp> vltps = new ArrayList<Vltp>();
 	private List<Vxc> vxcs = new ArrayList<Vxc>();
 	
