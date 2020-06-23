@@ -271,7 +271,7 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
   protected Handler<AsyncResult<Void>> deleteResultHandler(RoutingContext context) {
     return res -> {
       if (res.succeeded()) {
-        context.response().setStatusCode(204)
+        context.response().setStatusCode(200)
           .putHeader("content-type", "application/json")
           .end(new JsonObject().put("message", "delete_success").encodePrettily());
       } else {
@@ -313,7 +313,7 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
       .setStatusCode(502)
       .putHeader("content-type", "application/json")
       .end(new JsonObject().put("error", "bad_gateway")
-        //.put("message", ex.getMessage())
+        .put("message", ex.getMessage())
         .encodePrettily());
   }
 

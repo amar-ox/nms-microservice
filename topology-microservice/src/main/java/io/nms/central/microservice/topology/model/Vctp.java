@@ -1,5 +1,6 @@
 package io.nms.central.microservice.topology.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -18,7 +19,7 @@ public class Vctp {
 	private String created;
 	private String updated;
 	private String status;
-	private Map<String, Object> info; // contains connection info (vlan or wavelength)	
+	private Map<String, Object> info = new HashMap<String, Object>(); // contains connection info (vlan or wavelength)	
 		
 		// vctp fields
 	private int vltpId;

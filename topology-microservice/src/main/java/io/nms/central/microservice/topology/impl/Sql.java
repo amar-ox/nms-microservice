@@ -7,7 +7,7 @@ public class Sql {
 	/*-------------------- TABLE CREATION --------------------*/
 	public static final String CREATE_TABLE_VSUBNET = "CREATE TABLE IF NOT EXISTS `Vsubnet` (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
+			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
 			"    `label` VARCHAR(60) NOT NULL,\n" + 
 			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
@@ -18,7 +18,7 @@ public class Sql {
 			")";
 	public static final String CREATE_TABLE_VNODE = "CREATE TABLE IF NOT EXISTS `Vnode` (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
+			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
 			"    `label` VARCHAR(60) NOT NULL,\n" + 
 			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
@@ -38,7 +38,7 @@ public class Sql {
 			")";
 	public static final String CREATE_TABLE_VLTP = "CREATE TABLE IF NOT EXISTS Vltp (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
+			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
 			"    `label` VARCHAR(60) NOT NULL,\n" + 
 			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
@@ -55,7 +55,7 @@ public class Sql {
 			")";
 	public static final String CREATE_TABLE_VCTP = "CREATE TABLE IF NOT EXISTS Vctp (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
+			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
 			"    `label` VARCHAR(60) NOT NULL,\n" + 
 			"    `description` VARCHAR(255),\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
@@ -71,7 +71,7 @@ public class Sql {
 			")";
 	public static final String CREATE_TABLE_VLINK = "CREATE TABLE IF NOT EXISTS Vlink (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
+			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
 			"    `label` VARCHAR(60) NOT NULL,\n" + 
 			"    `description` VARCHAR(255),\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
@@ -94,7 +94,7 @@ public class Sql {
 			")";
 	public static final String CREATE_TABLE_VLINKCONN = "CREATE TABLE IF NOT EXISTS VlinkConn (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
+			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
 			"    `label` VARCHAR(60) NOT NULL,\n" + 
 			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
@@ -116,7 +116,7 @@ public class Sql {
 			")";
 	public static final String CREATE_TABLE_VTRAIL = "CREATE TABLE IF NOT EXISTS Vtrail (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
+			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
 			"    `label` VARCHAR(60) NOT NULL,\n" + 
 			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
@@ -138,7 +138,7 @@ public class Sql {
 			")";
 	public static final String CREATE_TABLE_VXC = "CREATE TABLE IF NOT EXISTS Vxc (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(30) NOT NULL UNIQUE,\n" + 
+			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
 			"    `label` VARCHAR(60) NOT NULL,\n" + 
 			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +

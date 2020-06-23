@@ -1,6 +1,7 @@
 package io.nms.central.microservice.topology.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -20,7 +21,7 @@ public class Vlink {
 	private String created;
 	private String updated;
 	private String status;
-	private Map<String, Object> info;	
+	private Map<String, Object> info = new HashMap<String, Object>();	
 		
 		// vlink fields
 	private String type; 		// internal/external to subnet
