@@ -33,7 +33,7 @@ public class ModelObjectMapper {
 			vltp.setDescription(row.getString("vltpDescription"));
 			vltp.setInfo(new JsonObject(rows.get(0).getString("vltpInfo")).getMap());
 			vltp.setStatus(row.getString("vltpStatus"));			
-			vltp.setCreated(row.getString("vlptCreated"));
+			vltp.setCreated(row.getString("vltpCreated"));
 			vltp.setUpdated(row.getString("vltpUpdated"));
 			vltp.setBusy(row.getBoolean("vltpBusy"));
 			vltp.setVnodeId(row.getInteger("vltpVnodeId"));			

@@ -14,7 +14,7 @@ public class Sql {
 			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" + 
-			"    PRIMARY KEY (`id`)\n" + 			
+			"    PRIMARY KEY (`id`)\n" +
 			")";
 	public static final String CREATE_TABLE_VNODE = "CREATE TABLE IF NOT EXISTS `Vnode` (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
@@ -234,8 +234,10 @@ public class Sql {
 	public static final String FETCH_ALL_VLINKCONNS = "SELECT "
 			+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, "
 			+ "VlinkConn.created, VlinkConn.updated, VlinkConn.srcVctpId, VlinkConn.destVctpId, "
-			+ "s.vltpId AS srcVltpId, d.vltpId AS destVltpId "
-			+ "FROM ((VlinkConn INNER JOIN Vctp AS s ON VlinkConn.srcVctpId=s.id) INNER JOIN Vctp AS d ON VlinkConn.destVctpId=d.id)";
+			+ "sCtp.vltpId AS srcVltpId, dCtp.vltpId AS destVltpId, sLtp.vnodeId AS srcVnodeId, dLtp.vnodeId AS destVnodeId "
+			+ "FROM ((VlinkConn "
+			+ "INNER JOIN Vctp AS sCtp ON VlinkConn.srcVctpId=sCtp.id INNER JOIN Vltp AS sLtp ON sCtp.vltpId=sLtp.id) "
+			+ "INNER JOIN Vctp AS dCtp ON VlinkConn.destVctpId=dCtp.id INNER JOIN Vltp AS dLtp ON dCtp.vltpId=dLtp.id)";
 
 	// get all Vtrails without Vxc
 	// use: FETCH_VTRAIL_BY_ID to get a Vtrail with its Vxcs 
@@ -270,7 +272,7 @@ public class Sql {
 			+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId "
 			+ "INNER JOIN Vlink ON Vltp.id=Vlink.srcVltpId INNER JOIN Vltp as destLtp ON Vlink.destVltpId=destLtp.id "
 			+ "WHERE Vnode.vsubnetId = ?";
-
+	
 	// get all the Vltps of a Vnode (without Vctps)
 	// use: FETCH_VLTP_BY_ID to get a Vltp with its Vctps
 	public static final String FETCH_VLTPS_BY_VNODE = "SELECT "
@@ -281,6 +283,13 @@ public class Sql {
 	public static final String FETCH_VCTPS_BY_VLTP = "SELECT "
 			+ "id, name, label, description, info, status, created, updated, vltpId "
 			+ "FROM Vctp WHERE vltpId = ?";
+	
+	// get all the Vctps of a Vltp
+	public static final String FETCH_VCTPS_BY_VNODE = "SELECT "
+			+ "Vctp.id, Vctp.name, Vctp.label, Vctp.description, Vctp.info, Vctp.status, Vctp.created, Vctp.updated, Vctp.vltpId "
+			+ "FROM Vnode "
+			+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId INNER JOIN Vctp ON Vltp.id=Vctp.vltpId "
+			+ "WHERE Vnode.Id = ?";
 
 	// get all the VlinkConns that goes over a Vlink
 	public static final String FETCH_VLINKCONNS_BY_VLINK = " SELECT "
@@ -292,6 +301,29 @@ public class Sql {
 			+ "INNER JOIN Vctp ON Vltp.id=Vctp.vltpId " 
 			+ "INNER JOIN VlinkConn ON Vctp.id=VlinkConn.srcVctpId OR Vctp.id=VlinkConn.destVctpId " 
 			+ "WHERE Vlink.id = ?";
+	
+	// Assuming that: a linkConn is in a subnet if its source-node is in that subnet
+	// get all the VlinkConns of a Vsubnet
+	public static final String FETCH_VLINKCONNS_BY_VSUBNET = "SELECT "
+			+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, VlinkConn.created, VlinkConn.updated, "
+			+ "VlinkConn.srcVctpId, VlinkConn.destVctpId, "
+			+ "Vltp.id AS srcVltpId, destLtp.id AS destVltpId, "
+			+ "Vltp.vnodeId AS srcVnodeId, destLtp.vnodeId AS destVnodeId, "
+			+ "Vnode.vsubnetId " 
+			+ "FROM Vnode "
+			+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId INNER JOIN Vctp ON Vltp.id=Vctp.vltpId "
+			+ "INNER JOIN VlinkConn ON Vctp.id=VlinkConn.srcVctpId INNER JOIN Vctp as destCtp ON VlinkConn.destVctpId=destCtp.id "
+			+ "INNER JOIN Vltp AS destLtp ON destCtp.vltpId=destLtp.id "
+			+ "WHERE Vnode.vsubnetId = ?";
+	
+	// get all the Vtrails of a Vsubnet
+	public static final String FETCH_VTRAILS_BY_VSUBNET = "SELECT "
+			+ "Vtrail.id, Vtrail.name, Vtrail.label, Vtrail.description, Vtrail.info, Vtrail.status, Vtrail.created, Vtrail.updated, "
+			+ "Vtrail.srcVctpId, Vtrail.destVctpId "
+			+ "FROM Vnode "
+			+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId INNER JOIN Vctp ON Vltp.id=Vctp.vltpId "
+			+ "INNER JOIN Vtrail ON Vctp.id=Vtrail.srcVctpId INNER JOIN Vctp as destCtp ON Vtrail.destVctpId=destCtp.id "
+			+ "WHERE Vnode.vsubnetId = ?";
 
 	// get all the Vxcs defined in a Vnode
 	public static final String FETCH_VXC_BY_VNODE = "SELECT "
@@ -317,7 +349,7 @@ public class Sql {
 	public static final String FETCH_VNODE_BY_ID = "SELECT "
 			+ "Vnode.id, Vnode.name, Vnode.label, Vnode.description, Vnode.info, Vnode.status, Vnode.created, Vnode.updated, "
 			+ "Vnode.posx, Vnode.posy, Vnode.location, Vnode.type, Vnode.vsubnetId, "
-			+ "Vltp.id AS vltpId, Vltp.name AS VltpName, Vltp.label AS vltpLabel, Vltp.description AS vltpDescription, Vltp.info AS vltpInfo, "
+			+ "Vltp.id AS vltpId, Vltp.name AS vltpName, Vltp.label AS vltpLabel, Vltp.description AS vltpDescription, Vltp.info AS vltpInfo, "
 			+ "Vltp.status AS vltpStatus, Vltp.created AS vltpCreated, Vltp.updated AS vltpUpdated, "
 			+ "Vltp.busy AS vltpBusy, Vltp.vnodeId AS vltpVnodeId "
 			+ "FROM `Vnode` LEFT JOIN `Vltp` ON Vnode.id=Vltp.vnodeId WHERE Vnode.id = ?";

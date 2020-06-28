@@ -444,6 +444,24 @@
     /**
 
      @public
+     @param vnodeId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.getVctpsByVnode =  function(vnodeId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"vnodeId":__args[0]}, {"action":"getVctpsByVnode"}, function(err, result) { __args[1](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
      @param vctpId {string} 
      @param resultHandler {function} 
      @return {TopologyService}
@@ -658,6 +676,24 @@
     /**
 
      @public
+     @param vsubnetId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.getVlinkConnsByVsubnet =  function(vsubnetId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"vsubnetId":__args[0]}, {"action":"getVlinkConnsByVsubnet"}, function(err, result) { __args[1](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
      @param vlinkConnId {string} 
      @param resultHandler {function} 
      @return {TopologyService}
@@ -765,6 +801,24 @@
     /**
 
      @public
+     @param vsubnetId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.getVtrailsByVsubnet =  function(vsubnetId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"vsubnetId":__args[0]}, {"action":"getVtrailsByVsubnet"}, function(err, result) { __args[1](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
      @param vtrail {Object} 
      @param resultHandler {function} 
      @return {TopologyService}
@@ -847,6 +901,24 @@
           throw new Error('Proxy is closed');
         }
         j_eb.send(j_address, {"vtrailId":__args[0]}, {"action":"getVxcsByVtrail"}, function(err, result) { __args[1](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
+     @param vnodeId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.getVxcsByVnode =  function(vnodeId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"vnodeId":__args[0]}, {"action":"getVxcsByVnode"}, function(err, result) { __args[1](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };

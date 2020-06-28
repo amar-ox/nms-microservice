@@ -57,6 +57,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_GET_CTP = "/ctp/:ctpId";	
 	private static final String API_GET_ALL_CTPS = "/ctps/all";
 	private static final String API_GET_CTPS_BY_LTP = "/ctps/ltp/:ltpId";
+	private static final String API_GET_CTPS_BY_NODE = "/ctps/node/:nodeId";
 	private static final String API_DELETE_CTP = "/ctp/:ctpId";
 	private static final String API_UPDATE_CTP = "/ctp";
 
@@ -71,12 +72,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_GET_LINKCONN = "/linkConn/:linkConnId";	
 	private static final String API_GET_ALL_LINKCONNS = "/linkConns/all";
 	private static final String API_GET_LINKCONNS_BY_LINK = "/linkConns/link/:linkId";
+	private static final String API_GET_LINKCONNS_BY_SUBNET = "/linkConns/subnet/:subnetId";
 	private static final String API_DELETE_LINKCONN = "/linkConn/:linkConnId";
 	private static final String API_UPDATE_LINKCONN = "/linkConn";
 
 	private static final String API_ADD_TRAIL = "/trail";
 	private static final String API_GET_TRAIL = "/trail/:trailId";	
 	private static final String API_GET_ALL_TRAILS = "/trails/all";
+	private static final String API_GET_TRAILS_BY_SUBNET = "/trails/subnet/:subnetId";
 	private static final String API_DELETE_TRAIL = "/trail/:trailId";
 	private static final String API_UPDATE_TRAIL = "/trail";
 
@@ -84,6 +87,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_GET_XC = "/xc/:xcId";
 	private static final String API_GET_ALL_XCS = "/xcs/all";
 	private static final String API_GET_XCS_BY_TRAIL = "/xcs/trail/:trailId";
+	private static final String API_GET_XCS_BY_NODE = "/xcs/node/:nodeId";
 	private static final String API_DELETE_XC = "/xc/:xcId";
 	private static final String API_UPDATE_XC = "/xc";
 
@@ -126,6 +130,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.post(API_ADD_CTP).handler(this::apiAddCtp);
 		router.get(API_GET_ALL_CTPS).handler(this::apiGetAllCtps);
 		router.get(API_GET_CTPS_BY_LTP).handler(this::apiGetCtpsByLtp);
+		router.get(API_GET_CTPS_BY_NODE).handler(this::apiGetCtpsByNode);
 		router.get(API_GET_CTP).handler(this::apiGetCtp);
 		router.delete(API_DELETE_CTP).handler(this::apiDeleteCtp);
 		router.patch(API_UPDATE_CTP).handler(this::apiUpdateCtp);
@@ -140,12 +145,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.post(API_ADD_LINKCONN).handler(this::apiAddLinkConn);
 		router.get(API_GET_ALL_LINKCONNS).handler(this::apiGetAllLinkConns);
 		router.get(API_GET_LINKCONNS_BY_LINK).handler(this::apiGetLinkConnsByLink);
+		router.get(API_GET_LINKCONNS_BY_SUBNET).handler(this::apiGetLinkConnsBySubnet);
 		router.get(API_GET_LINKCONN).handler(this::apiGetLinkConn);
 		router.delete(API_DELETE_LINKCONN).handler(this::apiDeleteLinkConn);
 		router.patch(API_UPDATE_LINKCONN).handler(this::apiUpdateLinkConn);
 
 		router.post(API_ADD_TRAIL).handler(this::apiAddTrail);
 		router.get(API_GET_ALL_TRAILS).handler(this::apiGetAllTrails);
+		router.get(API_GET_TRAILS_BY_SUBNET).handler(this::apiGetTrailsBySubnet);
 		router.get(API_GET_TRAIL).handler(this::apiGetTrail);
 		router.delete(API_DELETE_TRAIL).handler(this::apiDeleteTrail);
 		router.patch(API_UPDATE_TRAIL).handler(this::apiUpdateTrail);
@@ -153,6 +160,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.post(API_ADD_XC).handler(this::apiAddXc);
 		router.get(API_GET_ALL_XCS).handler(this::apiGetAllXcs);
 		router.get(API_GET_XCS_BY_TRAIL).handler(this::apiGetXcsByTrail);
+		router.get(API_GET_XCS_BY_NODE).handler(this::apiGetXcsByNode);
 		router.get(API_GET_XC).handler(this::apiGetXc);
 		router.delete(API_DELETE_XC).handler(this::apiDeleteXc);
 		router.patch(API_UPDATE_XC).handler(this::apiUpdateXc);
@@ -177,7 +185,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// Node API
 	private void apiAddSubnet(RoutingContext context) {
 		final Vsubnet vsubnet = Json.decodeValue(context.getBodyAsString(), Vsubnet.class);
-		logger.debug("apiAddSubnet: "+vsubnet.toString());
+		// logger.debug("apiAddSubnet: "+vsubnet.toString());
 		JsonObject result = new JsonObject().put("message", "subnet_added");
 		service.addVsubnet(vsubnet, resultVoidHandler(context, result));
 	}
@@ -272,6 +280,10 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		String ltpId = context.request().getParam("ltpId");		
 		service.getVctpsByVltp(ltpId, resultHandler(context, Json::encodePrettily));		
 	}
+	private void apiGetCtpsByNode(RoutingContext context) {
+		String nodeId = context.request().getParam("nodeId");		
+		service.getVctpsByVnode(nodeId, resultHandler(context, Json::encodePrettily));		
+	}
 	private void apiGetAllCtps(RoutingContext context) {		
 		service.getAllVctps(resultHandler(context, Json::encodePrettily));
 	}
@@ -328,6 +340,10 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		String linkId = context.request().getParam("linkId");		
 		service.getVlinkConnsByVlink(linkId, resultHandler(context, Json::encodePrettily));
 	}
+	private void apiGetLinkConnsBySubnet(RoutingContext context) {	
+		String subnetId = context.request().getParam("subnetId");		
+		service.getVlinkConnsByVsubnet(subnetId, resultHandler(context, Json::encodePrettily));
+	}
 	private void apiDeleteLinkConn(RoutingContext context) {
 		String linkConnId = context.request().getParam("linkConnId");		
 		service.deleteVlinkConn(linkConnId, deleteResultHandler(context));
@@ -350,6 +366,10 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	}
 	private void apiGetAllTrails(RoutingContext context) {
 		service.getAllVtrails(resultHandler(context, Json::encodePrettily));
+	}
+	private void apiGetTrailsBySubnet(RoutingContext context) {	
+		String subnetId = context.request().getParam("subnetId");		
+		service.getVtrailsByVsubnet(subnetId, resultHandler(context, Json::encodePrettily));
 	}
 	private void apiDeleteTrail(RoutingContext context) {
 		String trailId = context.request().getParam("trailId");			
@@ -377,6 +397,10 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiGetXcsByTrail(RoutingContext context) {	
 		String trailId = context.request().getParam("trailId");			
 		service.getVxcsByVtrail(trailId, resultHandler(context, Json::encodePrettily));
+	}
+	private void apiGetXcsByNode(RoutingContext context) {	
+		String nodeId = context.request().getParam("nodeId");			
+		service.getVxcsByVnode(nodeId, resultHandler(context, Json::encodePrettily));
 	}
 	private void apiDeleteXc(RoutingContext context) {
 		String xcId = context.request().getParam("xcId");			

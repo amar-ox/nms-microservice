@@ -28,7 +28,7 @@ import io.vertx.core.logging.LoggerFactory;
  */
 public class TopologyServiceImpl extends JdbcRepositoryWrapper implements TopologyService {
 
-	private static final Logger logger = LoggerFactory.getLogger(TopologyServiceImpl.class);
+	// private static final Logger logger = LoggerFactory.getLogger(TopologyServiceImpl.class);
 
 	public TopologyServiceImpl(Vertx vertx, JsonObject config) {
 		super(vertx, config);
@@ -59,7 +59,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	// INSERT_VSUBNET = "INSERT INTO Vsubnet (name, label, description, info, status) "
 	@Override
 	public TopologyService addVsubnet(Vsubnet vsubnet, Handler<AsyncResult<Void>> resultHandler) {
-		logger.debug("addSubnet: "+vsubnet.toString());
+		// logger.debug("addSubnet: "+vsubnet.toString());
 		JsonArray params = new JsonArray()
 				.add(vsubnet.getName())
 				.add(vsubnet.getLabel())
@@ -314,6 +314,21 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
+	public TopologyService getVctpsByVnode(String vnodeId, Handler<AsyncResult<List<Vctp>>> resultHandler) {
+		JsonArray params = new JsonArray().add(vnodeId);
+		this.retrieveMany(params, Sql.FETCH_VCTPS_BY_VNODE)
+		.map(rawList -> rawList.stream()
+				.map(row -> {
+					Vctp vctp = new Vctp(row);
+					vctp.setInfo(new JsonObject(row.getString("info")).getMap());
+					return vctp;
+				})
+				.collect(Collectors.toList())
+				)
+		.onComplete(resultHandler);
+		return this;
+	}
+	@Override
 	public TopologyService deleteVctp(String vctpId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(vctpId, Sql.DELETE_VCTP, resultHandler);
 		return this;
@@ -461,6 +476,21 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
+	public TopologyService getVlinkConnsByVsubnet(String vsubnetId, Handler<AsyncResult<List<VlinkConn>>> resultHandler) {
+		JsonArray params = new JsonArray().add(vsubnetId);
+		this.retrieveMany(params, Sql.FETCH_VLINKCONNS_BY_VSUBNET)
+		.map(rawList -> rawList.stream()
+				.map(row -> {
+					VlinkConn vlinkConn = new VlinkConn(row);
+					vlinkConn.setInfo(new JsonObject(row.getString("info")).getMap());
+					return vlinkConn;
+				})
+				.collect(Collectors.toList())
+				)
+		.onComplete(resultHandler);
+		return this;
+	}
+	@Override
 	public TopologyService deleteVlinkConn(String vlinkConnId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(vlinkConnId, Sql.DELETE_VLINKCONN, resultHandler);
 		return this;
@@ -505,6 +535,21 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService getAllVtrails(Handler<AsyncResult<List<Vtrail>>> resultHandler) {
 		this.retrieveAll(Sql.FETCH_ALL_VTRAILS)
+		.map(rawList -> rawList.stream()
+				.map(row -> {
+					Vtrail vtrail = new Vtrail(row);
+					vtrail.setInfo(new JsonObject(row.getString("info")).getMap());
+					return vtrail;
+				})
+				.collect(Collectors.toList())
+				)
+		.onComplete(resultHandler);
+		return this;
+	}
+	@Override
+	public TopologyService getVtrailsByVsubnet(String vsubnetId, Handler<AsyncResult<List<Vtrail>>> resultHandler) {
+		JsonArray params = new JsonArray().add(vsubnetId);
+		this.retrieveMany(params, Sql.FETCH_VTRAILS_BY_VSUBNET)
 		.map(rawList -> rawList.stream()
 				.map(row -> {
 					Vtrail vtrail = new Vtrail(row);
@@ -583,6 +628,21 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	public TopologyService getVxcsByVtrail(String vtrailId, Handler<AsyncResult<List<Vxc>>> resultHandler) {
 		JsonArray params = new JsonArray().add(vtrailId);
 		this.retrieveMany(params, Sql.FETCH_VXC_BY_VTRAIL)
+		.map(rawList -> rawList.stream()
+				.map(row -> {
+					Vxc vxc = new Vxc(row);
+					vxc.setInfo(new JsonObject(row.getString("info")).getMap());
+					return vxc;
+				})
+				.collect(Collectors.toList())
+				)
+		.onComplete(resultHandler);
+		return this;
+	}
+	@Override
+	public TopologyService getVxcsByVnode(String vnodeId, Handler<AsyncResult<List<Vxc>>> resultHandler) {
+		JsonArray params = new JsonArray().add(vnodeId);
+		this.retrieveMany(params, Sql.FETCH_VXC_BY_VNODE)
 		.map(rawList -> rawList.stream()
 				.map(row -> {
 					Vxc vxc = new Vxc(row);

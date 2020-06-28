@@ -113,6 +113,9 @@ public interface TopologyService {
 	TopologyService getVctpsByVltp(String vltpId, Handler<AsyncResult<List<Vctp>>> resultHandler);
 	
 	@Fluent	
+	TopologyService getVctpsByVnode(String vnodeId, Handler<AsyncResult<List<Vctp>>> resultHandler);
+	
+	@Fluent	
 	TopologyService deleteVctp(String vctpId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
@@ -153,6 +156,9 @@ public interface TopologyService {
 	TopologyService getVlinkConnsByVlink(String vlinkId, Handler<AsyncResult<List<VlinkConn>>> resultHandler);
 	
 	@Fluent	
+	TopologyService getVlinkConnsByVsubnet(String vsubnetId, Handler<AsyncResult<List<VlinkConn>>> resultHandler);
+	
+	@Fluent	
 	TopologyService deleteVlinkConn(String vlinkConnId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
@@ -172,6 +178,9 @@ public interface TopologyService {
 	@Fluent
 	TopologyService getAllVtrails(Handler<AsyncResult<List<Vtrail>>> resultHandler);
 	
+	@Fluent
+	TopologyService getVtrailsByVsubnet(String vsubnetId, Handler<AsyncResult<List<Vtrail>>> resultHandler);
+	
 	@Fluent 
 	TopologyService updateVtrail(Vtrail vtrail, Handler<AsyncResult<Vtrail>> resultHandler);
 	
@@ -188,6 +197,9 @@ public interface TopologyService {
 	
 	@Fluent	
 	TopologyService getVxcsByVtrail(String vtrailId, Handler<AsyncResult<List<Vxc>>> resultHandler);
+	
+	@Fluent
+	TopologyService getVxcsByVnode(String vnodeId, Handler<AsyncResult<List<Vxc>>> resultHandler);
 	
 	@Fluent	
 	TopologyService deleteVxc(String vxcId, Handler<AsyncResult<Void>> resultHandler);

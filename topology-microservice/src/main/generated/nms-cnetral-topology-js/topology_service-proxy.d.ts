@@ -71,6 +71,8 @@ export default class TopologyService {
 
   getVctpsByVltp(vltpId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
+  getVctpsByVnode(vnodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
   deleteVctp(vctpId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   updateVctp(vctp: any, resultHandler: (err: any, result: any) => any) : TopologyService;
@@ -95,6 +97,8 @@ export default class TopologyService {
 
   getVlinkConnsByVlink(vlinkId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
+  getVlinkConnsByVsubnet(vsubnetId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
   deleteVlinkConn(vlinkConnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   updateVlinkConn(vlinkConn: any, resultHandler: (err: any, result: any) => any) : TopologyService;
@@ -107,6 +111,8 @@ export default class TopologyService {
 
   getAllVtrails(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
+  getVtrailsByVsubnet(vsubnetId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
   updateVtrail(vtrail: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addVxc(vxc: any, resultHandler: (err: any, result: any) => any) : TopologyService;
@@ -116,6 +122,8 @@ export default class TopologyService {
   getAllVxcs(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
   getVxcsByVtrail(vtrailId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  getVxcsByVnode(vnodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
   deleteVxc(vxcId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 

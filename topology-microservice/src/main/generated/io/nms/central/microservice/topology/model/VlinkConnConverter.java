@@ -34,6 +34,11 @@ public class VlinkConnConverter {
             obj.setDestVltpId(((Number)member.getValue()).intValue());
           }
           break;
+        case "destVnodeId":
+          if (member.getValue() instanceof Number) {
+            obj.setDestVnodeId(((Number)member.getValue()).intValue());
+          }
+          break;
         case "id":
           if (member.getValue() instanceof Number) {
             obj.setId(((Number)member.getValue()).intValue());
@@ -67,6 +72,11 @@ public class VlinkConnConverter {
         case "srcVltpId":
           if (member.getValue() instanceof Number) {
             obj.setSrcVltpId(((Number)member.getValue()).intValue());
+          }
+          break;
+        case "srcVnodeId":
+          if (member.getValue() instanceof Number) {
+            obj.setSrcVnodeId(((Number)member.getValue()).intValue());
           }
           break;
         case "status":
@@ -106,6 +116,7 @@ public class VlinkConnConverter {
     }
     json.put("destVctpId", obj.getDestVctpId());
     json.put("destVltpId", obj.getDestVltpId());
+    json.put("destVnodeId", obj.getDestVnodeId());
     json.put("id", obj.getId());
     if (obj.getInfo() != null) {
       JsonObject map = new JsonObject();
@@ -120,6 +131,7 @@ public class VlinkConnConverter {
     }
     json.put("srcVctpId", obj.getSrcVctpId());
     json.put("srcVltpId", obj.getSrcVltpId());
+    json.put("srcVnodeId", obj.getSrcVnodeId());
     if (obj.getStatus() != null) {
       json.put("status", obj.getStatus());
     }

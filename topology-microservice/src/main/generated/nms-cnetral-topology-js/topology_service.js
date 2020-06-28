@@ -64,6 +64,7 @@ var TopologyService = function(j_val) {
   var __super_getVctp = this.getVctp;
   var __super_getAllVctps = this.getAllVctps;
   var __super_getVctpsByVltp = this.getVctpsByVltp;
+  var __super_getVctpsByVnode = this.getVctpsByVnode;
   var __super_deleteVctp = this.deleteVctp;
   var __super_updateVctp = this.updateVctp;
   var __super_addVlink = this.addVlink;
@@ -76,17 +77,20 @@ var TopologyService = function(j_val) {
   var __super_getVlinkConn = this.getVlinkConn;
   var __super_getAllVlinkConns = this.getAllVlinkConns;
   var __super_getVlinkConnsByVlink = this.getVlinkConnsByVlink;
+  var __super_getVlinkConnsByVsubnet = this.getVlinkConnsByVsubnet;
   var __super_deleteVlinkConn = this.deleteVlinkConn;
   var __super_updateVlinkConn = this.updateVlinkConn;
   var __super_addVtrail = this.addVtrail;
   var __super_getVtrail = this.getVtrail;
   var __super_deleteVtrail = this.deleteVtrail;
   var __super_getAllVtrails = this.getAllVtrails;
+  var __super_getVtrailsByVsubnet = this.getVtrailsByVsubnet;
   var __super_updateVtrail = this.updateVtrail;
   var __super_addVxc = this.addVxc;
   var __super_getVxc = this.getVxc;
   var __super_getAllVxcs = this.getAllVxcs;
   var __super_getVxcsByVtrail = this.getVxcsByVtrail;
+  var __super_getVxcsByVnode = this.getVxcsByVnode;
   var __super_deleteVxc = this.deleteVxc;
   var __super_updateVxc = this.updateVxc;
   /**
@@ -615,6 +619,30 @@ var TopologyService = function(j_val) {
   /**
 
    @public
+   @param vnodeId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getVctpsByVnode =  function(vnodeId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getVctpsByVnode(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getVctpsByVnode != 'undefined') {
+      return __super_getVctpsByVnode.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
    @param vctpId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
@@ -901,6 +929,30 @@ var TopologyService = function(j_val) {
   /**
 
    @public
+   @param vsubnetId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getVlinkConnsByVsubnet =  function(vsubnetId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getVlinkConnsByVsubnet(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getVlinkConnsByVsubnet != 'undefined') {
+      return __super_getVlinkConnsByVsubnet.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
    @param vlinkConnId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
@@ -1044,6 +1096,30 @@ var TopologyService = function(j_val) {
   /**
 
    @public
+   @param vsubnetId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getVtrailsByVsubnet =  function(vsubnetId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getVtrailsByVsubnet(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getVtrailsByVsubnet != 'undefined') {
+      return __super_getVtrailsByVsubnet.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
    @param vtrail {Object} 
    @param resultHandler {function} 
    @return {TopologyService}
@@ -1156,6 +1232,30 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_getVxcsByVtrail != 'undefined') {
       return __super_getVxcsByVtrail.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vnodeId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getVxcsByVnode =  function(vnodeId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getVxcsByVnode(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getVxcsByVnode != 'undefined') {
+      return __super_getVxcsByVnode.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };

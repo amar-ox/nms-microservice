@@ -55,11 +55,13 @@
 |[[description]]`@description`|`String`|-
 |[[destVctpId]]`@destVctpId`|`Number (int)`|-
 |[[destVltpId]]`@destVltpId`|`Number (int)`|-
+|[[destVnodeId]]`@destVnodeId`|`Number (int)`|-
 |[[id]]`@id`|`Number (int)`|-
 |[[label]]`@label`|`String`|-
 |[[name]]`@name`|`String`|-
 |[[srcVctpId]]`@srcVctpId`|`Number (int)`|-
 |[[srcVltpId]]`@srcVltpId`|`Number (int)`|-
+|[[srcVnodeId]]`@srcVnodeId`|`Number (int)`|-
 |[[status]]`@status`|`String`|-
 |[[updated]]`@updated`|`String`|-
 |[[vlinkId]]`@vlinkId`|`Number (int)`|-

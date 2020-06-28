@@ -18,7 +18,7 @@ public class VlinkConn {
 	private String description;
 	private String created;
 	private String updated;
-	private String status;
+	private String status = "DOWN";
 	private Map<String, Object> info = new HashMap<String, Object>();
 	
 		// vlinkConn fields
@@ -28,6 +28,9 @@ public class VlinkConn {
 	// in object only
 	private int srcVltpId;	
 	private int destVltpId;
+	private int srcVnodeId;	
+	private int destVnodeId;
+	
 	private int vlinkId;
 	
 	private int vsubnetId;	
@@ -179,5 +182,21 @@ public class VlinkConn {
 
 	public void setVlinkId(int vlinkId) {
 		this.vlinkId = vlinkId;
+	}
+
+	public int getSrcVnodeId() {
+		return srcVnodeId;
+	}
+
+	public void setSrcVnodeId(int srcVnodeId) {
+		this.srcVnodeId = srcVnodeId;
+	}
+
+	public int getDestVnodeId() {
+		return destVnodeId;
+	}
+
+	public void setDestVnodeId(int destVnodeId) {
+		this.destVnodeId = destVnodeId;
 	}
 }

@@ -368,6 +368,21 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
+        case "getVctpsByVnode": {
+          service.getVctpsByVnode((java.lang.String)json.getValue("vnodeId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
         case "deleteVctp": {
           service.deleteVctp((java.lang.String)json.getValue("vctpId"),
                         HelperUtils.createHandler(msg));
@@ -506,6 +521,21 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
+        case "getVlinkConnsByVsubnet": {
+          service.getVlinkConnsByVsubnet((java.lang.String)json.getValue("vsubnetId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
         case "deleteVlinkConn": {
           service.deleteVlinkConn((java.lang.String)json.getValue("vlinkConnId"),
                         HelperUtils.createHandler(msg));
@@ -553,6 +583,21 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
         }
         case "getAllVtrails": {
           service.getAllVtrails(res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "getVtrailsByVsubnet": {
+          service.getVtrailsByVsubnet((java.lang.String)json.getValue("vsubnetId"),
+                        res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
                             msg.reply(res.cause());
@@ -616,6 +661,21 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
         }
         case "getVxcsByVtrail": {
           service.getVxcsByVtrail((java.lang.String)json.getValue("vtrailId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "getVxcsByVnode": {
+          service.getVxcsByVnode((java.lang.String)json.getValue("vnodeId"),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {

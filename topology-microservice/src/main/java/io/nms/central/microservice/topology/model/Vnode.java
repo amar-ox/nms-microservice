@@ -21,7 +21,7 @@ public class Vnode {
 	private String description;
 	private String created;
 	private String updated;
-	private String status;
+	private String status = "DOWN";
 	private Map<String, Object> info = new HashMap<String, Object>();
 	
 		// specific Vnode fields 
