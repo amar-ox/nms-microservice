@@ -14,6 +14,11 @@ public class VctpConverter {
   public static void fromJson(Iterable<java.util.Map.Entry<String, Object>> json, Vctp obj) {
     for (java.util.Map.Entry<String, Object> member : json) {
       switch (member.getKey()) {
+        case "busy":
+          if (member.getValue() instanceof Boolean) {
+            obj.setBusy((Boolean)member.getValue());
+          }
+          break;
         case "created":
           if (member.getValue() instanceof String) {
             obj.setCreated((String)member.getValue());
@@ -78,6 +83,9 @@ public class VctpConverter {
   }
 
   public static void toJson(Vctp obj, java.util.Map<String, Object> json) {
+    if (obj.isBusy() != null) {
+      json.put("busy", obj.isBusy());
+    }
     if (obj.getCreated() != null) {
       json.put("created", obj.getCreated());
     }

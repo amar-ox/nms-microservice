@@ -71,6 +71,7 @@ public class ModelObjectMapper {
 			vctp.setStatus(row.getString("vctpStatus"));
 			vctp.setCreated(row.getString("vctpCreated"));
 			vctp.setUpdated(row.getString("vctpUpdated"));
+			vctp.setBusy(row.getBoolean("vctpBusy"));
 			vctp.setVltpId(row.getInteger("vctpVltpId"));
 			
 			vltp.addVctp(vctp);

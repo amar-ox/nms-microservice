@@ -61,7 +61,8 @@ public class Sql {
 			"	 `info` JSON DEFAULT NULL,\n" +
 			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
-			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" + 
+			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
+			"    `busy` BOOLEAN DEFAULT 0,\n" +
 			"    `vltpId` INT NOT NULL,\n" +  
 			"    PRIMARY KEY (`id`),\n" + 
 			"    FOREIGN KEY (`vltpId`) \n" + 
@@ -185,8 +186,8 @@ public class Sql {
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_VLTP = "INSERT INTO Vltp (name, label, description, info, status, busy, vnodeId) "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
-	public static final String INSERT_VCTP = "INSERT INTO Vctp (name, label, description, info, status, vltpId) "
-			+ "VALUES (?, ?, ?, ?, ?, ?)";
+	public static final String INSERT_VCTP = "INSERT INTO Vctp (name, label, description, info, status, busy, vltpId) "
+			+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_VLINK = "INSERT INTO Vlink (name, label, description, info, status, type, srcVltpId, destVltpId) "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_VLINKCONN = "INSERT INTO VlinkConn (name, label, description, info, status, srcVctpId, destVctpId) "
@@ -219,7 +220,7 @@ public class Sql {
 
 	// get all Vctps
 	public static final String FETCH_ALL_VCTPS = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, vltpId "
+			+ "id, name, label, description, info, status, created, updated, busy, vltpId "
 			+ "FROM Vctp"; 
 
 	// get all Vlinks without VlinkConns
@@ -281,12 +282,13 @@ public class Sql {
 
 	// get all the Vctps of a Vltp
 	public static final String FETCH_VCTPS_BY_VLTP = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, vltpId "
+			+ "id, name, label, description, info, status, created, updated, busy, vltpId "
 			+ "FROM Vctp WHERE vltpId = ?";
 	
 	// get all the Vctps of a Vltp
 	public static final String FETCH_VCTPS_BY_VNODE = "SELECT "
-			+ "Vctp.id, Vctp.name, Vctp.label, Vctp.description, Vctp.info, Vctp.status, Vctp.created, Vctp.updated, Vctp.vltpId "
+			+ "Vctp.id, Vctp.name, Vctp.label, Vctp.description, Vctp.info, Vctp.status, Vctp.created, Vctp.updated, "
+			+ "Vctp.busy, Vctp.vltpId "
 			+ "FROM Vnode "
 			+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId INNER JOIN Vctp ON Vltp.id=Vctp.vltpId "
 			+ "WHERE Vnode.Id = ?";
@@ -359,12 +361,12 @@ public class Sql {
 			+ "Vltp.id, Vltp.name, Vltp.label, Vltp.description, Vltp.info, Vltp.status, Vltp.created, Vltp.updated, Vltp.busy, Vltp.vnodeId, "
 			+ "Vctp.id AS vctpId, Vctp.name AS vctpName, Vctp.label AS vctpLabel, Vctp.description AS vctpDescription, "
 			+ "Vctp.info AS vctpInfo, Vctp.status AS vctpStatus, Vctp.created AS vctpCreated, Vctp.updated AS vctpUpdated, "
-			+ "Vctp.vltpId AS vctpVltpId "
+			+ "Vctp.busy AS vctpBusy, Vctp.vltpId AS vctpVltpId "
 			+ "FROM `Vltp` LEFT JOIN `Vctp` ON Vltp.id=Vctp.vltpId WHERE Vltp.id = ?";
 
 	// get a Vctp
 	public static final String FETCH_VCTP_BY_ID = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, vltpId "
+			+ "id, name, label, description, info, status, created, updated, busy, vltpId "
 			+ "FROM Vctp WHERE id = ?";
 
 	// get a Vlink and its VlinkConns
@@ -380,8 +382,8 @@ public class Sql {
 			+ "FROM (((Vlink "
 			+ "INNER JOIN Vltp AS sLtp ON Vlink.srcVltpId=sLtp.id) "
 			+ "INNER JOIN Vltp AS dLtp ON Vlink.destVltpId=dLtp.id) "
-			+ "INNER JOIN Vctp AS allVctps ON sLtp.id=allVctps.vltpId OR dLtp.id=allVctps.vltpId "
-			+ "INNER JOIN VlinkConn as vlc ON allVctps.id=vlc.srcVctpId OR allVctps.id=vlc.destVctpId) "
+			+ "LEFT JOIN Vctp AS allVctps ON sLtp.id=allVctps.vltpId OR dLtp.id=allVctps.vltpId "
+			+ "LEFT JOIN VlinkConn as vlc ON allVctps.id=vlc.srcVctpId OR allVctps.id=vlc.destVctpId) "
 			+ "WHERE Vlink.id = ? GROUP BY vlcId";
 
 	// get a VlinkConn
@@ -440,7 +442,8 @@ public class Sql {
 			+ "busy=IFNULL(?, busy) "
 			+ "WHERE id = ?";
 	public static final String UPDATE_VCTP = "UPDATE Vctp "
-			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status) "
+			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "
+			+ "busy=IFNULL(?, busy) "
 			+ "WHERE id = ?";
 	public static final String UPDATE_VLINK = "UPDATE Vlink "
 			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "

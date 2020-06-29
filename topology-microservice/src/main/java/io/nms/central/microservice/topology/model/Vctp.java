@@ -18,11 +18,12 @@ public class Vctp {
 	private String description;
 	private String created;
 	private String updated;
-	private String status = "DOWN";
+	private String status = "DOWN";	
 	private Map<String, Object> info = new HashMap<String, Object>(); // contains connection info (vlan or wavelength)	
 		
 		// vctp fields
 	private int vltpId;
+	private Boolean busy;
 	
 	// in object only
 	private int vlinkId;
@@ -142,5 +143,13 @@ public class Vctp {
 
 	public void setInfo(Map<String, Object> info) {
 		this.info = info;
+	}
+
+	public Boolean isBusy() {
+		return busy;
+	}
+
+	public void setBusy(Boolean busy) {
+		this.busy = busy;
 	}
 }

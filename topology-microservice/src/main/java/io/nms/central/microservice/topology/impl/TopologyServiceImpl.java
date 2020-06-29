@@ -268,7 +268,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vctp.getLabel())
 				.add(vctp.getDescription())
 				.add(new JsonObject(vctp.getInfo()).encode())
-				.add(vctp.getStatus())				
+				.add(vctp.getStatus())
+				.add(vctp.isBusy())
 				.add(vctp.getVltpId());
 		executeNoResult(params, Sql.INSERT_VCTP, resultHandler);
 		return this;
@@ -340,7 +341,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vctp.getLabel())
 				.add(vctp.getDescription())
 				.add(new JsonObject(vctp.getInfo()).encode())
-				.add(vctp.getStatus())				
+				.add(vctp.getStatus())
+				.add(vctp.isBusy())
 				.add(vctp.getId());
 		this.execute(params, Sql.UPDATE_VCTP, vctp, resultHandler);
 		return this;
