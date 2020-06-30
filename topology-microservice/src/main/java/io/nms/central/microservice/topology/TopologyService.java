@@ -56,7 +56,7 @@ public interface TopologyService {
 	TopologyService deleteVsubnet(String vsubnetId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVsubnet(Vsubnet vsubnet, Handler<AsyncResult<Vsubnet>> resultHandler);
+	TopologyService updateVsubnet(String id, Vsubnet vsubnet, Handler<AsyncResult<Vsubnet>> resultHandler);
 	
 	
 	/* Vnode */
@@ -76,7 +76,7 @@ public interface TopologyService {
 	TopologyService deleteVnode(String vnodeId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVnode(Vnode vnode, Handler<AsyncResult<Vnode>> resultHandler);
+	TopologyService updateVnode(String id, Vnode vnode, Handler<AsyncResult<Vnode>> resultHandler);
 	
 	
 	/* Vltp */
@@ -96,7 +96,7 @@ public interface TopologyService {
 	TopologyService deleteVltp(String vltpId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVltp(Vltp vltp, Handler<AsyncResult<Vltp>> resultHandler);
+	TopologyService updateVltp(String id, Vltp vltp, Handler<AsyncResult<Vltp>> resultHandler);
 	
 
 	/* Vctp */
@@ -119,7 +119,7 @@ public interface TopologyService {
 	TopologyService deleteVctp(String vctpId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVctp(Vctp vctp, Handler<AsyncResult<Vctp>> resultHandler);
+	TopologyService updateVctp(String id, Vctp vctp, Handler<AsyncResult<Vctp>> resultHandler);
 	
 	
 	/* Vlink */
@@ -139,7 +139,7 @@ public interface TopologyService {
 	TopologyService deleteVlink(String vlinkId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVlink(Vlink vlink, Handler<AsyncResult<Vlink>> resultHandler);
+	TopologyService updateVlink(String id, Vlink vlink, Handler<AsyncResult<Vlink>> resultHandler);
 	
 
 	/* VlinkConn */
@@ -162,7 +162,7 @@ public interface TopologyService {
 	TopologyService deleteVlinkConn(String vlinkConnId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<VlinkConn>> resultHandler);
+	TopologyService updateVlinkConn(String id, VlinkConn vlinkConn, Handler<AsyncResult<VlinkConn>> resultHandler);
 	
 	
 	/* Vtrail */
@@ -182,7 +182,7 @@ public interface TopologyService {
 	TopologyService getVtrailsByVsubnet(String vsubnetId, Handler<AsyncResult<List<Vtrail>>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVtrail(Vtrail vtrail, Handler<AsyncResult<Vtrail>> resultHandler);
+	TopologyService updateVtrail(String id, Vtrail vtrail, Handler<AsyncResult<Vtrail>> resultHandler);
 	
 	
 	/* Vxc */
@@ -205,5 +205,5 @@ public interface TopologyService {
 	TopologyService deleteVxc(String vxcId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVxc(Vxc vxc, Handler<AsyncResult<Vxc>> resultHandler);
+	TopologyService updateVxc(String id, Vxc vxc, Handler<AsyncResult<Vxc>> resultHandler);
 }

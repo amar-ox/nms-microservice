@@ -167,7 +167,8 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
           break;
         }
         case "updateVsubnet": {
-          service.updateVsubnet(json.getJsonObject("vsubnet") == null ? null : new io.nms.central.microservice.topology.model.Vsubnet(json.getJsonObject("vsubnet")),
+          service.updateVsubnet((java.lang.String)json.getValue("id"),
+                        json.getJsonObject("vsubnet") == null ? null : new io.nms.central.microservice.topology.model.Vsubnet(json.getJsonObject("vsubnet")),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
@@ -236,7 +237,8 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
           break;
         }
         case "updateVnode": {
-          service.updateVnode(json.getJsonObject("vnode") == null ? null : new io.nms.central.microservice.topology.model.Vnode(json.getJsonObject("vnode")),
+          service.updateVnode((java.lang.String)json.getValue("id"),
+                        json.getJsonObject("vnode") == null ? null : new io.nms.central.microservice.topology.model.Vnode(json.getJsonObject("vnode")),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
@@ -305,7 +307,8 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
           break;
         }
         case "updateVltp": {
-          service.updateVltp(json.getJsonObject("vltp") == null ? null : new io.nms.central.microservice.topology.model.Vltp(json.getJsonObject("vltp")),
+          service.updateVltp((java.lang.String)json.getValue("id"),
+                        json.getJsonObject("vltp") == null ? null : new io.nms.central.microservice.topology.model.Vltp(json.getJsonObject("vltp")),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
@@ -389,7 +392,8 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
           break;
         }
         case "updateVctp": {
-          service.updateVctp(json.getJsonObject("vctp") == null ? null : new io.nms.central.microservice.topology.model.Vctp(json.getJsonObject("vctp")),
+          service.updateVctp((java.lang.String)json.getValue("id"),
+                        json.getJsonObject("vctp") == null ? null : new io.nms.central.microservice.topology.model.Vctp(json.getJsonObject("vctp")),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
@@ -458,7 +462,8 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
           break;
         }
         case "updateVlink": {
-          service.updateVlink(json.getJsonObject("vlink") == null ? null : new io.nms.central.microservice.topology.model.Vlink(json.getJsonObject("vlink")),
+          service.updateVlink((java.lang.String)json.getValue("id"),
+                        json.getJsonObject("vlink") == null ? null : new io.nms.central.microservice.topology.model.Vlink(json.getJsonObject("vlink")),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
@@ -542,7 +547,8 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
           break;
         }
         case "updateVlinkConn": {
-          service.updateVlinkConn(json.getJsonObject("vlinkConn") == null ? null : new io.nms.central.microservice.topology.model.VlinkConn(json.getJsonObject("vlinkConn")),
+          service.updateVlinkConn((java.lang.String)json.getValue("id"),
+                        json.getJsonObject("vlinkConn") == null ? null : new io.nms.central.microservice.topology.model.VlinkConn(json.getJsonObject("vlinkConn")),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
@@ -611,7 +617,8 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
           break;
         }
         case "updateVtrail": {
-          service.updateVtrail(json.getJsonObject("vtrail") == null ? null : new io.nms.central.microservice.topology.model.Vtrail(json.getJsonObject("vtrail")),
+          service.updateVtrail((java.lang.String)json.getValue("id"),
+                        json.getJsonObject("vtrail") == null ? null : new io.nms.central.microservice.topology.model.Vtrail(json.getJsonObject("vtrail")),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
@@ -695,7 +702,8 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
           break;
         }
         case "updateVxc": {
-          service.updateVxc(json.getJsonObject("vxc") == null ? null : new io.nms.central.microservice.topology.model.Vxc(json.getJsonObject("vxc")),
+          service.updateVxc((java.lang.String)json.getValue("id"),
+                        json.getJsonObject("vxc") == null ? null : new io.nms.central.microservice.topology.model.Vxc(json.getJsonObject("vxc")),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {

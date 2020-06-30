@@ -173,12 +173,13 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
-  public  TopologyService updateVsubnet(Vsubnet vsubnet, Handler<AsyncResult<Vsubnet>> resultHandler){
+  public  TopologyService updateVsubnet(String id, Vsubnet vsubnet, Handler<AsyncResult<Vsubnet>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
     }
     JsonObject _json = new JsonObject();
+    _json.put("id", id);
     _json.put("vsubnet", vsubnet == null ? null : vsubnet.toJson());
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
@@ -300,12 +301,13 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
-  public  TopologyService updateVnode(Vnode vnode, Handler<AsyncResult<Vnode>> resultHandler){
+  public  TopologyService updateVnode(String id, Vnode vnode, Handler<AsyncResult<Vnode>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
     }
     JsonObject _json = new JsonObject();
+    _json.put("id", id);
     _json.put("vnode", vnode == null ? null : vnode.toJson());
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
@@ -427,12 +429,13 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
-  public  TopologyService updateVltp(Vltp vltp, Handler<AsyncResult<Vltp>> resultHandler){
+  public  TopologyService updateVltp(String id, Vltp vltp, Handler<AsyncResult<Vltp>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
     }
     JsonObject _json = new JsonObject();
+    _json.put("id", id);
     _json.put("vltp", vltp == null ? null : vltp.toJson());
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
@@ -578,12 +581,13 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
-  public  TopologyService updateVctp(Vctp vctp, Handler<AsyncResult<Vctp>> resultHandler){
+  public  TopologyService updateVctp(String id, Vctp vctp, Handler<AsyncResult<Vctp>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
     }
     JsonObject _json = new JsonObject();
+    _json.put("id", id);
     _json.put("vctp", vctp == null ? null : vctp.toJson());
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
@@ -705,12 +709,13 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
-  public  TopologyService updateVlink(Vlink vlink, Handler<AsyncResult<Vlink>> resultHandler){
+  public  TopologyService updateVlink(String id, Vlink vlink, Handler<AsyncResult<Vlink>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
     }
     JsonObject _json = new JsonObject();
+    _json.put("id", id);
     _json.put("vlink", vlink == null ? null : vlink.toJson());
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
@@ -856,12 +861,13 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
-  public  TopologyService updateVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<VlinkConn>> resultHandler){
+  public  TopologyService updateVlinkConn(String id, VlinkConn vlinkConn, Handler<AsyncResult<VlinkConn>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
     }
     JsonObject _json = new JsonObject();
+    _json.put("id", id);
     _json.put("vlinkConn", vlinkConn == null ? null : vlinkConn.toJson());
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
@@ -983,12 +989,13 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
-  public  TopologyService updateVtrail(Vtrail vtrail, Handler<AsyncResult<Vtrail>> resultHandler){
+  public  TopologyService updateVtrail(String id, Vtrail vtrail, Handler<AsyncResult<Vtrail>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
     }
     JsonObject _json = new JsonObject();
+    _json.put("id", id);
     _json.put("vtrail", vtrail == null ? null : vtrail.toJson());
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
@@ -1134,12 +1141,13 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
-  public  TopologyService updateVxc(Vxc vxc, Handler<AsyncResult<Vxc>> resultHandler){
+  public  TopologyService updateVxc(String id, Vxc vxc, Handler<AsyncResult<Vxc>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
     }
     JsonObject _json = new JsonObject();
+    _json.put("id", id);
     _json.put("vxc", vxc == null ? null : vxc.toJson());
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();

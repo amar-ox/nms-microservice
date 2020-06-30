@@ -101,13 +101,13 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	// UPDATE_VSUBNET = "UPDATE Vsubnet SET label = ?, description = ?, info = ?, status = ? WHERE id = ?";
 	@Override
-	public TopologyService updateVsubnet(Vsubnet vsubnet, Handler<AsyncResult<Vsubnet>> resultHandler) {
+	public TopologyService updateVsubnet(String id, Vsubnet vsubnet, Handler<AsyncResult<Vsubnet>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vsubnet.getLabel())
 				.add(vsubnet.getDescription())
 				.add(new JsonObject(vsubnet.getInfo()).encode())
 				.add(vsubnet.getStatus())
-				.add(vsubnet.getId());
+				.add(id);
 		this.execute(params, Sql.UPDATE_VSUBNET, vsubnet, resultHandler);
 		return this;
 	}
@@ -171,7 +171,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	// UPDATE_VNODE = "UPDATE Vnode SET label = ?, description = ?, info = ?, status = ?, posx = ?, posy = ?, location = ?, type = ? WHERE id = ?";
 	@Override
-	public TopologyService updateVnode(Vnode vnode, Handler<AsyncResult<Vnode>> resultHandler) {
+	public TopologyService updateVnode(String id, Vnode vnode, Handler<AsyncResult<Vnode>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vnode.getLabel())
 				.add(vnode.getDescription())
@@ -181,7 +181,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vnode.getPosy())
 				.add(vnode.getLocation())
 				.add(vnode.getType())
-				.add(vnode.getId());
+				.add(id);
 		this.execute(params, Sql.UPDATE_VNODE, vnode, resultHandler);
 		return this;
 	}
@@ -246,14 +246,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	// UPDATE_VLTP = "UPDATE Vltp SET label = ?, description = ?, info = ?, status = ?, busy = ? WHERE id = ?";
 	@Override
-	public TopologyService updateVltp(Vltp vltp, Handler<AsyncResult<Vltp>> resultHandler) {
+	public TopologyService updateVltp(String id, Vltp vltp, Handler<AsyncResult<Vltp>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vltp.getLabel())
 				.add(vltp.getDescription())
 				.add(new JsonObject(vltp.getInfo()).encode())
 				.add(vltp.getStatus())
 				.add(vltp.isBusy())				
-				.add(vltp.getId());
+				.add(id);
 		this.execute(params, Sql.UPDATE_VLTP, vltp, resultHandler);
 		return this;
 	}
@@ -336,14 +336,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	// UPDATE_VCTP = "UPDATE Vctp SET label = ?, description = ?, info = ?, status = ? WHERE id = ?";
 	@Override
-	public TopologyService updateVctp(Vctp vctp, Handler<AsyncResult<Vctp>> resultHandler) {
+	public TopologyService updateVctp(String id, Vctp vctp, Handler<AsyncResult<Vctp>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vctp.getLabel())
 				.add(vctp.getDescription())
 				.add(new JsonObject(vctp.getInfo()).encode())
 				.add(vctp.getStatus())
 				.add(vctp.isBusy())
-				.add(vctp.getId());
+				.add(id);
 		this.execute(params, Sql.UPDATE_VCTP, vctp, resultHandler);
 		return this;
 	}
@@ -409,14 +409,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	// UPDATE_VLINK = "UPDATE Vlink SET label = ?, description = ?, info = ?, status = ?, type = ? WHERE id = ?";
 	@Override
-	public TopologyService updateVlink(Vlink vlink, Handler<AsyncResult<Vlink>> resultHandler) {
+	public TopologyService updateVlink(String id, Vlink vlink, Handler<AsyncResult<Vlink>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vlink.getLabel())
 				.add(vlink.getDescription())
 				.add(new JsonObject(vlink.getInfo()).encode())
 				.add(vlink.getStatus())
 				.add(vlink.getType())
-				.add(vlink.getId());
+				.add(id);
 		this.execute(params, Sql.UPDATE_VLINK, vlink, resultHandler);
 		return this;
 	}
@@ -499,13 +499,13 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	// UPDATE_VLINKCONN = "UPDATE VlinkConn SET label = ?, description = ?, info = ?, status = ? WHERE id = ?";
 	@Override
-	public TopologyService updateVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<VlinkConn>> resultHandler) {
+	public TopologyService updateVlinkConn(String id, VlinkConn vlinkConn, Handler<AsyncResult<VlinkConn>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vlinkConn.getLabel())
 				.add(vlinkConn.getDescription())
 				.add(new JsonObject(vlinkConn.getInfo()).encode())
 				.add(vlinkConn.getStatus())
-				.add(vlinkConn.getId());
+				.add(id);
 		this.execute(params, Sql.UPDATE_VLINKCONN, vlinkConn, resultHandler);
 		return this;
 	}
@@ -570,13 +570,13 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	// UPDATE_VTRAIL = "UPDATE Vtrail SET label = ?, description = ?, info = ?, status = ? WHERE id = ?";
 	@Override
-	public TopologyService updateVtrail(Vtrail vtrail, Handler<AsyncResult<Vtrail>> resultHandler) {
+	public TopologyService updateVtrail(String id, Vtrail vtrail, Handler<AsyncResult<Vtrail>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vtrail.getLabel())
 				.add(vtrail.getDescription())
 				.add(new JsonObject(vtrail.getInfo()).encode())
 				.add(vtrail.getStatus())
-				.add(vtrail.getId());
+				.add(id);
 		this.execute(params, Sql.UPDATE_VTRAIL, vtrail, resultHandler);
 		return this;
 	}
@@ -663,14 +663,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	// UPDATE_VXC = "UPDATE Vxc SET label = ?, description = ?, info = ?, status = ?, type = ? WHERE id = ?";
 	@Override
-	public TopologyService updateVxc(Vxc vxc, Handler<AsyncResult<Vxc>> resultHandler) {
+	public TopologyService updateVxc(String id, Vxc vxc, Handler<AsyncResult<Vxc>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vxc.getLabel())
 				.add(vxc.getDescription())
 				.add(new JsonObject(vxc.getInfo()).encode())
 				.add(vxc.getStatus())
 				.add(vxc.getType())
-				.add(vxc.getId());
+				.add(id);
 		this.execute(params, Sql.UPDATE_VXC, vxc, resultHandler);
 		return this;
 	}

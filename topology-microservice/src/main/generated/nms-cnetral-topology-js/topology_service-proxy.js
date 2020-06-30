@@ -141,17 +141,18 @@
     /**
 
      @public
+     @param id {string} 
      @param vsubnet {Object} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.updateVsubnet =  function(vsubnet, resultHandler) {
+    this.updateVsubnet =  function(id, vsubnet, resultHandler) {
       var __args = arguments;
-      if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"vsubnet":__args[0]}, {"action":"updateVsubnet"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"id":__args[0], "vsubnet":__args[1]}, {"action":"updateVsubnet"}, function(err, result) { __args[2](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -248,17 +249,18 @@
     /**
 
      @public
+     @param id {string} 
      @param vnode {Object} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.updateVnode =  function(vnode, resultHandler) {
+    this.updateVnode =  function(id, vnode, resultHandler) {
       var __args = arguments;
-      if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"vnode":__args[0]}, {"action":"updateVnode"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"id":__args[0], "vnode":__args[1]}, {"action":"updateVnode"}, function(err, result) { __args[2](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -355,17 +357,18 @@
     /**
 
      @public
+     @param id {string} 
      @param vltp {Object} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.updateVltp =  function(vltp, resultHandler) {
+    this.updateVltp =  function(id, vltp, resultHandler) {
       var __args = arguments;
-      if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"vltp":__args[0]}, {"action":"updateVltp"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"id":__args[0], "vltp":__args[1]}, {"action":"updateVltp"}, function(err, result) { __args[2](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -480,17 +483,18 @@
     /**
 
      @public
+     @param id {string} 
      @param vctp {Object} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.updateVctp =  function(vctp, resultHandler) {
+    this.updateVctp =  function(id, vctp, resultHandler) {
       var __args = arguments;
-      if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"vctp":__args[0]}, {"action":"updateVctp"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"id":__args[0], "vctp":__args[1]}, {"action":"updateVctp"}, function(err, result) { __args[2](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -587,17 +591,18 @@
     /**
 
      @public
+     @param id {string} 
      @param vlink {Object} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.updateVlink =  function(vlink, resultHandler) {
+    this.updateVlink =  function(id, vlink, resultHandler) {
       var __args = arguments;
-      if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"vlink":__args[0]}, {"action":"updateVlink"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"id":__args[0], "vlink":__args[1]}, {"action":"updateVlink"}, function(err, result) { __args[2](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -712,17 +717,18 @@
     /**
 
      @public
+     @param id {string} 
      @param vlinkConn {Object} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.updateVlinkConn =  function(vlinkConn, resultHandler) {
+    this.updateVlinkConn =  function(id, vlinkConn, resultHandler) {
       var __args = arguments;
-      if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"vlinkConn":__args[0]}, {"action":"updateVlinkConn"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"id":__args[0], "vlinkConn":__args[1]}, {"action":"updateVlinkConn"}, function(err, result) { __args[2](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -819,17 +825,18 @@
     /**
 
      @public
+     @param id {string} 
      @param vtrail {Object} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.updateVtrail =  function(vtrail, resultHandler) {
+    this.updateVtrail =  function(id, vtrail, resultHandler) {
       var __args = arguments;
-      if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"vtrail":__args[0]}, {"action":"updateVtrail"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"id":__args[0], "vtrail":__args[1]}, {"action":"updateVtrail"}, function(err, result) { __args[2](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -944,17 +951,18 @@
     /**
 
      @public
+     @param id {string} 
      @param vxc {Object} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.updateVxc =  function(vxc, resultHandler) {
+    this.updateVxc =  function(id, vxc, resultHandler) {
       var __args = arguments;
-      if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"vxc":__args[0]}, {"action":"updateVxc"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"id":__args[0], "vxc":__args[1]}, {"action":"updateVxc"}, function(err, result) { __args[2](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };

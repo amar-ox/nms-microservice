@@ -37,7 +37,7 @@ export default class TopologyService {
 
   deleteVsubnet(vsubnetId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  updateVsubnet(vsubnet: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+  updateVsubnet(id: string, vsubnet: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addVnode(vnode: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
@@ -49,7 +49,7 @@ export default class TopologyService {
 
   deleteVnode(vnodeId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  updateVnode(vnode: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+  updateVnode(id: string, vnode: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addVltp(vltp: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
@@ -61,7 +61,7 @@ export default class TopologyService {
 
   deleteVltp(vltpId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  updateVltp(vltp: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+  updateVltp(id: string, vltp: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addVctp(vctp: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
@@ -75,7 +75,7 @@ export default class TopologyService {
 
   deleteVctp(vctpId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  updateVctp(vctp: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+  updateVctp(id: string, vctp: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addVlink(vlink: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
@@ -87,7 +87,7 @@ export default class TopologyService {
 
   deleteVlink(vlinkId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  updateVlink(vlink: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+  updateVlink(id: string, vlink: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addVlinkConn(vlinkConn: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
@@ -101,7 +101,7 @@ export default class TopologyService {
 
   deleteVlinkConn(vlinkConnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  updateVlinkConn(vlinkConn: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+  updateVlinkConn(id: string, vlinkConn: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addVtrail(vtrail: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
@@ -113,7 +113,7 @@ export default class TopologyService {
 
   getVtrailsByVsubnet(vsubnetId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
-  updateVtrail(vtrail: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+  updateVtrail(id: string, vtrail: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addVxc(vxc: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
@@ -127,5 +127,5 @@ export default class TopologyService {
 
   deleteVxc(vxcId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  updateVxc(vxc: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+  updateVxc(id: string, vxc: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 }
