@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import io.nms.central.microservice.common.service.JdbcRepositoryWrapper;
 import io.nms.central.microservice.topology.TopologyService;
 import io.nms.central.microservice.topology.model.ModelObjectMapper;
+import io.nms.central.microservice.topology.model.PrefixAnn;
+import io.nms.central.microservice.topology.model.Rte;
 import io.nms.central.microservice.topology.model.Vctp;
 import io.nms.central.microservice.topology.model.Vlink;
 import io.nms.central.microservice.topology.model.VlinkConn;
@@ -45,6 +47,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		statements.add(Sql.CREATE_TABLE_VLINKCONN);
 		statements.add(Sql.CREATE_TABLE_VTRAIL);
 		statements.add(Sql.CREATE_TABLE_VXC);
+		statements.add(Sql.CREATE_TABLE_PREFIX_ANN);
+		statements.add(Sql.CREATE_TABLE_RTE);
 		client.getConnection(connHandler(resultHandler, connection -> {
 			connection.batch(statements, r -> {
 				resultHandler.handle(r);
@@ -433,7 +437,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(new JsonObject(vlinkConn.getInfo()).encode())
 				.add(vlinkConn.getStatus())
 				.add(vlinkConn.getSrcVctpId())
-				.add(vlinkConn.getDestVctpId());
+				.add(vlinkConn.getDestVctpId())
+				.add(vlinkConn.getVlinkId());
 		executeNoResult(params, Sql.INSERT_VLINKCONN, resultHandler);
 		return this;
 	}
@@ -672,6 +677,124 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vxc.getType())
 				.add(id);
 		this.execute(params, Sql.UPDATE_VXC, vxc, resultHandler);
+		return this;
+	}
+
+	
+	/********** PrefixAnn **********/
+	// INSERT_PREFIX_ANN = "INSERT INTO PrefixAnn (name, strategy, nodeId, status) 
+	@Override
+	public TopologyService addPrefixAnn(PrefixAnn prefixAnn, Handler<AsyncResult<Void>> resultHandler) {
+		JsonArray params = new JsonArray()
+				.add(prefixAnn.getName())
+				.add(prefixAnn.getStrategy())
+				.add(prefixAnn.getNodeId())				
+				.add(prefixAnn.getStatus());				
+		executeNoResult(params, Sql.INSERT_PREFIX_ANN, resultHandler);
+		return this;
+	}
+	@Override
+	public TopologyService getPrefixAnn(String prefixAnnId, Handler<AsyncResult<PrefixAnn>> resultHandler) {
+		this.retrieveOne(prefixAnnId, Sql.FETCH_PREFIX_ANN_BY_ID)
+		.map(option -> option.map(json -> {
+			PrefixAnn pa = new PrefixAnn(json);
+			return pa;
+		}).orElse(null))
+		.onComplete(resultHandler);
+		return this;
+	}
+	@Override
+	public TopologyService getAllPrefixAnns(Handler<AsyncResult<List<PrefixAnn>>> resultHandler) {
+		this.retrieveAll(Sql.FETCH_ALL_PREFIX_ANNS)
+		.map(rawList -> rawList.stream()
+				.map(row -> {
+					PrefixAnn pa = new PrefixAnn(row);					
+					return pa;
+				})
+				.collect(Collectors.toList()))
+		.onComplete(resultHandler);
+		return this;
+	}
+	@Override
+	public TopologyService deletePrefixAnn(String prefixAnnId, Handler<AsyncResult<Void>> resultHandler) {
+		this.removeOne(prefixAnnId, Sql.DELETE_PREFIX_ANN, resultHandler);
+		return this;
+	}
+	// UPDATE_PREFIX_ANN = UPDATE PrefixAnn SET status=IFNULL(?, status), name=IFNULL(?, name), strategy=IFNULL(?, strategy) 
+	@Override
+	public TopologyService updatePrefixAnn(String id, PrefixAnn prefixAnn, Handler<AsyncResult<PrefixAnn>> resultHandler) {
+		JsonArray params = new JsonArray()
+				.add(prefixAnn.getStatus())
+				.add(prefixAnn.getName())
+				.add(prefixAnn.getStrategy())
+				.add(id);
+		this.execute(params, Sql.UPDATE_PREFIX_ANN, prefixAnn, resultHandler);
+		return this;
+	}
+
+	
+	/********** PrefixAnn **********/
+	// INSERT_ROUTING_ENTRY = "INSERT INTO RoutingEntry (prefixId, fromNodeId, nextHopId, ctpId, cost, status)
+	@Override
+	public TopologyService addRte(Rte rte, Handler<AsyncResult<Void>> resultHandler) {
+		JsonArray params = new JsonArray()
+				.add(rte.getPrefixId())
+				.add(rte.getFromNodeId())
+				.add(rte.getNextHopId())
+				.add(rte.getCtpId())
+				.add(rte.getCost())				
+				.add(rte.getStatus());				
+		executeNoResult(params, Sql.INSERT_RTE, resultHandler);
+		return this;
+	}
+	@Override
+	public TopologyService getRte(String rteId, Handler<AsyncResult<Rte>> resultHandler) {
+		this.retrieveOne(rteId, Sql.FETCH_RTE_BY_ID)
+		.map(option -> option.map(json -> {
+			Rte rte = new Rte(json);
+			return rte;
+		}).orElse(null))
+		.onComplete(resultHandler);
+		return this;
+	}
+	@Override
+	public TopologyService getAllRtes(Handler<AsyncResult<List<Rte>>> resultHandler) {
+		this.retrieveAll(Sql.FETCH_ALL_RTES)
+		.map(rawList -> rawList.stream()
+				.map(row -> {
+					Rte rte = new Rte(row);					
+					return rte;
+				})
+				.collect(Collectors.toList()))
+		.onComplete(resultHandler);
+		return this;
+	}
+	@Override
+	public TopologyService getRtesByNode(String nodeId, Handler<AsyncResult<List<Rte>>> resultHandler) {
+		JsonArray params = new JsonArray().add(nodeId);
+		this.retrieveMany(params, Sql.FETCH_RTES_BY_NODE)
+		.map(rawList -> rawList.stream()
+				.map(row -> {
+					Rte rte = new Rte(row);
+					return rte;
+				})
+				.collect(Collectors.toList())
+				)
+		.onComplete(resultHandler);
+		return this;
+	}
+	@Override
+	public TopologyService deleteRte(String rteId, Handler<AsyncResult<Void>> resultHandler) {
+		this.removeOne(rteId, Sql.DELETE_RTE, resultHandler);
+		return this;
+	}
+	// UPDATE_ROUTING_ENTRY = UPDATE RoutingEntry SET status=IFNULL(?, status)
+	@Override
+	public TopologyService updateRte(String id, Rte rte, Handler<AsyncResult<Rte>> resultHandler) {
+		JsonArray params = new JsonArray()
+				.add(rte.getStatus())
+				.add(id);
+		this.execute(params, Sql.UPDATE_RTE, rte, resultHandler);
 		return this;
 	}
 }

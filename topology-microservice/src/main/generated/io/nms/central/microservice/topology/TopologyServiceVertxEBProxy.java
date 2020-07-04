@@ -38,10 +38,12 @@ import io.nms.central.microservice.topology.model.Vltp;
 import io.nms.central.microservice.topology.model.Vlink;
 import io.nms.central.microservice.topology.model.Vxc;
 import io.nms.central.microservice.topology.model.Vsubnet;
+import io.nms.central.microservice.topology.model.Rte;
 import java.util.List;
 import io.nms.central.microservice.topology.model.VlinkConn;
 import io.nms.central.microservice.topology.model.Vtrail;
 import io.vertx.core.AsyncResult;
+import io.nms.central.microservice.topology.model.PrefixAnn;
 import io.vertx.core.Handler;
 import io.nms.central.microservice.topology.model.Vnode;
 import io.nms.central.microservice.topology.model.Vctp;
@@ -1157,6 +1159,238 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
         resultHandler.handle(Future.failedFuture(res.cause()));
       } else {
         resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new Vxc(res.result().body())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService addPrefixAnn(PrefixAnn prefixAnn, Handler<AsyncResult<Void>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("prefixAnn", prefixAnn == null ? null : prefixAnn.toJson());
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "addPrefixAnn");
+    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getPrefixAnn(String prefixAnnId, Handler<AsyncResult<PrefixAnn>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("prefixAnnId", prefixAnnId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getPrefixAnn");
+    _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new PrefixAnn(res.result().body())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getAllPrefixAnns(Handler<AsyncResult<List<PrefixAnn>>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getAllPrefixAnns");
+    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
+          .map(o -> { if (o == null) return null;
+              return o instanceof Map ? new PrefixAnn(new JsonObject((Map) o)) : new PrefixAnn((JsonObject) o);
+            })
+          .collect(Collectors.toList())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService deletePrefixAnn(String prefixAnnId, Handler<AsyncResult<Void>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("prefixAnnId", prefixAnnId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "deletePrefixAnn");
+    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService updatePrefixAnn(String id, PrefixAnn prefixAnn, Handler<AsyncResult<PrefixAnn>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("id", id);
+    _json.put("prefixAnn", prefixAnn == null ? null : prefixAnn.toJson());
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "updatePrefixAnn");
+    _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new PrefixAnn(res.result().body())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService addRte(Rte rte, Handler<AsyncResult<Void>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("rte", rte == null ? null : rte.toJson());
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "addRte");
+    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getRte(String rteId, Handler<AsyncResult<Rte>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("rteId", rteId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getRte");
+    _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new Rte(res.result().body())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getAllRtes(Handler<AsyncResult<List<Rte>>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getAllRtes");
+    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
+          .map(o -> { if (o == null) return null;
+              return o instanceof Map ? new Rte(new JsonObject((Map) o)) : new Rte((JsonObject) o);
+            })
+          .collect(Collectors.toList())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService getRtesByNode(String nodeId, Handler<AsyncResult<List<Rte>>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("nodeId", nodeId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "getRtesByNode");
+    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
+          .map(o -> { if (o == null) return null;
+              return o instanceof Map ? new Rte(new JsonObject((Map) o)) : new Rte((JsonObject) o);
+            })
+          .collect(Collectors.toList())));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService deleteRte(String rteId, Handler<AsyncResult<Void>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("rteId", rteId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "deleteRte");
+    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
+      }
+    });
+    return this;
+  }
+  @Override
+  public  TopologyService updateRte(String id, Rte rte, Handler<AsyncResult<Rte>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("id", id);
+    _json.put("rte", rte == null ? null : rte.toJson());
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "updateRte");
+    _vertx.eventBus().<JsonObject>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body() == null ? null : new Rte(res.result().body())));
       }
     });
     return this;

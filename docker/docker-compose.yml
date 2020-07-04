@@ -59,8 +59,8 @@ services:
       - logstash
     depends_on:
       - logstash
-  data-streaming-microservice:
-    image: nms/data-streaming-microservice
+  telemetry-microservice:
+    image: nms/telemetry-microservice
     links:
       - mongo
       - logstash
@@ -79,6 +79,16 @@ services:
       - logstash
     expose:
       - "8085"
+  fault-microservice:
+    image: nms/fault-microservice
+    links:
+      - mysql
+      - logstash
+    depends_on:
+      - mysql
+      - logstash
+    expose:
+      - "8086"
   api-gateway:
     image: nms/api-gateway
     ports:
@@ -86,8 +96,7 @@ services:
     environment:
       - JAVA_OPTS="-Xms128m -Xmx256m"
     links:
-      - keycloak-server      
-      - data-streaming-microservice      
+      - keycloak-server
       - logstash
     extra_hosts:
       - "dockernet:${EXTERNAL_IP}"

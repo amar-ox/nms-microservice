@@ -112,6 +112,7 @@ public class ModelObjectMapper {
 			vlc.setUpdated(row.getString("vlcUpdated"));
 			vlc.setSrcVctpId(row.getInteger("vlcSrcVctpId"));
 			vlc.setDestVctpId(row.getInteger("vlcDestVctpId"));
+			vlc.setVlinkId(row.getInteger("vlcVlinkId"));
 
 			vlink.addVlinkConn(vlc);
 		});

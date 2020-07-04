@@ -2,6 +2,8 @@ package io.nms.central.microservice.topology.api;
 
 import io.nms.central.microservice.common.RestAPIVerticle;
 import io.nms.central.microservice.topology.TopologyService;
+import io.nms.central.microservice.topology.model.PrefixAnn;
+import io.nms.central.microservice.topology.model.Rte;
 import io.nms.central.microservice.topology.model.Vctp;
 import io.nms.central.microservice.topology.model.Vlink;
 import io.nms.central.microservice.topology.model.VlinkConn;
@@ -90,6 +92,23 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_GET_XCS_BY_NODE = "/node/:nodeId/xcs";
 	private static final String API_DELETE_XC = "/xc/:xcId";
 	private static final String API_UPDATE_XC = "/xc/:xcId";
+	
+	// private static final String API_GET_TOPOLOGY = "/topology";
+	// private static final String API_GET_NETWORK = "/network";
+	// private static final String API_GET_ROUTES = "/routes";
+
+	private static final String API_ADD_PREFIX_ANN = "/prefixAnn";
+	private static final String API_GET_PREFIX_ANN = "/prefixAnn/:prefixAnnId";	
+	private static final String API_GET_ALL_PREFIX_ANNS = "/prefixAnns";	
+	private static final String API_DELETE_PREFIX_ANN = "/prefixAnn/:prefixAnnId";
+	private static final String API_UPDATE_PREFIX_ANN = "/prefixAnn/:prefixAnnId";
+
+	private static final String API_ADD_RTE = "/rte";
+	private static final String API_GET_RTE = "/rte/:rteId";	
+	private static final String API_GET_ALL_RTES = "/rtes";
+	private static final String API_GET_RTES_BY_NODE = "/rtes/node/:nodeId";
+	private static final String API_DELETE_RTE = "/rte/:rteId";
+	private static final String API_UPDATE_RTE = "/rte/:rteId";
 
 
 	private final TopologyService service;
@@ -165,6 +184,19 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.delete(API_DELETE_XC).handler(this::apiDeleteXc);
 		router.patch(API_UPDATE_XC).handler(this::apiUpdateXc);
 
+		router.post(API_ADD_PREFIX_ANN).handler(this::apiAddPrefixAnn);
+		router.get(API_GET_ALL_PREFIX_ANNS).handler(this::apiGetAllPrefixAnns);
+		router.get(API_GET_PREFIX_ANN).handler(this::apiGetPrefixAnn);
+		router.delete(API_DELETE_PREFIX_ANN).handler(this::apiDeletePrefixAnn);
+		router.patch(API_UPDATE_PREFIX_ANN).handler(this::apiUpdatePrefixAnn);
+
+		router.post(API_ADD_RTE).handler(this::apiAddRte);
+		router.get(API_GET_ALL_RTES).handler(this::apiGetAllRtes);
+		router.get(API_GET_RTES_BY_NODE).handler(this::apiGetRtesByNode);
+		router.get(API_GET_RTE).handler(this::apiGetRte);
+		router.delete(API_DELETE_RTE).handler(this::apiDeleteRte);
+		router.patch(API_UPDATE_RTE).handler(this::apiUpdateRte);
+
 		// get HTTP host and port from configuration, or use default value
 		String host = config().getString("topology.http.address", "0.0.0.0");
 		int port = config().getInteger("topology.http.port", 8085);
@@ -209,7 +241,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		logger.debug("apiUpdateSubnet: "+vsubnet.toString());		
 		service.updateVsubnet(id, vsubnet, resultHandlerNonEmpty(context));
 	}
-	
+
 
 	// Node API 
 	private void apiAddNode(RoutingContext context) {
@@ -239,7 +271,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		final Vnode vnode = Json.decodeValue(context.getBodyAsString(), Vnode.class);		
 		service.updateVnode(id, vnode, resultHandlerNonEmpty(context));
 	}
-	
+
 
 	// Ltp API
 	private void apiAddLtp(RoutingContext context) {
@@ -268,7 +300,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		service.updateVltp(id, vltp, resultHandlerNonEmpty(context));
 	}
 
-	
+
 	// Ctp API
 	private void apiAddCtp(RoutingContext context) {
 		final Vctp ctp = Json.decodeValue(context.getBodyAsString(), Vctp.class);		
@@ -359,7 +391,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		service.updateVlinkConn(id, vlinkConn, resultHandlerNonEmpty(context));
 	}
 
-	
+
 	// Trail API
 	private void apiAddTrail(RoutingContext context) {
 		final Vtrail vtrail = Json.decodeValue(context.getBodyAsString(), Vtrail.class);			
@@ -417,5 +449,57 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		String id = context.request().getParam("xcId");
 		final Vxc vxc = Json.decodeValue(context.getBodyAsString(), Vxc.class);		
 		service.updateVxc(id, vxc, resultHandlerNonEmpty(context));
+	}
+
+
+	// Prefix Announcement API
+	private void apiAddPrefixAnn(RoutingContext context) {
+		final PrefixAnn prefixAnn = Json.decodeValue(context.getBodyAsString(), PrefixAnn.class);			
+		JsonObject result = new JsonObject().put("message", "prefixAnn_added");
+		service.addPrefixAnn(prefixAnn, resultVoidHandler(context, result));
+	}
+	private void apiGetPrefixAnn(RoutingContext context) {
+		String prefixAnnId = context.request().getParam("prefixAnnId");			
+		service.getPrefixAnn(prefixAnnId, resultHandlerNonEmpty(context));
+	}
+	private void apiGetAllPrefixAnns(RoutingContext context) {
+		service.getAllPrefixAnns(resultHandler(context, Json::encodePrettily));
+	}
+	private void apiDeletePrefixAnn(RoutingContext context) {
+		String prefixAnnId = context.request().getParam("prefixAnnId");			
+		service.deletePrefixAnn(prefixAnnId, deleteResultHandler(context));
+	}
+	private void apiUpdatePrefixAnn(RoutingContext context) {
+		String id = context.request().getParam("prefixAnnId");
+		final PrefixAnn prefixAnn = Json.decodeValue(context.getBodyAsString(), PrefixAnn.class);		
+		service.updatePrefixAnn(id, prefixAnn, resultHandlerNonEmpty(context));
+	}
+	
+	
+	// Routing Table Entry API
+	private void apiAddRte(RoutingContext context) {
+		final Rte rte = Json.decodeValue(context.getBodyAsString(), Rte.class);			
+		JsonObject result = new JsonObject().put("message", "rte_added");
+		service.addRte(rte, resultVoidHandler(context, result));
+	}
+	private void apiGetRte(RoutingContext context) {
+		String rteId = context.request().getParam("RteId");			
+		service.getRte(rteId, resultHandlerNonEmpty(context));
+	}
+	private void apiGetAllRtes(RoutingContext context) {
+		service.getAllRtes(resultHandler(context, Json::encodePrettily));
+	}
+	private void apiGetRtesByNode(RoutingContext context) {	
+		String nodeId = context.request().getParam("nodeId");		
+		service.getRtesByNode(nodeId, resultHandler(context, Json::encodePrettily));
+	}
+	private void apiDeleteRte(RoutingContext context) {
+		String rteId = context.request().getParam("rteId");			
+		service.deleteRte(rteId, deleteResultHandler(context));
+	}
+	private void apiUpdateRte(RoutingContext context) {
+		String id = context.request().getParam("rteId");
+		final Rte rte = Json.decodeValue(context.getBodyAsString(), Rte.class);		
+		service.updateRte(id, rte, resultHandlerNonEmpty(context));
 	}
 }

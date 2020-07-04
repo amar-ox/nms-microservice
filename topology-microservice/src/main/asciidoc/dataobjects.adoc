@@ -1,5 +1,42 @@
 = Cheatsheets
 
+[[PrefixAnn]]
+== PrefixAnn
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[created]]`@created`|`String`|-
+|[[id]]`@id`|`Number (int)`|-
+|[[name]]`@name`|`String`|-
+|[[nodeId]]`@nodeId`|`Number (int)`|-
+|[[status]]`@status`|`String`|-
+|[[strategy]]`@strategy`|`String`|-
+|[[updated]]`@updated`|`String`|-
+|===
+
+[[Rte]]
+== Rte
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[cost]]`@cost`|`Number (int)`|-
+|[[created]]`@created`|`String`|-
+|[[ctpId]]`@ctpId`|`Number (int)`|-
+|[[fromNodeId]]`@fromNodeId`|`Number (int)`|-
+|[[id]]`@id`|`Number (int)`|-
+|[[nextHopId]]`@nextHopId`|`Number (int)`|-
+|[[prefixId]]`@prefixId`|`Number (int)`|-
+|[[prefixName]]`@prefixName`|`String`|-
+|[[status]]`@status`|`String`|-
+|[[updated]]`@updated`|`String`|-
+|===
+
 [[Vctp]]
 == Vctp
 

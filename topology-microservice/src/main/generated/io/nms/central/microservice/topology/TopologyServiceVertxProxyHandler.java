@@ -46,10 +46,12 @@ import io.nms.central.microservice.topology.model.Vltp;
 import io.nms.central.microservice.topology.model.Vlink;
 import io.nms.central.microservice.topology.model.Vxc;
 import io.nms.central.microservice.topology.model.Vsubnet;
+import io.nms.central.microservice.topology.model.Rte;
 import java.util.List;
 import io.nms.central.microservice.topology.model.VlinkConn;
 import io.nms.central.microservice.topology.model.Vtrail;
 import io.vertx.core.AsyncResult;
+import io.nms.central.microservice.topology.model.PrefixAnn;
 import io.vertx.core.Handler;
 import io.nms.central.microservice.topology.model.Vnode;
 import io.nms.central.microservice.topology.model.Vctp;
@@ -704,6 +706,131 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
         case "updateVxc": {
           service.updateVxc((java.lang.String)json.getValue("id"),
                         json.getJsonObject("vxc") == null ? null : new io.nms.central.microservice.topology.model.Vxc(json.getJsonObject("vxc")),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(res.result() == null ? null : res.result().toJson());
+                        }
+                     });
+          break;
+        }
+        case "addPrefixAnn": {
+          service.addPrefixAnn(json.getJsonObject("prefixAnn") == null ? null : new io.nms.central.microservice.topology.model.PrefixAnn(json.getJsonObject("prefixAnn")),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "getPrefixAnn": {
+          service.getPrefixAnn((java.lang.String)json.getValue("prefixAnnId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(res.result() == null ? null : res.result().toJson());
+                        }
+                     });
+          break;
+        }
+        case "getAllPrefixAnns": {
+          service.getAllPrefixAnns(res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "deletePrefixAnn": {
+          service.deletePrefixAnn((java.lang.String)json.getValue("prefixAnnId"),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "updatePrefixAnn": {
+          service.updatePrefixAnn((java.lang.String)json.getValue("id"),
+                        json.getJsonObject("prefixAnn") == null ? null : new io.nms.central.microservice.topology.model.PrefixAnn(json.getJsonObject("prefixAnn")),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(res.result() == null ? null : res.result().toJson());
+                        }
+                     });
+          break;
+        }
+        case "addRte": {
+          service.addRte(json.getJsonObject("rte") == null ? null : new io.nms.central.microservice.topology.model.Rte(json.getJsonObject("rte")),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "getRte": {
+          service.getRte((java.lang.String)json.getValue("rteId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(res.result() == null ? null : res.result().toJson());
+                        }
+                     });
+          break;
+        }
+        case "getAllRtes": {
+          service.getAllRtes(res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "getRtesByNode": {
+          service.getRtesByNode((java.lang.String)json.getValue("nodeId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "deleteRte": {
+          service.deleteRte((java.lang.String)json.getValue("rteId"),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "updateRte": {
+          service.updateRte((java.lang.String)json.getValue("id"),
+                        json.getJsonObject("rte") == null ? null : new io.nms.central.microservice.topology.model.Rte(json.getJsonObject("rte")),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {

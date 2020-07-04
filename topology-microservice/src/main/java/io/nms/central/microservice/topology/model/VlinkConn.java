@@ -24,14 +24,13 @@ public class VlinkConn {
 		// vlinkConn fields
 	private int srcVctpId;
 	private int destVctpId;	
+	private int vlinkId;
 	
 	// in object only
 	private int srcVltpId;	
 	private int destVltpId;
 	private int srcVnodeId;	
-	private int destVnodeId;
-	
-	private int vlinkId;
+	private int destVnodeId;	
 	
 	private int vsubnetId;	
 

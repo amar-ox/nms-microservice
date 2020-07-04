@@ -83,7 +83,6 @@ public class Sql {
 			"    `srcVltpId` INT NOT NULL,\n" + 
 			"    `destVltpId` INT NOT NULL,\n" + 
 			"    PRIMARY KEY (`id`),\n" + 
-			"    UNIQUE (`name`),\n" +
 			"    FOREIGN KEY (`srcVltpId`) \n" + 
 			"        REFERENCES Vltp(`id`)\n" + 
 			"        ON DELETE CASCADE\n" + 
@@ -102,10 +101,14 @@ public class Sql {
 			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
+			"    `vlinkId` INT NOT NULL,\n" +
 			"    `srcVctpId` INT NOT NULL,\n" + 
 			"    `destVctpId` INT NOT NULL,\n" +
 			"    PRIMARY KEY (`id`),\n" + 
-			"    UNIQUE (`name`),\n" +
+			"    FOREIGN KEY (`vlinkId`) \n" + 
+			"        REFERENCES Vlink(`id`)\n" + 
+			"        ON DELETE CASCADE\n" + 
+			"        ON UPDATE CASCADE,\n" +
 			"    FOREIGN KEY (`srcVctpId`) \n" + 
 			"        REFERENCES Vctp(`id`)\n" + 
 			"        ON DELETE CASCADE\n" + 
@@ -127,7 +130,6 @@ public class Sql {
 			"    `srcVctpId` INT NOT NULL,\n" + 
 			"    `destVctpId` INT NOT NULL,\n" +
 			"    PRIMARY KEY (`id`),\n" + 
-			"    UNIQUE (`name`),\n" +
 			"    FOREIGN KEY (`srcVctpId`) \n" + 
 			"        REFERENCES Vctp(`id`)\n" + 
 			"        ON DELETE CASCADE\n" + 
@@ -151,9 +153,8 @@ public class Sql {
 			"    `vtrailId` INT NOT NULL,\n" +
 			"    `srcVctpId` INT NOT NULL,\n" + 
 			"    `destVctpId` INT NOT NULL,\n" +
-			"    `dropVctpId` INT NOT NULL,\n" +
+			"    `dropVctpId` INT DEFAULT NULL,\n" +
 			"    PRIMARY KEY (`id`),\n" + 
-			"    UNIQUE (`name`),\n" +
 			"    FOREIGN KEY (`vnodeId`) \n" + 
 			"        REFERENCES Vnode(`id`)\n" + 
 			"        ON DELETE CASCADE\n" + 
@@ -175,7 +176,48 @@ public class Sql {
 			"        ON DELETE CASCADE\n" + 
 			"        ON UPDATE CASCADE\n" + 
 			")";
-
+	public static final String CREATE_TABLE_PREFIX_ANN = "CREATE TABLE IF NOT EXISTS PrefixAnn (\n" +
+			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
+			"    `name` VARCHAR(255) NOT NULL,\n" + 
+			"    `nodeId` INT NOT NULL,\n" +
+			"    `strategy` VARCHAR(60) NOT NULL,\n" + 
+			"    `status` VARCHAR(10) NOT NULL,\n" +
+			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
+			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
+			"    PRIMARY KEY (`id`),\n" + 
+			"    FOREIGN KEY (`nodeId`) \n" + 
+			"        REFERENCES Vnode(`id`)\n" + 
+			"        ON DELETE CASCADE\n" + 
+			"		 ON UPDATE CASCADE\n" +
+			")";
+	public static final String CREATE_TABLE_RTE = "CREATE TABLE IF NOT EXISTS Rte (\n" +
+			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
+			"    `prefixId` INT NOT NULL,\n" +
+			"    `fromNodeId` INT NOT NULL,\n" +
+			"    `nextHopId` INT NOT NULL,\n" +
+			"    `cost` INT NOT NULL,\n" +
+			"    `ctpId` INT NOT NULL,\n" +
+			"    `status` VARCHAR(10) NOT NULL,\n" +
+			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
+			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +			
+			"    PRIMARY KEY (`id`),\n" +
+			"    FOREIGN KEY (`prefixId`) \n" +
+			"        REFERENCES PrefixAnn(`id`)\n" + 
+			"        ON DELETE CASCADE\n" + 
+			"		 ON UPDATE CASCADE,\n" +
+			"    FOREIGN KEY (`fromNodeId`) \n" + 
+			"        REFERENCES Vnode(`id`)\n" + 
+			"        ON DELETE CASCADE\n" + 
+			"		 ON UPDATE CASCADE,\n" +
+			"    FOREIGN KEY (`nextHopId`) \n" + 
+			"        REFERENCES Vnode(`id`)\n" + 
+			"        ON DELETE CASCADE\n" + 
+			"		 ON UPDATE CASCADE,\n" +
+			"    FOREIGN KEY (`ctpId`) \n" + 
+			"        REFERENCES Vctp(`id`)\n" + 
+			"        ON DELETE CASCADE\n" + 
+			"		 ON UPDATE CASCADE\n" +
+			")";
 	
 	
 	/*-------------------- INSERT ITEMS --------------------*/
@@ -190,12 +232,16 @@ public class Sql {
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_VLINK = "INSERT INTO Vlink (name, label, description, info, status, type, srcVltpId, destVltpId) "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-	public static final String INSERT_VLINKCONN = "INSERT INTO VlinkConn (name, label, description, info, status, srcVctpId, destVctpId) "
-			+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+	public static final String INSERT_VLINKCONN = "INSERT INTO VlinkConn (name, label, description, info, status, srcVctpId, destVctpId, vlinkId) "
+			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_VTRAIL = "INSERT INTO Vtrail (name, label, description, info, status, srcVctpId, destVctpId) "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_VXC = "INSERT INTO Vxc (name, label, description, info, status, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId) "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	public static final String INSERT_PREFIX_ANN = "INSERT INTO PrefixAnn (name, strategy, nodeId, status) "
+			+ "VALUES (?, ?, ?, ?)";
+	public static final String INSERT_RTE = "INSERT INTO Rte (prefixId, fromNodeId, nextHopId, ctpId, cost, status) "
+			+ "VALUES (?, ?, ?, ?, ?, ?)";
 
 
 	
@@ -234,7 +280,7 @@ public class Sql {
 	// get all VlinkConns
 	public static final String FETCH_ALL_VLINKCONNS = "SELECT "
 			+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, "
-			+ "VlinkConn.created, VlinkConn.updated, VlinkConn.srcVctpId, VlinkConn.destVctpId, "
+			+ "VlinkConn.created, VlinkConn.updated, VlinkConn.srcVctpId, VlinkConn.destVctpId, VlinkConn.vlinkId, "
 			+ "sCtp.vltpId AS srcVltpId, dCtp.vltpId AS destVltpId, sLtp.vnodeId AS srcVnodeId, dLtp.vnodeId AS destVnodeId "
 			+ "FROM ((VlinkConn "
 			+ "INNER JOIN Vctp AS sCtp ON VlinkConn.srcVctpId=sCtp.id INNER JOIN Vltp AS sLtp ON sCtp.vltpId=sLtp.id) "
@@ -250,7 +296,15 @@ public class Sql {
 	public static final String FETCH_ALL_VXCS = "SELECT "
 			+ "id, name, label, description, info, status, created, updated, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId "
 			+ "FROM Vxc"; 
-
+	
+	
+	public static final String FETCH_ALL_PREFIX_ANNS = "SELECT "
+			+ "id, name, nodeId, strategy, status, created, updated "
+			+ "FROM PrefixAnn";
+	
+	public static final String FETCH_ALL_RTES = "SELECT "
+			+ "Rte.id, Rte.prefixId, PrefixAnn.name AS prefixName, Rte.fromNodeId, Rte.nextHopId, Rte.cost, Rte.ctpId, Rte.status, Rte.created, Rte.updated "
+			+ "FROM Rte INNER JOIN PrefixAnn on Rte.prefixId=PrefixAnn.id";
 
 
 	/*-------------------- FETCH ITEMS BY ANOTHER --------------------*/
@@ -294,21 +348,20 @@ public class Sql {
 			+ "WHERE Vnode.Id = ?";
 
 	// get all the VlinkConns that goes over a Vlink
-	public static final String FETCH_VLINKCONNS_BY_VLINK = " SELECT "
-			+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, VlinkConn.created, VlinkConn.updated, "
-			+ "VlinkConn.srcVctpId, VlinkConn.destVctpId, "
-			+ "Vlink.srcVltpId AS srcVltpId, Vlink.destVltpId AS destVltpId, Vlink.id as vlinkId " 
-			+ "FROM Vlink " 
-			+ "INNER JOIN Vltp ON Vlink.srcVltpId=Vltp.id "
-			+ "INNER JOIN Vctp ON Vltp.id=Vctp.vltpId " 
-			+ "INNER JOIN VlinkConn ON Vctp.id=VlinkConn.srcVctpId OR Vctp.id=VlinkConn.destVctpId " 
-			+ "WHERE Vlink.id = ?";
+	public static final String FETCH_VLINKCONNS_BY_VLINK = "SELECT "
+			+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, "
+			+ "VlinkConn.created, VlinkConn.updated, VlinkConn.srcVctpId, VlinkConn.destVctpId, VlinkConn.vlinkId, "
+			+ "sCtp.vltpId AS srcVltpId, dCtp.vltpId AS destVltpId, sLtp.vnodeId AS srcVnodeId, dLtp.vnodeId AS destVnodeId "
+			+ "FROM ((VlinkConn "
+			+ "INNER JOIN Vctp AS sCtp ON VlinkConn.srcVctpId=sCtp.id INNER JOIN Vltp AS sLtp ON sCtp.vltpId=sLtp.id) "
+			+ "INNER JOIN Vctp AS dCtp ON VlinkConn.destVctpId=dCtp.id INNER JOIN Vltp AS dLtp ON dCtp.vltpId=dLtp.id) "
+			+ "WHERE VlinkConn.vlinkId = ?";
 	
 	// Assuming that: a linkConn is in a subnet if its source-node is in that subnet
 	// get all the VlinkConns of a Vsubnet
 	public static final String FETCH_VLINKCONNS_BY_VSUBNET = "SELECT "
 			+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, VlinkConn.created, VlinkConn.updated, "
-			+ "VlinkConn.srcVctpId, VlinkConn.destVctpId, "
+			+ "VlinkConn.srcVctpId, VlinkConn.destVctpId, VlinkConn.vlinkId, "
 			+ "Vltp.id AS srcVltpId, destLtp.id AS destVltpId, "
 			+ "Vltp.vnodeId AS srcVnodeId, destLtp.vnodeId AS destVnodeId, "
 			+ "Vnode.vsubnetId " 
@@ -336,7 +389,11 @@ public class Sql {
 	public static final String FETCH_VXC_BY_VTRAIL = "SELECT "
 			+ "id, name, label, description, info, status, created, updated, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId "
 			+ "FROM Vxc WHERE vtrailId = ?";
-
+	
+	// get all Routing entries of a node
+	public static final String FETCH_RTES_BY_NODE = "SELECT "
+			+ "Rte.id, Rte.prefixId, PrefixAnn.name AS prefixName, Rte.fromNodeId, Rte.nextHopId, Rte.cost, Rte.ctpId, Rte.status, Rte.created, Rte.updated "
+			+ "FROM Rte INNER JOIN PrefixAnn on Rte.prefixId=PrefixAnn.id WHERE Rte.fromNodeId=?";
 
 
 	/*-------------------- FETCH ITEMS BY ID --------------------*/
@@ -377,24 +434,22 @@ public class Sql {
 			+ "sLtp.id AS srcVltpId, dLtp.id AS destVltpId, "
 			+ "vlc.id AS vlcId, vlc.name AS vlcName, vlc.label AS vlcLabel, vlc.description AS vlcDescription, vlc.info AS vlcInfo, "
 			+ "vlc.status AS vlcStatus, vlc.created AS vlcCreated, vlc.updated AS vlcUpdated, "
-			+ "vlc.srcVctpId AS vlcSrcVctpId, vlc.destVctpId AS vlcDestVctpId, "
+			+ "vlc.srcVctpId AS vlcSrcVctpId, vlc.destVctpId AS vlcDestVctpId, vlc.vlinkId AS vlcVlinkId, "
 			+ "sLtp.id AS vlcSrcVltpId, dLtp.id AS vlcDestVltpId "
 			+ "FROM (((Vlink "
 			+ "INNER JOIN Vltp AS sLtp ON Vlink.srcVltpId=sLtp.id) "
 			+ "INNER JOIN Vltp AS dLtp ON Vlink.destVltpId=dLtp.id) "
-			+ "LEFT JOIN Vctp AS allVctps ON sLtp.id=allVctps.vltpId OR dLtp.id=allVctps.vltpId "
-			+ "LEFT JOIN VlinkConn as vlc ON allVctps.id=vlc.srcVctpId OR allVctps.id=vlc.destVctpId) "
+			+ "LEFT JOIN VlinkConn as vlc ON Vlink.id=vlc.vlinkId) "
 			+ "WHERE Vlink.id = ? GROUP BY vlcId";
 
 	// get a VlinkConn
 	public static final String FETCH_VLINKCONN_BY_ID = "SELECT "
 			+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, "
-			+ "VlinkConn.created, VlinkConn.updated, VlinkConn.srcVctpId, VlinkConn.destVctpId, "
-			+ "sLtp.id AS srcVltpId, dLtp.id AS destVltpId, Vlink.id AS vlinkId "
+			+ "VlinkConn.created, VlinkConn.updated, VlinkConn.srcVctpId, VlinkConn.destVctpId, VlinkConn.vlinkId, "
+			+ "sLtp.id AS srcVltpId, dLtp.id AS destVltpId, sLtp.vnodeId AS srcVnodeId, dLtp.vnodeId AS destVnodeId "
 			+ "FROM ((VlinkConn "
 			+ "INNER JOIN Vctp AS sCtp ON sCtp.id=srcVctpId INNER JOIN Vltp AS sLtp ON sLtp.id=sCtp.vltpId) "
 			+ "INNER JOIN Vctp AS dCtp ON dCtp.id=destVctpId INNER JOIN Vltp AS dLtp ON dLtp.id=dCtp.vltpId) "
-			+ "LEFT JOIN Vlink ON Vlink.srcVltpId=sLtp.id OR Vlink.destVltpId=dLtp.id "
 			+ "WHERE VlinkConn.id = ?";
 
 	// get a Vtrail and its Vxcs
@@ -412,7 +467,14 @@ public class Sql {
 			+ "id, name, label, description, info, status, created, updated, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId "
 			+ "FROM Vxc WHERE id = ?"; 
 
-
+	
+	public static final String FETCH_PREFIX_ANN_BY_ID = "SELECT "
+			+ "id, name, nodeId, strategy, status, created, updated "
+			+ "FROM PrefixAnn WHERE id=?";
+	
+	public static final String FETCH_RTE_BY_ID = "SELECT "
+			+ "Rte.id, Rte.prefixId, PrefixAnn.name AS prefixName, Rte.fromNodeId, Rte.nextHopId, Rte.cost, Rte.ctpId, Rte.status, Rte.created, Rte.updated "
+			+ "FROM Rte INNER JOIN PrefixAnn on Rte.prefixId=PrefixAnn.id WHERE Rte.id=?";
 
 	/*-------------------- DELETE ITEMS BY ID --------------------*/
 
@@ -424,6 +486,9 @@ public class Sql {
 	public static final String DELETE_VLINKCONN = "DELETE FROM VlinkConn WHERE id=?";
 	public static final String DELETE_VTRAIL = "DELETE FROM Vtrail WHERE id=?";
 	public static final String DELETE_VXC = "DELETE FROM Vxc WHERE id=?";
+	
+	public static final String DELETE_PREFIX_ANN = "DELETE FROM PrefixAnn WHERE id=?";
+	public static final String DELETE_RTE = "DELETE FROM Rte WHERE id=?";
 	
 
 
@@ -458,5 +523,13 @@ public class Sql {
 	public static final String UPDATE_VXC = "UPDATE Vxc "
 			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "
 			+ "type=IFNULL(?, type) "
+			+ "WHERE id = ?";
+	
+	public static final String UPDATE_PREFIX_ANN = "UPDATE PrefixAnn "
+			+ "SET status=IFNULL(?, status), name=IFNULL(?, name), strategy=IFNULL(?, strategy) "
+			+ "WHERE id = ?";
+		
+	public static final String UPDATE_RTE = "UPDATE Rte "
+			+ "SET status=IFNULL(?, status) "
 			+ "WHERE id = ?";
 }
