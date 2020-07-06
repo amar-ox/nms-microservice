@@ -73,6 +73,8 @@ export default class TopologyService {
 
   getVctpsByVnode(vnodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
+  getVctpsByVlink(vlinkId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
   deleteVctp(vctpId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   updateVctp(id: string, vctp: any, resultHandler: (err: any, result: any) => any) : TopologyService;

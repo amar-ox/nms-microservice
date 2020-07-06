@@ -60,6 +60,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_GET_ALL_CTPS = "/ctps";
 	private static final String API_GET_CTPS_BY_LTP = "/ltp/:ltpId/ctps";
 	private static final String API_GET_CTPS_BY_NODE = "/node/:nodeId/ctps";
+	private static final String API_GET_CTPS_BY_LINK = "/link/:linkId/ctps";
 	private static final String API_DELETE_CTP = "/ctp/:ctpId";
 	private static final String API_UPDATE_CTP = "/ctp/:ctpId";
 
@@ -150,6 +151,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.get(API_GET_ALL_CTPS).handler(this::apiGetAllCtps);
 		router.get(API_GET_CTPS_BY_LTP).handler(this::apiGetCtpsByLtp);
 		router.get(API_GET_CTPS_BY_NODE).handler(this::apiGetCtpsByNode);
+		router.get(API_GET_CTPS_BY_LINK).handler(this::apiGetCtpsByLink);
 		router.get(API_GET_CTP).handler(this::apiGetCtp);
 		router.delete(API_DELETE_CTP).handler(this::apiDeleteCtp);
 		router.patch(API_UPDATE_CTP).handler(this::apiUpdateCtp);
@@ -318,6 +320,10 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiGetCtpsByNode(RoutingContext context) {
 		String nodeId = context.request().getParam("nodeId");		
 		service.getVctpsByVnode(nodeId, resultHandler(context, Json::encodePrettily));		
+	}
+	private void apiGetCtpsByLink(RoutingContext context) {
+		String linkId = context.request().getParam("linkId");		
+		service.getVctpsByVlink(linkId, resultHandler(context, Json::encodePrettily));		
 	}
 	private void apiGetAllCtps(RoutingContext context) {		
 		service.getAllVctps(resultHandler(context, Json::encodePrettily));

@@ -388,6 +388,21 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
+        case "getVctpsByVlink": {
+          service.getVctpsByVlink((java.lang.String)json.getValue("vlinkId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
         case "deleteVctp": {
           service.deleteVctp((java.lang.String)json.getValue("vctpId"),
                         HelperUtils.createHandler(msg));

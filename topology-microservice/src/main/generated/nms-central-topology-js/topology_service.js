@@ -67,6 +67,7 @@ var TopologyService = function(j_val) {
   var __super_getAllVctps = this.getAllVctps;
   var __super_getVctpsByVltp = this.getVctpsByVltp;
   var __super_getVctpsByVnode = this.getVctpsByVnode;
+  var __super_getVctpsByVlink = this.getVctpsByVlink;
   var __super_deleteVctp = this.deleteVctp;
   var __super_updateVctp = this.updateVctp;
   var __super_addVlink = this.addVlink;
@@ -652,6 +653,30 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_getVctpsByVnode != 'undefined') {
       return __super_getVctpsByVnode.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vlinkId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getVctpsByVlink =  function(vlinkId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getVctpsByVlink(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getVctpsByVlink != 'undefined') {
+      return __super_getVctpsByVlink.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };

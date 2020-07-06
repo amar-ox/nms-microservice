@@ -334,6 +334,21 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
+	public TopologyService getVctpsByVlink(String vlinkId, Handler<AsyncResult<List<Vctp>>> resultHandler) {
+		JsonArray params = new JsonArray().add(vlinkId);
+		this.retrieveMany(params, Sql.FETCH_VCTPS_BY_VLINK)
+		.map(rawList -> rawList.stream()
+				.map(row -> {
+					Vctp vctp = new Vctp(row);
+					vctp.setInfo(new JsonObject(row.getString("info")).getMap());
+					return vctp;
+				})
+				.collect(Collectors.toList())
+				)
+		.onComplete(resultHandler);
+		return this;
+	}
+	@Override
 	public TopologyService deleteVctp(String vctpId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(vctpId, Sql.DELETE_VCTP, resultHandler);
 		return this;
@@ -601,9 +616,13 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vxc.getVnodeId())
 				.add(vxc.getVtrailId())
 				.add(vxc.getSrcVctpId())
-				.add(vxc.getDestVctpId())
-				.add(vxc.getDropVctpId());
-		executeNoResult(params, Sql.INSERT_VXC, resultHandler);
+				.add(vxc.getDestVctpId());				
+		if(vxc.getDropVctpId() == 0) {
+			executeNoResult(params, Sql.INSERT_VXC_1, resultHandler);
+		} else {
+			params.add(vxc.getDropVctpId());
+			executeNoResult(params, Sql.INSERT_VXC, resultHandler);
+		}
 		return this;
 	}
 	@Override
@@ -796,5 +815,5 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(id);
 		this.execute(params, Sql.UPDATE_RTE, rte, resultHandler);
 		return this;
-	}
+	}	
 }

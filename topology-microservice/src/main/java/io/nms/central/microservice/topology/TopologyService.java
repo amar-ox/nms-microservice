@@ -118,6 +118,9 @@ public interface TopologyService {
 	TopologyService getVctpsByVnode(String vnodeId, Handler<AsyncResult<List<Vctp>>> resultHandler);
 	
 	@Fluent	
+	TopologyService getVctpsByVlink(String vlinkId, Handler<AsyncResult<List<Vctp>>> resultHandler);
+	
+	@Fluent	
 	TopologyService deleteVctp(String vctpId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 

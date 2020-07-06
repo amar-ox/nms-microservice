@@ -238,6 +238,8 @@ public class Sql {
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_VXC = "INSERT INTO Vxc (name, label, description, info, status, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId) "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	public static final String INSERT_VXC_1 = "INSERT INTO Vxc (name, label, description, info, status, type, vnodeId, vtrailId, srcVctpId, destVctpId) "
+			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_PREFIX_ANN = "INSERT INTO PrefixAnn (name, strategy, nodeId, status) "
 			+ "VALUES (?, ?, ?, ?)";
 	public static final String INSERT_RTE = "INSERT INTO Rte (prefixId, fromNodeId, nextHopId, ctpId, cost, status) "
@@ -338,6 +340,16 @@ public class Sql {
 	public static final String FETCH_VCTPS_BY_VLTP = "SELECT "
 			+ "id, name, label, description, info, status, created, updated, busy, vltpId "
 			+ "FROM Vctp WHERE vltpId = ?";
+	
+	// get all the Vctps reachable over a Vlink
+	public static final String FETCH_VCTPS_BY_VLINK = "SELECT "
+			+ "allCtps.id, allCtps.name, allCtps.label, allCtps.description, allCtps.info, allCtps.status, allCtps.created, allCtps.updated, "
+			+ "allCtps.busy, allCtps.vltpId, Vlink.id AS vlinkId " 
+			+ "FROM ((Vlink "
+			+ "INNER JOIN Vltp AS sLtp ON Vlink.srcVltpId=sLtp.id) "
+			+ "INNER JOIN Vltp AS dLtp ON Vlink.destVltpId=dLtp.id) "
+			+ "INNER JOIN Vctp AS allCtps ON allCtps.vltpId=sLtp.id OR allCtps.vltpId=dLtp.id "	
+			+ "WHERE Vlink.id = ?";
 	
 	// get all the Vctps of a Vltp
 	public static final String FETCH_VCTPS_BY_VNODE = "SELECT "
@@ -458,7 +470,7 @@ public class Sql {
 			+ "Vtrail.srcVctpId, Vtrail.destVctpId, "
 			+ "Vxc.id AS vxcId, Vxc.name AS vxcName, Vxc.label AS vxcLabel, Vxc.description AS vxcDescription, Vxc.info AS vxcInfo, "
 			+ "Vxc.status AS vxcStatus, Vxc.created AS vxcCreated, Vxc.updated AS vxcUpdated, "
-			+ "Vxc.type AS vxcType, Vxc.vtrailId AS vxcVtrailId, Vxc.srcVctpId AS vxcSrcVctpId, Vxc.destVctpId AS vxcDestVctpId, Vxc.dropVctpId AS vxcDropVctpId "
+			+ "Vxc.type AS vxcType, Vxc.vtrailId AS vxcVtrailId, Vxc.srcVctpId AS vxcSrcVctpId, Vxc.destVctpId AS vxcDestVctpId, IFNULL(Vxc.dropVctpId, 0) AS vxcDropVctpId "
 			+ "FROM Vtrail LEFT JOIN Vxc ON Vtrail.id=Vxc.vtrailId "
 			+ "WHERE Vtrail.id = ?";
 
