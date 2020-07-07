@@ -46,7 +46,7 @@ public interface TopologyService {
 	
 	/* Vsubnet */
 	@Fluent	
-	TopologyService addVsubnet(Vsubnet vsubnet, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService addVsubnet(Vsubnet vsubnet, Handler<AsyncResult<Integer>> resultHandler);
 	
 	@Fluent	
 	TopologyService getVsubnet(String vsubnetId, Handler<AsyncResult<Vsubnet>> resultHandler);
@@ -63,7 +63,7 @@ public interface TopologyService {
 	
 	/* Vnode */
 	@Fluent	
-	TopologyService addVnode(Vnode vnode, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService addVnode(Vnode vnode, Handler<AsyncResult<Integer>> resultHandler);
 	
 	@Fluent	
 	TopologyService getVnode(String vnodeId, Handler<AsyncResult<Vnode>> resultHandler);
@@ -83,7 +83,7 @@ public interface TopologyService {
 	
 	/* Vltp */
 	@Fluent	
-	TopologyService addVltp(Vltp vltp, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService addVltp(Vltp vltp, Handler<AsyncResult<Integer>> resultHandler);
 	
 	@Fluent	
 	TopologyService getVltp(String vltpId, Handler<AsyncResult<Vltp>> resultHandler);
@@ -103,7 +103,7 @@ public interface TopologyService {
 
 	/* Vctp */
 	@Fluent	
-	TopologyService addVctp(Vctp vctp, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService addVctp(Vctp vctp, Handler<AsyncResult<Integer>> resultHandler);
 	
 	@Fluent	
 	TopologyService getVctp(String vctpId, Handler<AsyncResult<Vctp>> resultHandler);
@@ -129,7 +129,7 @@ public interface TopologyService {
 	
 	/* Vlink */
 	@Fluent	
-	TopologyService addVlink(Vlink vlink, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService addVlink(Vlink vlink, Handler<AsyncResult<Integer>> resultHandler);
 	
 	@Fluent	
 	TopologyService getVlink(String vlinkId, Handler<AsyncResult<Vlink>> resultHandler);
@@ -149,7 +149,7 @@ public interface TopologyService {
 
 	/* VlinkConn */
 	@Fluent	
-	TopologyService addVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService addVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<Integer>> resultHandler);
 	
 	@Fluent	
 	TopologyService getVlinkConn(String vlinkConnId, Handler<AsyncResult<VlinkConn>> resultHandler);
@@ -172,7 +172,7 @@ public interface TopologyService {
 	
 	/* Vtrail */
 	@Fluent	
-	TopologyService addVtrail(Vtrail vtrail, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService addVtrail(Vtrail vtrail, Handler<AsyncResult<Integer>> resultHandler);
 	
 	@Fluent	
 	TopologyService getVtrail(String vtrailId, Handler<AsyncResult<Vtrail>> resultHandler);
@@ -192,7 +192,7 @@ public interface TopologyService {
 	
 	/* Vxc */
 	@Fluent	
-	TopologyService addVxc(Vxc vxc, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService addVxc(Vxc vxc, Handler<AsyncResult<Integer>> resultHandler);
 	
 	@Fluent	
 	TopologyService getVxc(String vxcId, Handler<AsyncResult<Vxc>> resultHandler);
@@ -215,7 +215,7 @@ public interface TopologyService {
 	
 	/* PrefixAnn */
 	@Fluent	
-	TopologyService addPrefixAnn(PrefixAnn prefixAnn, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService addPrefixAnn(PrefixAnn prefixAnn, Handler<AsyncResult<Integer>> resultHandler);
 	
 	@Fluent	
 	TopologyService getPrefixAnn(String prefixAnnId, Handler<AsyncResult<PrefixAnn>> resultHandler);
@@ -232,7 +232,7 @@ public interface TopologyService {
 	
 	/* RoutingEntry */
 	@Fluent	
-	TopologyService addRte(Rte rte, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService addRte(Rte rte, Handler<AsyncResult<Integer>> resultHandler);
 	
 	@Fluent	
 	TopologyService getRte(String rteId, Handler<AsyncResult<Rte>> resultHandler);

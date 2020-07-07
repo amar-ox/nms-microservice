@@ -22,8 +22,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 
 /**
  *
@@ -62,7 +60,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** Vsubnet **********/
 	// INSERT_VSUBNET = "INSERT INTO Vsubnet (name, label, description, info, status) "
 	@Override
-	public TopologyService addVsubnet(Vsubnet vsubnet, Handler<AsyncResult<Void>> resultHandler) {
+	public TopologyService addVsubnet(Vsubnet vsubnet, Handler<AsyncResult<Integer>> resultHandler) {
 		// logger.debug("addSubnet: "+vsubnet.toString());
 		JsonArray params = new JsonArray()
 				.add(vsubnet.getName())
@@ -70,7 +68,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vsubnet.getDescription())
 				.add(new JsonObject(vsubnet.getInfo()).encode())
 				.add(vsubnet.getStatus());
-		executeNoResult(params, Sql.INSERT_VSUBNET, resultHandler);
+		insertAndGetId(params, Sql.INSERT_VSUBNET, resultHandler);
 		return this;
 	}
 	@Override
@@ -120,7 +118,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** Vnode **********/
 	// INSERT_VNODE = "INSERT INTO Vnode (name, label, description, info, status, posx, posy, location, type, vsubnetId) "
 	@Override
-	public TopologyService addVnode(Vnode vnode, Handler<AsyncResult<Void>> resultHandler) {
+	public TopologyService addVnode(Vnode vnode, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vnode.getName())
 				.add(vnode.getLabel())
@@ -132,7 +130,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vnode.getLocation())
 				.add(vnode.getType())	
 				.add(vnode.getVsubnetId());
-		executeNoResult(params, Sql.INSERT_VNODE, resultHandler);
+		insertAndGetId(params, Sql.INSERT_VNODE, resultHandler);
 		return this;
 	}
 	@Override
@@ -194,7 +192,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** Vltp **********/
 	// INSERT_VLTP = "INSERT INTO Vltp (name, label, description, info, status, busy, vnodeId) "
 	@Override 
-	public TopologyService addVltp(Vltp vltp, Handler<AsyncResult<Void>> resultHandler) {
+	public TopologyService addVltp(Vltp vltp, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vltp.getName())
 				.add(vltp.getLabel())
@@ -203,7 +201,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vltp.getStatus())
 				.add(vltp.isBusy())
 				.add(vltp.getVnodeId());
-		executeNoResult(params, Sql.INSERT_VLTP, resultHandler);
+		insertAndGetId(params, Sql.INSERT_VLTP, resultHandler);
 		return this;
 	}
 	@Override
@@ -266,7 +264,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** Vctp **********/
 	// INSERT_VCTP = "INSERT INTO Vctp (name, label, description, info, status, vltpId) "
 	@Override
-	public TopologyService addVctp(Vctp vctp, Handler<AsyncResult<Void>> resultHandler) {
+	public TopologyService addVctp(Vctp vctp, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vctp.getName())
 				.add(vctp.getLabel())
@@ -275,7 +273,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vctp.getStatus())
 				.add(vctp.isBusy())
 				.add(vctp.getVltpId());
-		executeNoResult(params, Sql.INSERT_VCTP, resultHandler);
+		insertAndGetId(params, Sql.INSERT_VCTP, resultHandler);
 		return this;
 	}
 	@Override
@@ -371,7 +369,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** Vlink **********/
 	// INSERT_VLINK = "INSERT INTO Vlink (name, label, description, info, status, type, srcVltpId, destVltpId) "
 	@Override 
-	public TopologyService addVlink(Vlink vlink, Handler<AsyncResult<Void>> resultHandler) {
+	public TopologyService addVlink(Vlink vlink, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()				
 				.add(vlink.getName())
 				.add(vlink.getLabel())
@@ -381,7 +379,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vlink.getType())
 				.add(vlink.getSrcVltpId())
 				.add(vlink.getDestVltpId());
-		executeNoResult(params, Sql.INSERT_VLINK, resultHandler);
+		insertAndGetId(params, Sql.INSERT_VLINK, resultHandler);
 		return this;
 	}
 	@Override
@@ -444,7 +442,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** VlinkConn **********/
 	// INSERT_VLINKCONN = "INSERT INTO VlinkConn (name, label, description, info, status, srcVctpId, destVctpId) "
 	@Override
-	public TopologyService addVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<Void>> resultHandler) {
+	public TopologyService addVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vlinkConn.getName())
 				.add(vlinkConn.getLabel())
@@ -454,7 +452,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vlinkConn.getSrcVctpId())
 				.add(vlinkConn.getDestVctpId())
 				.add(vlinkConn.getVlinkId());
-		executeNoResult(params, Sql.INSERT_VLINKCONN, resultHandler);
+		insertAndGetId(params, Sql.INSERT_VLINKCONN, resultHandler);
 		return this;
 	}
 	@Override
@@ -534,7 +532,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** Vtrail **********/
 	// INSERT_VTRAIL = "INSERT INTO Vtrail (name, label, description, info, status, srcVctpId, destVctpId) "
 	@Override
-	public TopologyService addVtrail(Vtrail vtrail, Handler<AsyncResult<Void>> resultHandler) {
+	public TopologyService addVtrail(Vtrail vtrail, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vtrail.getName())
 				.add(vtrail.getLabel())
@@ -543,7 +541,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vtrail.getStatus())
 				.add(vtrail.getSrcVctpId())
 				.add(vtrail.getDestVctpId());
-		executeNoResult(params, Sql.INSERT_VTRAIL, resultHandler);
+		insertAndGetId(params, Sql.INSERT_VTRAIL, resultHandler);
 		return this;
 	}
 	@Override
@@ -605,7 +603,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** Vxc **********/
 	// INSERT_VXC = "INSERT INTO Vxc (name, label, description, info, status, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId) "
 	@Override
-	public TopologyService addVxc(Vxc vxc, Handler<AsyncResult<Void>> resultHandler) {
+	public TopologyService addVxc(Vxc vxc, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vxc.getName())
 				.add(vxc.getLabel())
@@ -618,10 +616,10 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vxc.getSrcVctpId())
 				.add(vxc.getDestVctpId());				
 		if(vxc.getDropVctpId() == 0) {
-			executeNoResult(params, Sql.INSERT_VXC_1, resultHandler);
+			insertAndGetId(params, Sql.INSERT_VXC_1, resultHandler);
 		} else {
 			params.add(vxc.getDropVctpId());
-			executeNoResult(params, Sql.INSERT_VXC, resultHandler);
+			insertAndGetId(params, Sql.INSERT_VXC, resultHandler);
 		}
 		return this;
 	}
@@ -703,13 +701,13 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** PrefixAnn **********/
 	// INSERT_PREFIX_ANN = "INSERT INTO PrefixAnn (name, strategy, nodeId, status) 
 	@Override
-	public TopologyService addPrefixAnn(PrefixAnn prefixAnn, Handler<AsyncResult<Void>> resultHandler) {
+	public TopologyService addPrefixAnn(PrefixAnn prefixAnn, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(prefixAnn.getName())
 				.add(prefixAnn.getStrategy())
 				.add(prefixAnn.getNodeId())				
 				.add(prefixAnn.getStatus());				
-		executeNoResult(params, Sql.INSERT_PREFIX_ANN, resultHandler);
+		insertAndGetId(params, Sql.INSERT_PREFIX_ANN, resultHandler);
 		return this;
 	}
 	@Override
@@ -755,7 +753,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** PrefixAnn **********/
 	// INSERT_ROUTING_ENTRY = "INSERT INTO RoutingEntry (prefixId, fromNodeId, nextHopId, ctpId, cost, status)
 	@Override
-	public TopologyService addRte(Rte rte, Handler<AsyncResult<Void>> resultHandler) {
+	public TopologyService addRte(Rte rte, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(rte.getPrefixId())
 				.add(rte.getFromNodeId())
@@ -763,7 +761,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(rte.getCtpId())
 				.add(rte.getCost())				
 				.add(rte.getStatus());				
-		executeNoResult(params, Sql.INSERT_RTE, resultHandler);
+		insertAndGetId(params, Sql.INSERT_RTE, resultHandler);
 		return this;
 	}
 	@Override

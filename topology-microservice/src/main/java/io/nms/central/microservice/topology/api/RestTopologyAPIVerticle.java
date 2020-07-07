@@ -220,8 +220,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiAddSubnet(RoutingContext context) {
 		final Vsubnet vsubnet = Json.decodeValue(context.getBodyAsString(), Vsubnet.class);
 		// logger.debug("apiAddSubnet: "+vsubnet.toString());
-		JsonObject result = new JsonObject().put("message", "subnet_added");
-		service.addVsubnet(vsubnet, resultVoidHandler(context, result));
+		// JsonObject result = new JsonObject().put("message", "subnet_added");
+		service.addVsubnet(vsubnet, resultHandlerNonEmpty(context, "id"));
 	}
 	private void apiGetSubnet(RoutingContext context) {
 		String subnetId = context.request().getParam("subnetId");
@@ -249,8 +249,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiAddNode(RoutingContext context) {
 		final Vnode vnode = Json.decodeValue(context.getBodyAsString(), Vnode.class);
 		// logger.debug("apiAddNode: "+vnode.toString());		
-		JsonObject result = new JsonObject().put("message", "node_added");
-		service.addVnode(vnode, resultVoidHandler(context, result));
+		// JsonObject result = new JsonObject().put("message", "node_added");
+		service.addVnode(vnode, resultHandlerNonEmpty(context, "id"));
 	}
 	private void apiGetNode(RoutingContext context) {
 		String nodeId = context.request().getParam("nodeId");
@@ -278,8 +278,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// Ltp API
 	private void apiAddLtp(RoutingContext context) {
 		final Vltp ltp = Json.decodeValue(context.getBodyAsString(), Vltp.class);		
-		JsonObject result = new JsonObject().put("message", "ltp_added");
-		service.addVltp(ltp, resultVoidHandler(context, result));
+		// JsonObject result = new JsonObject().put("message", "ltp_added");
+		service.addVltp(ltp, resultHandlerNonEmpty(context, "id"));
 	}
 	private void apiGetLtp(RoutingContext context) {
 		String ltpId = context.request().getParam("ltpId");
@@ -306,8 +306,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// Ctp API
 	private void apiAddCtp(RoutingContext context) {
 		final Vctp ctp = Json.decodeValue(context.getBodyAsString(), Vctp.class);		
-		JsonObject result = new JsonObject().put("message", "ctp_added");
-		service.addVctp(ctp, resultVoidHandler(context, result));
+		// JsonObject result = new JsonObject().put("message", "ctp_added");
+		service.addVctp(ctp, resultHandlerNonEmpty(context, "id"));
 	}
 	private void apiGetCtp(RoutingContext context) {
 		String ctpId = context.request().getParam("ctpId");
@@ -342,8 +342,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// Link API
 	private void apiAddLink(RoutingContext context) {
 		final Vlink link = Json.decodeValue(context.getBodyAsString(), Vlink.class);		
-		JsonObject result = new JsonObject().put("message", "link_added");
-		service.addVlink(link, resultVoidHandler(context, result));				
+		// JsonObject result = new JsonObject().put("message", "link_added");
+		service.addVlink(link, resultHandlerNonEmpty(context, "id"));				
 	}
 	private void apiGetLink(RoutingContext context) {
 		String linkId = context.request().getParam("linkId");
@@ -369,8 +369,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// LinkConn API
 	private void apiAddLinkConn(RoutingContext context) {
 		final VlinkConn vlinkConn = Json.decodeValue(context.getBodyAsString(), VlinkConn.class);		
-		JsonObject result = new JsonObject().put("message", "linkConn_added");
-		service.addVlinkConn(vlinkConn, resultVoidHandler(context, result));				
+		// JsonObject result = new JsonObject().put("message", "linkConn_added");
+		service.addVlinkConn(vlinkConn, resultHandlerNonEmpty(context, "id"));				
 	}
 	private void apiGetLinkConn(RoutingContext context) {
 		String linkConnId = context.request().getParam("linkConnId");		
@@ -401,8 +401,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// Trail API
 	private void apiAddTrail(RoutingContext context) {
 		final Vtrail vtrail = Json.decodeValue(context.getBodyAsString(), Vtrail.class);			
-		JsonObject result = new JsonObject().put("message", "trail_added");
-		service.addVtrail(vtrail, resultVoidHandler(context, result));
+		// JsonObject result = new JsonObject().put("message", "trail_added");
+		service.addVtrail(vtrail, resultHandlerNonEmpty(context, "id"));
 	}
 	private void apiGetTrail(RoutingContext context) {
 		String trailId = context.request().getParam("trailId");			
@@ -429,8 +429,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// Xc API
 	private void apiAddXc(RoutingContext context) {
 		final Vxc vxc = Json.decodeValue(context.getBodyAsString(), Vxc.class);			
-		JsonObject result = new JsonObject().put("message", "xc_added");
-		service.addVxc(vxc, resultVoidHandler(context, result));
+		// JsonObject result = new JsonObject().put("message", "xc_added");
+		service.addVxc(vxc, resultHandlerNonEmpty(context, "id"));
 	}
 	private void apiGetXc(RoutingContext context) {
 		String xcId = context.request().getParam("xcId");
@@ -461,8 +461,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// Prefix Announcement API
 	private void apiAddPrefixAnn(RoutingContext context) {
 		final PrefixAnn prefixAnn = Json.decodeValue(context.getBodyAsString(), PrefixAnn.class);			
-		JsonObject result = new JsonObject().put("message", "prefixAnn_added");
-		service.addPrefixAnn(prefixAnn, resultVoidHandler(context, result));
+		// JsonObject result = new JsonObject().put("message", "prefixAnn_added");
+		service.addPrefixAnn(prefixAnn, resultHandlerNonEmpty(context, "id"));
 	}
 	private void apiGetPrefixAnn(RoutingContext context) {
 		String prefixAnnId = context.request().getParam("prefixAnnId");			
@@ -485,8 +485,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// Routing Table Entry API
 	private void apiAddRte(RoutingContext context) {
 		final Rte rte = Json.decodeValue(context.getBodyAsString(), Rte.class);			
-		JsonObject result = new JsonObject().put("message", "rte_added");
-		service.addRte(rte, resultVoidHandler(context, result));
+		// JsonObject result = new JsonObject().put("message", "rte_added");
+		service.addRte(rte, resultHandlerNonEmpty(context, "id"));
 	}
 	private void apiGetRte(RoutingContext context) {
 		String rteId = context.request().getParam("RteId");			

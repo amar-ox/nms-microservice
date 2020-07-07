@@ -195,6 +195,24 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
       }
     };
   }
+  
+  protected <T> Handler<AsyncResult<T>> resultHandlerNonEmpty(RoutingContext context, String key) {
+	    return ar -> {
+	      if (ar.succeeded()) {
+	        T res = ar.result();
+	        if (res == null) {
+	          notFound(context);
+	        } else {
+	          context.response()
+	            .putHeader("content-type", "application/json")
+	            .end(new JsonObject().put(key,  res.toString()).encodePrettily());
+	        }
+	      } else {
+	        internalError(context, ar.cause());
+	        ar.cause().printStackTrace();
+	      }
+	    };
+	  }
 
   /**
    * This method generates handler for async methods in REST APIs.

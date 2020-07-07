@@ -13,6 +13,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.sql.SQLConnection;
+import io.vertx.ext.sql.UpdateResult;
 
 /**
  * Helper and wrapper class for JDBC repository services.
@@ -53,6 +54,25 @@ public class JdbcRepositoryWrapper {
 			connection.updateWithParams(sql, params, r -> {
 				if (r.succeeded()) {
 					resultHandler.handle(Future.succeededFuture(ret));
+				} else {
+					resultHandler.handle(Future.failedFuture(r.cause()));
+				}
+				connection.close();
+			});
+		}));
+	}
+	
+	protected <R> void insertAndGetId(JsonArray params, String sql, Handler<AsyncResult<Integer>> resultHandler) {
+		client.getConnection(connHandler(resultHandler, connection -> {
+			connection.updateWithParams(sql, params, r -> {
+				if (r.succeeded()) {
+					UpdateResult updateResult = r.result();
+					// logger.debug("updeateResult: "+updateResult.toJson().encodePrettily());
+					Integer autoId = 0;
+					if (updateResult.getUpdated() == 1) {
+						autoId = updateResult.getKeys().getInteger(0);
+					}
+					resultHandler.handle(Future.succeededFuture(autoId));
 				} else {
 					resultHandler.handle(Future.failedFuture(r.cause()));
 				}
