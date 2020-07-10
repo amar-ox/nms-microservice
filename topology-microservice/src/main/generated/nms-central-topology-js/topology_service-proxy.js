@@ -1183,6 +1183,113 @@
       } else throw new TypeError('function invoked with invalid arguments');
     };
 
+    /**
+
+     @public
+     @param face {Object} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.addFace =  function(face, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"face":__args[0]}, {"action":"addFace"}, function(err, result) { __args[1](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
+     @param linkConnId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.generateFacesForLc =  function(linkConnId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"linkConnId":__args[0]}, {"action":"generateFacesForLc"}, function(err, result) { __args[1](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
+     @param faceId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.getFace =  function(faceId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"faceId":__args[0]}, {"action":"getFace"}, function(err, result) { __args[1](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.getAllFaces =  function(resultHandler) {
+      var __args = arguments;
+      if (__args.length === 1 && typeof __args[0] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {}, {"action":"getAllFaces"}, function(err, result) { __args[0](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
+     @param nodeId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.getFacesByNode =  function(nodeId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"nodeId":__args[0]}, {"action":"getFacesByNode"}, function(err, result) { __args[1](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
+     @param faceId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.deleteFace =  function(faceId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"faceId":__args[0]}, {"action":"deleteFace"}, function(err, result) { __args[1](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
   };
 
   if (typeof exports !== 'undefined') {

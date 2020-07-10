@@ -152,4 +152,16 @@ export default class TopologyService {
   deleteRte(rteId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   updateRte(id: string, rte: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+
+  addFace(face: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+
+  generateFacesForLc(linkConnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+
+  getFace(faceId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+
+  getAllFaces(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  getFacesByNode(nodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  deleteFace(faceId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 }

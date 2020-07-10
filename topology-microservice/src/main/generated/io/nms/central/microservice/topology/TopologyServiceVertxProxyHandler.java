@@ -46,6 +46,7 @@ import io.nms.central.microservice.topology.model.Vltp;
 import io.nms.central.microservice.topology.model.Vlink;
 import io.nms.central.microservice.topology.model.Vxc;
 import io.nms.central.microservice.topology.model.Vsubnet;
+import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.Rte;
 import java.util.List;
 import io.nms.central.microservice.topology.model.VlinkConn;
@@ -857,6 +858,65 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                           msg.reply(res.result() == null ? null : res.result().toJson());
                         }
                      });
+          break;
+        }
+        case "addFace": {
+          service.addFace(json.getJsonObject("face") == null ? null : new io.nms.central.microservice.topology.model.Face(json.getJsonObject("face")),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "generateFacesForLc": {
+          service.generateFacesForLc((java.lang.String)json.getValue("linkConnId"),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "getFace": {
+          service.getFace((java.lang.String)json.getValue("faceId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(res.result() == null ? null : res.result().toJson());
+                        }
+                     });
+          break;
+        }
+        case "getAllFaces": {
+          service.getAllFaces(res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "getFacesByNode": {
+          service.getFacesByNode((java.lang.String)json.getValue("nodeId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "deleteFace": {
+          service.deleteFace((java.lang.String)json.getValue("faceId"),
+                        HelperUtils.createHandler(msg));
           break;
         }
         default: throw new IllegalStateException("Invalid action: " + action);

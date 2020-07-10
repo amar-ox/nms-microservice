@@ -1,6 +1,6 @@
 package io.nms.central.microservice.topology.impl;
 
-public class Sql {
+public class ApiSql {
 
 	
 	
@@ -218,7 +218,26 @@ public class Sql {
 			"        ON DELETE CASCADE\n" + 
 			"		 ON UPDATE CASCADE\n" +
 			")";
-	
+	public static final String CREATE_TABLE_FACE = "CREATE TABLE IF NOT EXISTS Face (\n" +
+			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
+			"    `local` VARCHAR(60) NOT NULL,\n" +
+			"    `remote` VARCHAR(60) NOT NULL,\n" +
+			"    `scheme` VARCHAR(30) NOT NULL,\n" +
+			"    `label` VARCHAR(60) NOT NULL,\n" +			
+			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
+			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
+			"    `vctpId` INT NOT NULL,\n" +
+			"    `vlinkConnId` INT NOT NULL,\n" +
+			"    PRIMARY KEY (`id`),\n" + 
+			"    FOREIGN KEY (`vctpId`) \n" + 
+			"       REFERENCES Vctp(`id`)\n" + 
+			"       ON DELETE CASCADE\n" + 
+			"		ON UPDATE CASCADE,\n" +
+			"    FOREIGN KEY (`vlinkConnId`) \n" + 
+			"       REFERENCES VlinkConn(`id`)\n" + 
+			"       ON DELETE CASCADE\n" + 
+			"		ON UPDATE CASCADE\n" +
+			")";
 	
 	/*-------------------- INSERT ITEMS --------------------*/
 	
@@ -244,7 +263,8 @@ public class Sql {
 			+ "VALUES (?, ?, ?, ?)";
 	public static final String INSERT_RTE = "INSERT INTO Rte (prefixId, fromNodeId, nextHopId, ctpId, cost, status) "
 			+ "VALUES (?, ?, ?, ?, ?, ?)";
-
+	public static final String INSERT_FACE = "INSERT INTO Face (label, local, remote, scheme, vctpId, vlinkConnId) "
+			+ "VALUES (?, ?, ?, ?, ?, ?)";
 
 	
 	/*-------------------- FETCH ALL ITEMS --------------------*/
@@ -308,6 +328,9 @@ public class Sql {
 			+ "Rte.id, Rte.prefixId, PrefixAnn.name AS prefixName, Rte.fromNodeId, Rte.nextHopId, Rte.cost, Rte.ctpId, Rte.status, Rte.created, Rte.updated "
 			+ "FROM Rte INNER JOIN PrefixAnn on Rte.prefixId=PrefixAnn.id";
 
+	public static final String FETCH_ALL_FACES = "SELECT "
+			+ "id, label, local, remote, scheme, created, updated, vctpId, vlinkConnId "
+			+ "FROM Face"; 
 
 	/*-------------------- FETCH ITEMS BY ANOTHER --------------------*/
 	
@@ -406,6 +429,15 @@ public class Sql {
 	public static final String FETCH_RTES_BY_NODE = "SELECT "
 			+ "Rte.id, Rte.prefixId, PrefixAnn.name AS prefixName, Rte.fromNodeId, Rte.nextHopId, Rte.cost, Rte.ctpId, Rte.status, Rte.created, Rte.updated "
 			+ "FROM Rte INNER JOIN PrefixAnn on Rte.prefixId=PrefixAnn.id WHERE Rte.fromNodeId=?";
+	
+	// get all Face on a node
+	public static final String FETCH_FACES_BY_NODE = "SELECT "
+			+ "Face.id, Face.label, Face.local, Face.remote, Face.scheme, Face.created, Face.updated, Face.vctpId, Face.vlinkConnId "
+			+ "FROM Vnode "
+			+ "INNER JOIN Vltp on Vltp.vnodeId=Vnode.id "
+			+ "INNER JOIN Vctp on Vctp.vltpId=Vltp.id "
+			+ "INNER JOIN Face on Face.vctpId=Vctp.id "
+			+ "WHERE Vnode.id = ?";
 
 
 	/*-------------------- FETCH ITEMS BY ID --------------------*/
@@ -488,6 +520,12 @@ public class Sql {
 			+ "Rte.id, Rte.prefixId, PrefixAnn.name AS prefixName, Rte.fromNodeId, Rte.nextHopId, Rte.cost, Rte.ctpId, Rte.status, Rte.created, Rte.updated "
 			+ "FROM Rte INNER JOIN PrefixAnn on Rte.prefixId=PrefixAnn.id WHERE Rte.id=?";
 
+	public static final String FETCH_FACE_BY_ID = "SELECT "
+			+ "id, label, local, remote, scheme, created, updated, vctpId, vlinkConnId "
+			+ "FROM Face WHERE id = ?"; 
+	
+	
+	
 	/*-------------------- DELETE ITEMS BY ID --------------------*/
 
 	public static final String DELETE_VSUBNET = "DELETE FROM Vsubnet WHERE id=?";
@@ -501,6 +539,8 @@ public class Sql {
 	
 	public static final String DELETE_PREFIX_ANN = "DELETE FROM PrefixAnn WHERE id=?";
 	public static final String DELETE_RTE = "DELETE FROM Rte WHERE id=?";
+	
+	public static final String DELETE_FACE = "DELETE FROM Face WHERE id=?";
 	
 
 

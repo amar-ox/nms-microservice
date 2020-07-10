@@ -2,6 +2,7 @@ package io.nms.central.microservice.topology;
 
 import java.util.List;
 
+import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.PrefixAnn;
 import io.nms.central.microservice.topology.model.Rte;
 import io.nms.central.microservice.topology.model.Vctp;
@@ -248,4 +249,23 @@ public interface TopologyService {
 	
 	@Fluent 
 	TopologyService updateRte(String id, Rte rte, Handler<AsyncResult<Rte>> resultHandler);
+	
+	/* Face */
+	@Fluent	
+	TopologyService addFace(Face face, Handler<AsyncResult<Integer>> resultHandler);
+	
+	@Fluent	
+	TopologyService generateFacesForLc(String linkConnId, Handler<AsyncResult<Void>> resultHandler);
+	
+	@Fluent	
+	TopologyService getFace(String faceId, Handler<AsyncResult<Face>> resultHandler);
+	
+	@Fluent	
+	TopologyService getAllFaces(Handler<AsyncResult<List<Face>>> resultHandler);
+	
+	@Fluent	
+	TopologyService getFacesByNode(String nodeId, Handler<AsyncResult<List<Face>>> resultHandler);
+	
+	@Fluent	
+	TopologyService deleteFace(String faceId, Handler<AsyncResult<Void>> resultHandler);	
 }

@@ -67,7 +67,7 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 	allowedHeaders.add("X-PINGARUNER");
 
 	CorsHandler corsHandler = CorsHandler
-			.create("http://localhost:8081")
+			.create("http://localhost:8080")
 			.allowedHeaders(allowedHeaders);
 	
 	Arrays.asList(HttpMethod.values()).stream().forEach(method -> corsHandler.allowedMethod(method));

@@ -21,6 +21,7 @@ var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
 var JTopologyService = Java.type('io.nms.central.microservice.topology.TopologyService');
 var Vsubnet = Java.type('io.nms.central.microservice.topology.model.Vsubnet');
+var Face = Java.type('io.nms.central.microservice.topology.model.Face');
 var Rte = Java.type('io.nms.central.microservice.topology.model.Rte');
 var Vltp = Java.type('io.nms.central.microservice.topology.model.Vltp');
 var Vlink = Java.type('io.nms.central.microservice.topology.model.Vlink');
@@ -107,6 +108,12 @@ var TopologyService = function(j_val) {
   var __super_getRtesByNode = this.getRtesByNode;
   var __super_deleteRte = this.deleteRte;
   var __super_updateRte = this.updateRte;
+  var __super_addFace = this.addFace;
+  var __super_generateFacesForLc = this.generateFacesForLc;
+  var __super_getFace = this.getFace;
+  var __super_getAllFaces = this.getAllFaces;
+  var __super_getFacesByNode = this.getFacesByNode;
+  var __super_deleteFace = this.deleteFace;
   /**
 
    @public
@@ -1614,6 +1621,149 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_updateRte != 'undefined') {
       return __super_updateRte.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param face {Object} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.addFace =  function(face, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_topologyService["addFace(io.nms.central.microservice.topology.model.Face,io.vertx.core.Handler)"](__args[0]  != null ? new Face(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+        if (ar.succeeded()) {
+          __args[1](ar.result(), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_addFace != 'undefined') {
+      return __super_addFace.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param linkConnId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.generateFacesForLc =  function(linkConnId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["generateFacesForLc(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](null, null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_generateFacesForLc != 'undefined') {
+      return __super_generateFacesForLc.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param faceId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getFace =  function(faceId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getFace(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getFace != 'undefined') {
+      return __super_getFace.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getAllFaces =  function(resultHandler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_topologyService["getAllFaces(io.vertx.core.Handler)"](function(ar) {
+        if (ar.succeeded()) {
+          __args[0](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[0](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getAllFaces != 'undefined') {
+      return __super_getAllFaces.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param nodeId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getFacesByNode =  function(nodeId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getFacesByNode(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getFacesByNode != 'undefined') {
+      return __super_getFacesByNode.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param faceId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.deleteFace =  function(faceId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["deleteFace(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](null, null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_deleteFace != 'undefined') {
+      return __super_deleteFace.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };

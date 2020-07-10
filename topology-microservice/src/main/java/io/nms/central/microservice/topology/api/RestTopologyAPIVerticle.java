@@ -2,6 +2,7 @@ package io.nms.central.microservice.topology.api;
 
 import io.nms.central.microservice.common.RestAPIVerticle;
 import io.nms.central.microservice.topology.TopologyService;
+import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.PrefixAnn;
 import io.nms.central.microservice.topology.model.Rte;
 import io.nms.central.microservice.topology.model.Vctp;
@@ -39,21 +40,21 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_GET_SUBNET = "/subnet/:subnetId";
 	private static final String API_GET_ALL_SUBNETS = "/subnets";
 	private static final String API_DELETE_SUBNET = "/subnet/:subnetId";
-	private static final String API_UPDATE_SUBNET = "/subnet";
+	// private static final String API_UPDATE_SUBNET = "/subnet";
 
 	private static final String API_ADD_NODE = "/node";
 	private static final String API_GET_NODE = "/node/:nodeId";	
 	private static final String API_GET_ALL_NODES = "/nodes";
 	private static final String API_GET_NODES_BY_SUBNET = "/subnet/:subnetId/nodes";
 	private static final String API_DELETE_NODE = "/node/:nodeId";
-	private static final String API_UPDATE_NODE = "/node/:nodeId";
+	// private static final String API_UPDATE_NODE = "/node/:nodeId";
 
 	private static final String API_ADD_LTP = "/ltp";
 	private static final String API_GET_LTP = "/ltp/:ltpId";	
 	private static final String API_GET_ALL_LTPS = "/ltps";
 	private static final String API_GET_LTPS_BY_NODE = "/node/:nodeId/ltps";
 	private static final String API_DELETE_LTP = "/ltp/:ltpId";
-	private static final String API_UPDATE_LTP = "/ltp/:ltpId";
+	// private static final String API_UPDATE_LTP = "/ltp/:ltpId";
 
 	private static final String API_ADD_CTP = "/ctp";
 	private static final String API_GET_CTP = "/ctp/:ctpId";	
@@ -62,14 +63,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_GET_CTPS_BY_NODE = "/node/:nodeId/ctps";
 	private static final String API_GET_CTPS_BY_LINK = "/link/:linkId/ctps";
 	private static final String API_DELETE_CTP = "/ctp/:ctpId";
-	private static final String API_UPDATE_CTP = "/ctp/:ctpId";
+	// private static final String API_UPDATE_CTP = "/ctp/:ctpId";
 
 	private static final String API_ADD_LINK = "/link";
 	private static final String API_GET_LINK = "/link/:linkId";	
 	private static final String API_GET_ALL_LINKS = "/links";
 	private static final String API_GET_LINKS_BY_SUBNET = "/subnet/:subnetId/links";
 	private static final String API_DELETE_LINK = "/link/:linkId";
-	private static final String API_UPDATE_LINK = "/link/:linkId";
+	// private static final String API_UPDATE_LINK = "/link/:linkId";
 
 	private static final String API_ADD_LINKCONN = "/linkConn";
 	private static final String API_GET_LINKCONN = "/linkConn/:linkConnId";	
@@ -77,14 +78,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_GET_LINKCONNS_BY_LINK = "/link/:linkId/linkConns";
 	private static final String API_GET_LINKCONNS_BY_SUBNET = "/subnet/:subnetId/linkConns";
 	private static final String API_DELETE_LINKCONN = "/linkConn/:linkConnId";
-	private static final String API_UPDATE_LINKCONN = "/linkConn/:linkConnId";
+	// private static final String API_UPDATE_LINKCONN = "/linkConn/:linkConnId";
 
 	private static final String API_ADD_TRAIL = "/trail";
 	private static final String API_GET_TRAIL = "/trail/:trailId";	
 	private static final String API_GET_ALL_TRAILS = "/trails";
 	private static final String API_GET_TRAILS_BY_SUBNET = "/subnet/:subnetId/trails";
 	private static final String API_DELETE_TRAIL = "/trail/:trailId";
-	private static final String API_UPDATE_TRAIL = "/trail/:trailId";
+	// private static final String API_UPDATE_TRAIL = "/trail/:trailId";
 
 	private static final String API_ADD_XC = "/xc";
 	private static final String API_GET_XC = "/xc/:xcId";
@@ -92,24 +93,27 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_GET_XCS_BY_TRAIL = "/trail/:trailId/xcs";
 	private static final String API_GET_XCS_BY_NODE = "/node/:nodeId/xcs";
 	private static final String API_DELETE_XC = "/xc/:xcId";
-	private static final String API_UPDATE_XC = "/xc/:xcId";
-	
-	// private static final String API_GET_TOPOLOGY = "/topology";
-	// private static final String API_GET_NETWORK = "/network";
-	// private static final String API_GET_ROUTES = "/routes";
+	// private static final String API_UPDATE_XC = "/xc/:xcId";
 
 	private static final String API_ADD_PREFIX_ANN = "/prefixAnn";
 	private static final String API_GET_PREFIX_ANN = "/prefixAnn/:prefixAnnId";	
 	private static final String API_GET_ALL_PREFIX_ANNS = "/prefixAnns";	
 	private static final String API_DELETE_PREFIX_ANN = "/prefixAnn/:prefixAnnId";
-	private static final String API_UPDATE_PREFIX_ANN = "/prefixAnn/:prefixAnnId";
+	// private static final String API_UPDATE_PREFIX_ANN = "/prefixAnn/:prefixAnnId";
 
 	private static final String API_ADD_RTE = "/rte";
 	private static final String API_GET_RTE = "/rte/:rteId";	
 	private static final String API_GET_ALL_RTES = "/rtes";
 	private static final String API_GET_RTES_BY_NODE = "/rtes/node/:nodeId";
 	private static final String API_DELETE_RTE = "/rte/:rteId";
-	private static final String API_UPDATE_RTE = "/rte/:rteId";
+	// private static final String API_UPDATE_RTE = "/rte/:rteId";
+
+	private static final String API_ADD_FACE = "/face";
+	private static final String API_GEN_FACES = "/genfaces";
+	private static final String API_GET_FACE = "/face/:faceId";	
+	private static final String API_GET_ALL_FACES = "/faces";
+	private static final String API_GET_FACES_BY_NODE = "/node/:nodeId/faces";
+	private static final String API_DELETE_FACE = "/face/:faceId";
 
 
 	private final TopologyService service;
@@ -131,21 +135,21 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.get(API_GET_ALL_SUBNETS).handler(this::apiGetAllSubnets);
 		router.get(API_GET_SUBNET).handler(this::apiGetSubnet);
 		router.delete(API_DELETE_SUBNET).handler(this::apiDeleteSubnet);
-		router.patch(API_UPDATE_SUBNET).handler(this::apiUpdateSubnet);
+		// router.patch(API_UPDATE_SUBNET).handler(this::apiUpdateSubnet);
 
 		router.post(API_ADD_NODE).handler(this::apiAddNode);
 		router.get(API_GET_ALL_NODES).handler(this::apiGetAllNodes);
 		router.get(API_GET_NODES_BY_SUBNET).handler(this::apiGetNodesBySubnet);
 		router.get(API_GET_NODE).handler(this::apiGetNode);
 		router.delete(API_DELETE_NODE).handler(this::apiDeleteNode);
-		router.patch(API_UPDATE_NODE).handler(this::apiUpdateNode);
+		// router.patch(API_UPDATE_NODE).handler(this::apiUpdateNode);
 
 		router.post(API_ADD_LTP).handler(this::apiAddLtp);
 		router.get(API_GET_ALL_LTPS).handler(this::apiGetAllLtps);
 		router.get(API_GET_LTPS_BY_NODE).handler(this::apiGetLtpsByNode);
 		router.get(API_GET_LTP).handler(this::apiGetLtp);
 		router.delete(API_DELETE_LTP).handler(this::apiDeleteLtp);
-		router.patch(API_UPDATE_LTP).handler(this::apiUpdateLtp);
+		// router.patch(API_UPDATE_LTP).handler(this::apiUpdateLtp);
 
 		router.post(API_ADD_CTP).handler(this::apiAddCtp);
 		router.get(API_GET_ALL_CTPS).handler(this::apiGetAllCtps);
@@ -154,14 +158,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.get(API_GET_CTPS_BY_LINK).handler(this::apiGetCtpsByLink);
 		router.get(API_GET_CTP).handler(this::apiGetCtp);
 		router.delete(API_DELETE_CTP).handler(this::apiDeleteCtp);
-		router.patch(API_UPDATE_CTP).handler(this::apiUpdateCtp);
+		// router.patch(API_UPDATE_CTP).handler(this::apiUpdateCtp);
 
 		router.post(API_ADD_LINK).handler(this::apiAddLink);
 		router.get(API_GET_ALL_LINKS).handler(this::apiGetAllLinks);
 		router.get(API_GET_LINKS_BY_SUBNET).handler(this::apiGetLinksBySubnet);
 		router.get(API_GET_LINK).handler(this::apiGetLink);
 		router.delete(API_DELETE_LINK).handler(this::apiDeleteLink);
-		router.patch(API_UPDATE_LINK).handler(this::apiUpdateLink);
+		// router.patch(API_UPDATE_LINK).handler(this::apiUpdateLink);
 
 		router.post(API_ADD_LINKCONN).handler(this::apiAddLinkConn);
 		router.get(API_GET_ALL_LINKCONNS).handler(this::apiGetAllLinkConns);
@@ -169,14 +173,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.get(API_GET_LINKCONNS_BY_SUBNET).handler(this::apiGetLinkConnsBySubnet);
 		router.get(API_GET_LINKCONN).handler(this::apiGetLinkConn);
 		router.delete(API_DELETE_LINKCONN).handler(this::apiDeleteLinkConn);
-		router.patch(API_UPDATE_LINKCONN).handler(this::apiUpdateLinkConn);
+		// router.patch(API_UPDATE_LINKCONN).handler(this::apiUpdateLinkConn);
 
 		router.post(API_ADD_TRAIL).handler(this::apiAddTrail);
 		router.get(API_GET_ALL_TRAILS).handler(this::apiGetAllTrails);
 		router.get(API_GET_TRAILS_BY_SUBNET).handler(this::apiGetTrailsBySubnet);
 		router.get(API_GET_TRAIL).handler(this::apiGetTrail);
 		router.delete(API_DELETE_TRAIL).handler(this::apiDeleteTrail);
-		router.patch(API_UPDATE_TRAIL).handler(this::apiUpdateTrail);
+		// router.patch(API_UPDATE_TRAIL).handler(this::apiUpdateTrail);
 
 		router.post(API_ADD_XC).handler(this::apiAddXc);
 		router.get(API_GET_ALL_XCS).handler(this::apiGetAllXcs);
@@ -184,20 +188,27 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.get(API_GET_XCS_BY_NODE).handler(this::apiGetXcsByNode);
 		router.get(API_GET_XC).handler(this::apiGetXc);
 		router.delete(API_DELETE_XC).handler(this::apiDeleteXc);
-		router.patch(API_UPDATE_XC).handler(this::apiUpdateXc);
+		// router.patch(API_UPDATE_XC).handler(this::apiUpdateXc);
 
 		router.post(API_ADD_PREFIX_ANN).handler(this::apiAddPrefixAnn);
 		router.get(API_GET_ALL_PREFIX_ANNS).handler(this::apiGetAllPrefixAnns);
 		router.get(API_GET_PREFIX_ANN).handler(this::apiGetPrefixAnn);
 		router.delete(API_DELETE_PREFIX_ANN).handler(this::apiDeletePrefixAnn);
-		router.patch(API_UPDATE_PREFIX_ANN).handler(this::apiUpdatePrefixAnn);
+		// router.patch(API_UPDATE_PREFIX_ANN).handler(this::apiUpdatePrefixAnn);
 
 		router.post(API_ADD_RTE).handler(this::apiAddRte);
 		router.get(API_GET_ALL_RTES).handler(this::apiGetAllRtes);
 		router.get(API_GET_RTES_BY_NODE).handler(this::apiGetRtesByNode);
 		router.get(API_GET_RTE).handler(this::apiGetRte);
 		router.delete(API_DELETE_RTE).handler(this::apiDeleteRte);
-		router.patch(API_UPDATE_RTE).handler(this::apiUpdateRte);
+		// router.patch(API_UPDATE_RTE).handler(this::apiUpdateRte);
+
+		router.post(API_ADD_FACE).handler(this::apiAddFace);
+		router.post(API_GEN_FACES).handler(this::apiGenFaces);
+		router.get(API_GET_ALL_FACES).handler(this::apiGetAllFaces);
+		router.get(API_GET_FACES_BY_NODE).handler(this::apiGetFacesByNode);
+		router.get(API_GET_FACE).handler(this::apiGetFace);
+		router.delete(API_DELETE_FACE).handler(this::apiDeleteFace);
 
 		// get HTTP host and port from configuration, or use default value
 		String host = config().getString("topology.http.address", "0.0.0.0");
@@ -480,8 +491,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		final PrefixAnn prefixAnn = Json.decodeValue(context.getBodyAsString(), PrefixAnn.class);		
 		service.updatePrefixAnn(id, prefixAnn, resultHandlerNonEmpty(context));
 	}
-	
-	
+
+
 	// Routing Table Entry API
 	private void apiAddRte(RoutingContext context) {
 		final Rte rte = Json.decodeValue(context.getBodyAsString(), Rte.class);			
@@ -489,7 +500,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		service.addRte(rte, resultHandlerNonEmpty(context, "id"));
 	}
 	private void apiGetRte(RoutingContext context) {
-		String rteId = context.request().getParam("RteId");			
+		String rteId = context.request().getParam("rteId");			
 		service.getRte(rteId, resultHandlerNonEmpty(context));
 	}
 	private void apiGetAllRtes(RoutingContext context) {
@@ -507,5 +518,32 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		String id = context.request().getParam("rteId");
 		final Rte rte = Json.decodeValue(context.getBodyAsString(), Rte.class);		
 		service.updateRte(id, rte, resultHandlerNonEmpty(context));
+	}
+
+
+	// Routing Table Entry API
+	private void apiAddFace(RoutingContext context) {
+		final Face face = Json.decodeValue(context.getBodyAsString(), Face.class);			
+		service.addFace(face, resultHandlerNonEmpty(context, "id"));
+	}
+	private void apiGenFaces(RoutingContext context) {
+		Integer linkConnId = context.getBodyAsJson().getInteger("vlinkConnId");
+		JsonObject result = new JsonObject().put("message", "faces_created");
+		service.generateFacesForLc(String.valueOf(linkConnId), resultVoidHandler(context, result));
+	}
+	private void apiGetFace(RoutingContext context) {
+		String faceId = context.request().getParam("faceId");			
+		service.getFace(faceId, resultHandlerNonEmpty(context));
+	}
+	private void apiGetAllFaces(RoutingContext context) {
+		service.getAllFaces(resultHandler(context, Json::encodePrettily));
+	}
+	private void apiGetFacesByNode(RoutingContext context) {	
+		String nodeId = context.request().getParam("nodeId");		
+		service.getFacesByNode(nodeId, resultHandler(context, Json::encodePrettily));
+	}
+	private void apiDeleteFace(RoutingContext context) {
+		String faceId = context.request().getParam("faceId");			
+		service.deleteFace(faceId, deleteResultHandler(context));
 	}
 }

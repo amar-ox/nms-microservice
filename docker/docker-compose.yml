@@ -1,11 +1,5 @@
 version: "2"
 services:
-  config-server:
-    image: httpd:alpine
-    ports:
-      - "8000:80"
-    volumes:
-      - ${DIR}/config-server:/usr/local/apache2/htdocs:ro
   mysql:
     image: mysql:5.7
     restart: always
@@ -18,75 +12,28 @@ services:
     image: mongo:latest
     expose:
       - "27017"
-  keycloak-server:
-    image: jboss/keycloak
-    ports:
-      - "8080:8080"
-    environment:
-      - DB_VENDOR=H2 
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
-  redis:
-    image: redis:latest
-    expose:
-      - "6379"
-  elasticsearch:
-    image: elasticsearch:6.8.9
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    command: elasticsearch
-    environment:
-      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
-  logstash:
-    image: logstash:6.8.9
-    ports:
-      - "12201:12201/udp"
-    command: -e 'input { gelf { host => "0.0.0.0" port => 12201 } }
-              output { elasticsearch { hosts => ["elasticsearch"] } }'
-    links:
-      - elasticsearch
-    depends_on:
-      - elasticsearch
-  kibana:
-    image: kibana:6.8.9
-    ports:
-      - "5601:5601"
-    environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-    links:
-      - elasticsearch
-      - logstash
-    depends_on:
-      - logstash
   telemetry-microservice:
     image: nms/telemetry-microservice
     links:
       - mongo
-      - logstash
     depends_on:
       - mongo
-      - logstash
     expose:
       - "8082"
   topology-microservice:
     image: nms/topology-microservice
     links:
       - mysql
-      - logstash
     depends_on:
       - mysql
-      - logstash
     expose:
       - "8085"
   fault-microservice:
     image: nms/fault-microservice
     links:
-      - mysql
-      - logstash
+      - mongo
     depends_on:
-      - mysql
-      - logstash
+      - mongo
     expose:
       - "8086"
   api-gateway:
@@ -95,8 +42,5 @@ services:
       - "8787:8787"
     environment:
       - JAVA_OPTS="-Xms128m -Xmx256m"
-    links:
-      - keycloak-server
-      - logstash
     extra_hosts:
       - "dockernet:${EXTERNAL_IP}"

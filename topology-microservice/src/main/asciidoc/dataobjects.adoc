@@ -1,5 +1,24 @@
 = Cheatsheets
 
+[[Face]]
+== Face
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[created]]`@created`|`String`|-
+|[[id]]`@id`|`Number (int)`|-
+|[[label]]`@label`|`String`|-
+|[[local]]`@local`|`String`|-
+|[[remote]]`@remote`|`String`|-
+|[[scheme]]`@scheme`|`String`|-
+|[[updated]]`@updated`|`String`|-
+|[[vctpId]]`@vctpId`|`Number (int)`|-
+|[[vlinkConnId]]`@vlinkConnId`|`Number (int)`|-
+|===
+
 [[PrefixAnn]]
 == PrefixAnn
 
