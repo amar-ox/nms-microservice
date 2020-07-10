@@ -18,13 +18,9 @@ public class PrefixAnn {
 	private String name;
 	private String created;
 	private String updated;
-	private String status = "DOWN";	
-	private int nodeId;
-	private String strategy;
-	
-	// in object only
-	
-	
+		
+	private int originId;
+	private String expiration;
 	
 	/*-----------------------------------------------*/
 	public PrefixAnn() {}
@@ -94,27 +90,20 @@ public class PrefixAnn {
 		this.name = name;
 	}
 
-	public String getStatus() {
-		return status;
+	public int getOriginId() {
+		return originId;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setOriginId(int originId) {
+		this.originId = originId;
 	}
 
-	public int getNodeId() {
-		return nodeId;
+	public String getExpiration() {
+		return expiration;
 	}
 
-	public void setNodeId(int nodeId) {
-		this.nodeId = nodeId;
+	public void setExpiration(String expiration) {
+		this.expiration = expiration;
 	}
-
-	public String getStrategy() {
-		return strategy;
-	}
-
-	public void setStrategy(String strategy) {
-		this.strategy = strategy;
-	}
+	
 }

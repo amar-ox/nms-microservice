@@ -1078,17 +1078,17 @@
     /**
 
      @public
-     @param rte {Object} 
+     @param route {Object} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.addRte =  function(rte, resultHandler) {
+    this.addRoute =  function(route, resultHandler) {
       var __args = arguments;
       if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"rte":__args[0]}, {"action":"addRte"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"route":__args[0]}, {"action":"addRoute"}, function(err, result) { __args[1](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -1096,17 +1096,17 @@
     /**
 
      @public
-     @param rteId {string} 
+     @param routeId {string} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.getRte =  function(rteId, resultHandler) {
+    this.getRoute =  function(routeId, resultHandler) {
       var __args = arguments;
       if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"rteId":__args[0]}, {"action":"getRte"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"routeId":__args[0]}, {"action":"getRoute"}, function(err, result) { __args[1](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -1117,13 +1117,13 @@
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.getAllRtes =  function(resultHandler) {
+    this.getAllRoutes =  function(resultHandler) {
       var __args = arguments;
       if (__args.length === 1 && typeof __args[0] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {}, {"action":"getAllRtes"}, function(err, result) { __args[0](err, result && result.body); });
+        j_eb.send(j_address, {}, {"action":"getAllRoutes"}, function(err, result) { __args[0](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -1135,13 +1135,13 @@
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.getRtesByNode =  function(nodeId, resultHandler) {
+    this.getRoutesByNode =  function(nodeId, resultHandler) {
       var __args = arguments;
       if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"nodeId":__args[0]}, {"action":"getRtesByNode"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"nodeId":__args[0]}, {"action":"getRoutesByNode"}, function(err, result) { __args[1](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -1149,36 +1149,17 @@
     /**
 
      @public
-     @param rteId {string} 
+     @param routeId {string} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.deleteRte =  function(rteId, resultHandler) {
+    this.deleteRoute =  function(routeId, resultHandler) {
       var __args = arguments;
       if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"rteId":__args[0]}, {"action":"deleteRte"}, function(err, result) { __args[1](err, result && result.body); });
-        return that;
-      } else throw new TypeError('function invoked with invalid arguments');
-    };
-
-    /**
-
-     @public
-     @param id {string} 
-     @param rte {Object} 
-     @param resultHandler {function} 
-     @return {TopologyService}
-     */
-    this.updateRte =  function(id, rte, resultHandler) {
-      var __args = arguments;
-      if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
-        if (closed) {
-          throw new Error('Proxy is closed');
-        }
-        j_eb.send(j_address, {"id":__args[0], "rte":__args[1]}, {"action":"updateRte"}, function(err, result) { __args[2](err, result && result.body); });
+        j_eb.send(j_address, {"routeId":__args[0]}, {"action":"deleteRoute"}, function(err, result) { __args[1](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };

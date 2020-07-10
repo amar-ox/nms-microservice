@@ -9,7 +9,7 @@ import io.nms.central.microservice.topology.TopologyService;
 import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.ModelObjectMapper;
 import io.nms.central.microservice.topology.model.PrefixAnn;
-import io.nms.central.microservice.topology.model.Rte;
+import io.nms.central.microservice.topology.model.Route;
 import io.nms.central.microservice.topology.model.Vctp;
 import io.nms.central.microservice.topology.model.Vlink;
 import io.nms.central.microservice.topology.model.VlinkConn;
@@ -21,6 +21,7 @@ import io.nms.central.microservice.topology.model.Vxc;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -32,7 +33,7 @@ import io.vertx.core.logging.LoggerFactory;
  */
 public class TopologyServiceImpl extends JdbcRepositoryWrapper implements TopologyService {
 
-	private static final Logger logger = LoggerFactory.getLogger(TopologyServiceImpl.class);
+	// private static final Logger logger = LoggerFactory.getLogger(TopologyServiceImpl.class);
 
 	public TopologyServiceImpl(Vertx vertx, JsonObject config) {
 		super(vertx, config);
@@ -50,8 +51,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		statements.add(ApiSql.CREATE_TABLE_VTRAIL);
 		statements.add(ApiSql.CREATE_TABLE_VXC);
 		statements.add(ApiSql.CREATE_TABLE_PREFIX_ANN);
-		statements.add(ApiSql.CREATE_TABLE_RTE);
 		statements.add(ApiSql.CREATE_TABLE_FACE);
+		statements.add(ApiSql.CREATE_TABLE_ROUTE);
 		client.getConnection(connHandler(resultHandler, connection -> {
 			connection.batch(statements, r -> {
 				resultHandler.handle(r);
@@ -425,7 +426,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
-	public TopologyService deleteVlink(String vlinkId, Handler<AsyncResult<Void>> resultHandler) {
+	public TopologyService deleteVlink(String vlinkId, Handler<AsyncResult<Void>> resultHandler) {		
 		this.removeOne(vlinkId, ApiSql.DELETE_VLINK, resultHandler);
 		return this;
 	}
@@ -704,14 +705,13 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 
 	
 	/********** PrefixAnn **********/
-	// INSERT_PREFIX_ANN = "INSERT INTO PrefixAnn (name, strategy, nodeId, status) 
+	// INSERT_PREFIX_ANN = "INSERT INTO PrefixAnn (name, originId, expiration) 
 	@Override
 	public TopologyService addPrefixAnn(PrefixAnn prefixAnn, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(prefixAnn.getName())
-				.add(prefixAnn.getStrategy())
-				.add(prefixAnn.getNodeId())				
-				.add(prefixAnn.getStatus());				
+				.add(prefixAnn.getOriginId())
+				.add(prefixAnn.getExpiration());
 		insertAndGetId(params, ApiSql.INSERT_PREFIX_ANN, resultHandler);
 		return this;
 	}
@@ -729,10 +729,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	public TopologyService getAllPrefixAnns(Handler<AsyncResult<List<PrefixAnn>>> resultHandler) {
 		this.retrieveAll(ApiSql.FETCH_ALL_PREFIX_ANNS)
 		.map(rawList -> rawList.stream()
-				.map(row -> {
-					PrefixAnn pa = new PrefixAnn(row);					
-					return pa;
-				})
+				.map(PrefixAnn::new)
 				.collect(Collectors.toList()))
 		.onComplete(resultHandler);
 		return this;
@@ -742,81 +739,52 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		this.removeOne(prefixAnnId, ApiSql.DELETE_PREFIX_ANN, resultHandler);
 		return this;
 	}
-	// UPDATE_PREFIX_ANN = UPDATE PrefixAnn SET status=IFNULL(?, status), name=IFNULL(?, name), strategy=IFNULL(?, strategy) 
-	@Override
-	public TopologyService updatePrefixAnn(String id, PrefixAnn prefixAnn, Handler<AsyncResult<PrefixAnn>> resultHandler) {
-		JsonArray params = new JsonArray()
-				.add(prefixAnn.getStatus())
-				.add(prefixAnn.getName())
-				.add(prefixAnn.getStrategy())
-				.add(id);
-		this.execute(params, ApiSql.UPDATE_PREFIX_ANN, prefixAnn, resultHandler);
-		return this;
-	}
 
 	
 	/********** PrefixAnn **********/
-	// INSERT_ROUTING_ENTRY = "INSERT INTO RoutingEntry (prefixId, fromNodeId, nextHopId, ctpId, cost, status)
+	// INSERT_ROUTING_ENTRY = "INSERT INTO RoutingEntry (paId, nodeId, nextHopId, faceId, cost, origin)
 	@Override
-	public TopologyService addRte(Rte rte, Handler<AsyncResult<Integer>> resultHandler) {
+	public TopologyService addRoute(Route route, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()
-				.add(rte.getPrefixId())
-				.add(rte.getFromNodeId())
-				.add(rte.getNextHopId())
-				.add(rte.getCtpId())
-				.add(rte.getCost())				
-				.add(rte.getStatus());				
-		insertAndGetId(params, ApiSql.INSERT_RTE, resultHandler);
+				.add(route.getPaId())
+				.add(route.getNodeId())
+				.add(route.getNextHopId())
+				.add(route.getFaceId())
+				.add(route.getCost())				
+				.add(route.getOrigin());				
+		insertAndGetId(params, ApiSql.INSERT_ROUTE, resultHandler);
 		return this;
 	}
 	@Override
-	public TopologyService getRte(String rteId, Handler<AsyncResult<Rte>> resultHandler) {
-		this.retrieveOne(rteId, ApiSql.FETCH_RTE_BY_ID)
-		.map(option -> option.map(json -> {
-			Rte rte = new Rte(json);
-			return rte;
-		}).orElse(null))
+	public TopologyService getRoute(String routeId, Handler<AsyncResult<Route>> resultHandler) {
+		this.retrieveOne(routeId, ApiSql.FETCH_ROUTE_BY_ID)
+		.map(option -> option.map(Route::new).orElse(null))
 		.onComplete(resultHandler);
 		return this;
 	}
 	@Override
-	public TopologyService getAllRtes(Handler<AsyncResult<List<Rte>>> resultHandler) {
-		this.retrieveAll(ApiSql.FETCH_ALL_RTES)
+	public TopologyService getAllRoutes(Handler<AsyncResult<List<Route>>> resultHandler) {
+		this.retrieveAll(ApiSql.FETCH_ALL_ROUTES)
 		.map(rawList -> rawList.stream()
-				.map(row -> {
-					Rte rte = new Rte(row);					
-					return rte;
-				})
+				.map(Route::new)
 				.collect(Collectors.toList()))
 		.onComplete(resultHandler);
 		return this;
 	}
 	@Override
-	public TopologyService getRtesByNode(String nodeId, Handler<AsyncResult<List<Rte>>> resultHandler) {
+	public TopologyService getRoutesByNode(String nodeId, Handler<AsyncResult<List<Route>>> resultHandler) {
 		JsonArray params = new JsonArray().add(nodeId);
-		this.retrieveMany(params, ApiSql.FETCH_RTES_BY_NODE)
+		this.retrieveMany(params, ApiSql.FETCH_ROUTES_BY_NODE)
 		.map(rawList -> rawList.stream()
-				.map(row -> {
-					Rte rte = new Rte(row);
-					return rte;
-				})
+				.map(Route::new)
 				.collect(Collectors.toList())
 				)
 		.onComplete(resultHandler);
 		return this;
 	}
 	@Override
-	public TopologyService deleteRte(String rteId, Handler<AsyncResult<Void>> resultHandler) {
-		this.removeOne(rteId, ApiSql.DELETE_RTE, resultHandler);
-		return this;
-	}
-	// UPDATE_ROUTING_ENTRY = UPDATE RoutingEntry SET status=IFNULL(?, status)
-	@Override
-	public TopologyService updateRte(String id, Rte rte, Handler<AsyncResult<Rte>> resultHandler) {
-		JsonArray params = new JsonArray()
-				.add(rte.getStatus())
-				.add(id);
-		this.execute(params, ApiSql.UPDATE_RTE, rte, resultHandler);
+	public TopologyService deleteRoute(String routeId, Handler<AsyncResult<Void>> resultHandler) {
+		this.removeOne(routeId, ApiSql.DELETE_ROUTE, resultHandler);
 		return this;
 	}
 
@@ -914,4 +882,30 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 			});
 		return this;
 	}
+
+	
+	
+	
+	/* ---------------------------------- */
+	protected Future<Void> setVltpBusy(Integer vltpId, Boolean busy) {
+		Promise<Void> promise = Promise.promise();
+		JsonArray params = new JsonArray().add(busy).add(vltpId);
+		executeNoResult(params, InternalSql.UPDATE_LTP_BUSY, ar -> {
+			if (ar.succeeded()) {
+				promise.complete();
+			} else {
+				promise.fail(ar.cause());
+			}
+		});
+		return promise.future();
+	}
+
+	@Override
+	public TopologyService updatePrefixAnn(String id, PrefixAnn prefixAnn,
+			Handler<AsyncResult<PrefixAnn>> resultHandler) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
+
+

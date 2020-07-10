@@ -10,38 +10,38 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 
 @DataObject(generateConverter = true)
-public class Rte {
+public class Route {
 	
 	// in SQL table		
 	private int id;
 	private String created;
-	private String updated;
-	private String status = "DOWN";	
+	private String updated;	
 	
-	private int prefixId;
-	private int fromNodeId;
+	private int paId;
+	private int nodeId;
 	private int nextHopId;
-	private int ctpId;
+	private int faceId;
 	private int cost;
+	private String origin;
 	
 	// in object only
-	private String prefixName; 	// prefix name
+	private String prefix;
 	
 	
 	/*-----------------------------------------------*/
-	public Rte() {}
+	public Route() {}
 	
-	public Rte(int id) {
+	public Route(int id) {
 		this.id = id;		
 	}
 	
-	public Rte(JsonObject json) {
-		RteConverter.fromJson(json, this);
+	public Route(JsonObject json) {
+		RouteConverter.fromJson(json, this);
 	}
 	
 	public JsonObject toJson() {
 		JsonObject json = new JsonObject();
-		RteConverter.toJson(this, json);
+		RouteConverter.toJson(this, json);
 		return json;
 	}
 	
@@ -52,7 +52,7 @@ public class Rte {
 
 	@Override
 	public boolean equals(Object obj) {
-		return Objects.equals(id, ((Rte) obj).id);
+		return Objects.equals(id, ((Route) obj).id);
 	}
 
 	
@@ -88,44 +88,12 @@ public class Rte {
 		this.updated = updated;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public int getPrefixId() {
-		return prefixId;
-	}
-
-	public void setPrefixId(int prefixId) {
-		this.prefixId = prefixId;
-	}
-
-	public int getFromNodeId() {
-		return fromNodeId;
-	}
-
-	public void setFromNodeId(int fromNodeId) {
-		this.fromNodeId = fromNodeId;
-	}
-
 	public int getNextHopId() {
 		return nextHopId;
 	}
 
 	public void setNextHopId(int nextHopId) {
 		this.nextHopId = nextHopId;
-	}
-
-	public int getCtpId() {
-		return ctpId;
-	}
-
-	public void setCtpId(int ctpId) {
-		this.ctpId = ctpId;
 	}
 
 	public int getCost() {
@@ -136,12 +104,44 @@ public class Rte {
 		this.cost = cost;
 	}
 
-	public String getPrefixName() {
-		return prefixName;
+	public int getPaId() {
+		return paId;
 	}
 
-	public void setPrefixName(String prefixName) {
-		this.prefixName = prefixName;
+	public void setPaId(int paId) {
+		this.paId = paId;
 	}
 
+	public int getNodeId() {
+		return nodeId;
+	}
+
+	public void setNodeId(int nodeId) {
+		this.nodeId = nodeId;
+	}
+
+	public int getFaceId() {
+		return faceId;
+	}
+
+	public void setFaceId(int faceId) {
+		this.faceId = faceId;
+	}
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+	
 }

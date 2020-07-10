@@ -179,33 +179,33 @@ public class ApiSql {
 	public static final String CREATE_TABLE_PREFIX_ANN = "CREATE TABLE IF NOT EXISTS PrefixAnn (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
 			"    `name` VARCHAR(255) NOT NULL,\n" + 
-			"    `nodeId` INT NOT NULL,\n" +
-			"    `strategy` VARCHAR(60) NOT NULL,\n" + 
-			"    `status` VARCHAR(10) NOT NULL,\n" +
+			"    `originId` INT NOT NULL,\n" +
+			"    `expiration` DATETIME NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
-			"    PRIMARY KEY (`id`),\n" + 
-			"    FOREIGN KEY (`nodeId`) \n" + 
+			"    PRIMARY KEY (`id`),\n" +
+			"    UNIQUE KEY (`name`, `originId`),\n" +
+			"    FOREIGN KEY (`originId`) \n" + 
 			"        REFERENCES Vnode(`id`)\n" + 
 			"        ON DELETE CASCADE\n" + 
 			"		 ON UPDATE CASCADE\n" +
 			")";
-	public static final String CREATE_TABLE_RTE = "CREATE TABLE IF NOT EXISTS Rte (\n" +
+	public static final String CREATE_TABLE_ROUTE = "CREATE TABLE IF NOT EXISTS Route (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `prefixId` INT NOT NULL,\n" +
-			"    `fromNodeId` INT NOT NULL,\n" +
+			"    `paId` INT NOT NULL,\n" +
+			"    `nodeId` INT NOT NULL,\n" +
 			"    `nextHopId` INT NOT NULL,\n" +
+			"    `faceId` INT NOT NULL,\n" +
 			"    `cost` INT NOT NULL,\n" +
-			"    `ctpId` INT NOT NULL,\n" +
-			"    `status` VARCHAR(10) NOT NULL,\n" +
+			"    `origin` VARCHAR(20) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +			
 			"    PRIMARY KEY (`id`),\n" +
-			"    FOREIGN KEY (`prefixId`) \n" +
+			"    FOREIGN KEY (`paId`) \n" +
 			"        REFERENCES PrefixAnn(`id`)\n" + 
 			"        ON DELETE CASCADE\n" + 
 			"		 ON UPDATE CASCADE,\n" +
-			"    FOREIGN KEY (`fromNodeId`) \n" + 
+			"    FOREIGN KEY (`nodeId`) \n" + 
 			"        REFERENCES Vnode(`id`)\n" + 
 			"        ON DELETE CASCADE\n" + 
 			"		 ON UPDATE CASCADE,\n" +
@@ -213,8 +213,8 @@ public class ApiSql {
 			"        REFERENCES Vnode(`id`)\n" + 
 			"        ON DELETE CASCADE\n" + 
 			"		 ON UPDATE CASCADE,\n" +
-			"    FOREIGN KEY (`ctpId`) \n" + 
-			"        REFERENCES Vctp(`id`)\n" + 
+			"    FOREIGN KEY (`faceId`) \n" + 
+			"        REFERENCES Face(`id`)\n" + 
 			"        ON DELETE CASCADE\n" + 
 			"		 ON UPDATE CASCADE\n" +
 			")";
@@ -259,9 +259,9 @@ public class ApiSql {
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_VXC_1 = "INSERT INTO Vxc (name, label, description, info, status, type, vnodeId, vtrailId, srcVctpId, destVctpId) "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	public static final String INSERT_PREFIX_ANN = "INSERT INTO PrefixAnn (name, strategy, nodeId, status) "
-			+ "VALUES (?, ?, ?, ?)";
-	public static final String INSERT_RTE = "INSERT INTO Rte (prefixId, fromNodeId, nextHopId, ctpId, cost, status) "
+	public static final String INSERT_PREFIX_ANN = "INSERT INTO PrefixAnn (name, originId, expiration) "
+			+ "VALUES (?, ?, ?)";
+	public static final String INSERT_ROUTE = "INSERT INTO Route (paId, nodeId, nextHopId, faceId, cost, origin) "
 			+ "VALUES (?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_FACE = "INSERT INTO Face (label, local, remote, scheme, vctpId, vlinkConnId) "
 			+ "VALUES (?, ?, ?, ?, ?, ?)";
@@ -321,12 +321,13 @@ public class ApiSql {
 	
 	
 	public static final String FETCH_ALL_PREFIX_ANNS = "SELECT "
-			+ "id, name, nodeId, strategy, status, created, updated "
+			+ "id, name, originId, expiration, created, updated "
 			+ "FROM PrefixAnn";
 	
-	public static final String FETCH_ALL_RTES = "SELECT "
-			+ "Rte.id, Rte.prefixId, PrefixAnn.name AS prefixName, Rte.fromNodeId, Rte.nextHopId, Rte.cost, Rte.ctpId, Rte.status, Rte.created, Rte.updated "
-			+ "FROM Rte INNER JOIN PrefixAnn on Rte.prefixId=PrefixAnn.id";
+	public static final String FETCH_ALL_ROUTES = "SELECT "
+			+ "Route.id, Route.paId, PrefixAnn.name AS prefix, Route.nodeId, Route.nextHopId, Route.faceId, Route.cost, Route.origin, "
+			+ "Route.created, Route.updated "
+			+ "FROM Route INNER JOIN PrefixAnn on Route.paId=PrefixAnn.id";
 
 	public static final String FETCH_ALL_FACES = "SELECT "
 			+ "id, label, local, remote, scheme, created, updated, vctpId, vlinkConnId "
@@ -426,9 +427,10 @@ public class ApiSql {
 			+ "FROM Vxc WHERE vtrailId = ?";
 	
 	// get all Routing entries of a node
-	public static final String FETCH_RTES_BY_NODE = "SELECT "
-			+ "Rte.id, Rte.prefixId, PrefixAnn.name AS prefixName, Rte.fromNodeId, Rte.nextHopId, Rte.cost, Rte.ctpId, Rte.status, Rte.created, Rte.updated "
-			+ "FROM Rte INNER JOIN PrefixAnn on Rte.prefixId=PrefixAnn.id WHERE Rte.fromNodeId=?";
+	public static final String FETCH_ROUTES_BY_NODE = "SELECT "
+			+ "Route.id, Route.paId, PrefixAnn.name AS prefix, Route.nodeId, Route.nextHopId, Route.faceId, Route.cost, Route.origin, "
+			+ "Route.created, Route.updated "
+			+ "FROM Route INNER JOIN PrefixAnn on Route.paId=PrefixAnn.id WHERE Route.nodeId = ?";
 	
 	// get all Face on a node
 	public static final String FETCH_FACES_BY_NODE = "SELECT "
@@ -513,12 +515,13 @@ public class ApiSql {
 
 	
 	public static final String FETCH_PREFIX_ANN_BY_ID = "SELECT "
-			+ "id, name, nodeId, strategy, status, created, updated "
+			+ "id, name, originId, expiration, created, updated "
 			+ "FROM PrefixAnn WHERE id=?";
 	
-	public static final String FETCH_RTE_BY_ID = "SELECT "
-			+ "Rte.id, Rte.prefixId, PrefixAnn.name AS prefixName, Rte.fromNodeId, Rte.nextHopId, Rte.cost, Rte.ctpId, Rte.status, Rte.created, Rte.updated "
-			+ "FROM Rte INNER JOIN PrefixAnn on Rte.prefixId=PrefixAnn.id WHERE Rte.id=?";
+	public static final String FETCH_ROUTE_BY_ID = "SELECT "
+			+ "Route.id, Route.paId, PrefixAnn.name AS prefix, Route.nodeId, Route.nextHopId, Route.faceId, Route.cost, Route.origin, "
+			+ "Route.created, Route.updated "
+			+ "FROM Route INNER JOIN PrefixAnn on Route.paId=PrefixAnn.id WHERE Route.id=?";
 
 	public static final String FETCH_FACE_BY_ID = "SELECT "
 			+ "id, label, local, remote, scheme, created, updated, vctpId, vlinkConnId "
@@ -538,7 +541,7 @@ public class ApiSql {
 	public static final String DELETE_VXC = "DELETE FROM Vxc WHERE id=?";
 	
 	public static final String DELETE_PREFIX_ANN = "DELETE FROM PrefixAnn WHERE id=?";
-	public static final String DELETE_RTE = "DELETE FROM Rte WHERE id=?";
+	public static final String DELETE_ROUTE = "DELETE FROM Route WHERE id=?";
 	
 	public static final String DELETE_FACE = "DELETE FROM Face WHERE id=?";
 	
@@ -575,13 +578,5 @@ public class ApiSql {
 	public static final String UPDATE_VXC = "UPDATE Vxc "
 			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "
 			+ "type=IFNULL(?, type) "
-			+ "WHERE id = ?";
-	
-	public static final String UPDATE_PREFIX_ANN = "UPDATE PrefixAnn "
-			+ "SET status=IFNULL(?, status), name=IFNULL(?, name), strategy=IFNULL(?, strategy) "
-			+ "WHERE id = ?";
-		
-	public static final String UPDATE_RTE = "UPDATE Rte "
-			+ "SET status=IFNULL(?, status) "
 			+ "WHERE id = ?";
 }

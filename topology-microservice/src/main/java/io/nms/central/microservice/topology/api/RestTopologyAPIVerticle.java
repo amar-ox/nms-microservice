@@ -4,7 +4,7 @@ import io.nms.central.microservice.common.RestAPIVerticle;
 import io.nms.central.microservice.topology.TopologyService;
 import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.PrefixAnn;
-import io.nms.central.microservice.topology.model.Rte;
+import io.nms.central.microservice.topology.model.Route;
 import io.nms.central.microservice.topology.model.Vctp;
 import io.nms.central.microservice.topology.model.Vlink;
 import io.nms.central.microservice.topology.model.VlinkConn;
@@ -101,12 +101,11 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_DELETE_PREFIX_ANN = "/prefixAnn/:prefixAnnId";
 	// private static final String API_UPDATE_PREFIX_ANN = "/prefixAnn/:prefixAnnId";
 
-	private static final String API_ADD_RTE = "/rte";
-	private static final String API_GET_RTE = "/rte/:rteId";	
-	private static final String API_GET_ALL_RTES = "/rtes";
-	private static final String API_GET_RTES_BY_NODE = "/rtes/node/:nodeId";
-	private static final String API_DELETE_RTE = "/rte/:rteId";
-	// private static final String API_UPDATE_RTE = "/rte/:rteId";
+	private static final String API_ADD_ROUTE = "/route";
+	private static final String API_GET_ROUTE = "/route/:routeId";	
+	private static final String API_GET_ALL_ROUTES = "/routes";
+	private static final String API_GET_ROUTES_BY_NODE = "/routes/node/:nodeId";
+	private static final String API_DELETE_ROUTE = "/route/:routeId";
 
 	private static final String API_ADD_FACE = "/face";
 	private static final String API_GEN_FACES = "/genfaces";
@@ -196,12 +195,11 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.delete(API_DELETE_PREFIX_ANN).handler(this::apiDeletePrefixAnn);
 		// router.patch(API_UPDATE_PREFIX_ANN).handler(this::apiUpdatePrefixAnn);
 
-		router.post(API_ADD_RTE).handler(this::apiAddRte);
-		router.get(API_GET_ALL_RTES).handler(this::apiGetAllRtes);
-		router.get(API_GET_RTES_BY_NODE).handler(this::apiGetRtesByNode);
-		router.get(API_GET_RTE).handler(this::apiGetRte);
-		router.delete(API_DELETE_RTE).handler(this::apiDeleteRte);
-		// router.patch(API_UPDATE_RTE).handler(this::apiUpdateRte);
+		router.post(API_ADD_ROUTE).handler(this::apiAddRoute);
+		router.get(API_GET_ALL_ROUTES).handler(this::apiGetAllRoutes);
+		router.get(API_GET_ROUTES_BY_NODE).handler(this::apiGetRoutesByNode);
+		router.get(API_GET_ROUTE).handler(this::apiGetRoute);
+		router.delete(API_DELETE_ROUTE).handler(this::apiDeleteRoute);
 
 		router.post(API_ADD_FACE).handler(this::apiAddFace);
 		router.post(API_GEN_FACES).handler(this::apiGenFaces);
@@ -494,30 +492,24 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 
 
 	// Routing Table Entry API
-	private void apiAddRte(RoutingContext context) {
-		final Rte rte = Json.decodeValue(context.getBodyAsString(), Rte.class);			
-		// JsonObject result = new JsonObject().put("message", "rte_added");
-		service.addRte(rte, resultHandlerNonEmpty(context, "id"));
+	private void apiAddRoute(RoutingContext context) {
+		final Route route = Json.decodeValue(context.getBodyAsString(), Route.class);
+		service.addRoute(route, resultHandlerNonEmpty(context, "id"));
 	}
-	private void apiGetRte(RoutingContext context) {
-		String rteId = context.request().getParam("rteId");			
-		service.getRte(rteId, resultHandlerNonEmpty(context));
+	private void apiGetRoute(RoutingContext context) {
+		String routeId = context.request().getParam("routeId");
+		service.getRoute(routeId, resultHandlerNonEmpty(context));
 	}
-	private void apiGetAllRtes(RoutingContext context) {
-		service.getAllRtes(resultHandler(context, Json::encodePrettily));
+	private void apiGetAllRoutes(RoutingContext context) {
+		service.getAllRoutes(resultHandler(context, Json::encodePrettily));
 	}
-	private void apiGetRtesByNode(RoutingContext context) {	
+	private void apiGetRoutesByNode(RoutingContext context) {	
 		String nodeId = context.request().getParam("nodeId");		
-		service.getRtesByNode(nodeId, resultHandler(context, Json::encodePrettily));
+		service.getRoutesByNode(nodeId, resultHandler(context, Json::encodePrettily));
 	}
-	private void apiDeleteRte(RoutingContext context) {
-		String rteId = context.request().getParam("rteId");			
-		service.deleteRte(rteId, deleteResultHandler(context));
-	}
-	private void apiUpdateRte(RoutingContext context) {
-		String id = context.request().getParam("rteId");
-		final Rte rte = Json.decodeValue(context.getBodyAsString(), Rte.class);		
-		service.updateRte(id, rte, resultHandlerNonEmpty(context));
+	private void apiDeleteRoute(RoutingContext context) {
+		String routeId = context.request().getParam("routeId");
+		service.deleteRoute(routeId, deleteResultHandler(context));
 	}
 
 

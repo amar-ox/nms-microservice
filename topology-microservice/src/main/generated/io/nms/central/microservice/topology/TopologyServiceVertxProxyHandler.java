@@ -47,8 +47,8 @@ import io.nms.central.microservice.topology.model.Vlink;
 import io.nms.central.microservice.topology.model.Vxc;
 import io.nms.central.microservice.topology.model.Vsubnet;
 import io.nms.central.microservice.topology.model.Face;
-import io.nms.central.microservice.topology.model.Rte;
 import java.util.List;
+import io.nms.central.microservice.topology.model.Route;
 import io.nms.central.microservice.topology.model.VlinkConn;
 import io.nms.central.microservice.topology.model.Vtrail;
 import io.vertx.core.AsyncResult;
@@ -790,13 +790,13 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
-        case "addRte": {
-          service.addRte(json.getJsonObject("rte") == null ? null : new io.nms.central.microservice.topology.model.Rte(json.getJsonObject("rte")),
+        case "addRoute": {
+          service.addRoute(json.getJsonObject("route") == null ? null : new io.nms.central.microservice.topology.model.Route(json.getJsonObject("route")),
                         HelperUtils.createHandler(msg));
           break;
         }
-        case "getRte": {
-          service.getRte((java.lang.String)json.getValue("rteId"),
+        case "getRoute": {
+          service.getRoute((java.lang.String)json.getValue("routeId"),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
@@ -810,8 +810,8 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
-        case "getAllRtes": {
-          service.getAllRtes(res -> {
+        case "getAllRoutes": {
+          service.getAllRoutes(res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
                             msg.reply(res.cause());
@@ -824,8 +824,8 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
-        case "getRtesByNode": {
-          service.getRtesByNode((java.lang.String)json.getValue("nodeId"),
+        case "getRoutesByNode": {
+          service.getRoutesByNode((java.lang.String)json.getValue("nodeId"),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
@@ -839,25 +839,9 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
-        case "deleteRte": {
-          service.deleteRte((java.lang.String)json.getValue("rteId"),
+        case "deleteRoute": {
+          service.deleteRoute((java.lang.String)json.getValue("routeId"),
                         HelperUtils.createHandler(msg));
-          break;
-        }
-        case "updateRte": {
-          service.updateRte((java.lang.String)json.getValue("id"),
-                        json.getJsonObject("rte") == null ? null : new io.nms.central.microservice.topology.model.Rte(json.getJsonObject("rte")),
-                        res -> {
-                        if (res.failed()) {
-                          if (res.cause() instanceof ServiceException) {
-                            msg.reply(res.cause());
-                          } else {
-                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
-                          }
-                        } else {
-                          msg.reply(res.result() == null ? null : res.result().toJson());
-                        }
-                     });
           break;
         }
         case "addFace": {

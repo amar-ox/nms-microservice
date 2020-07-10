@@ -4,7 +4,7 @@ import java.util.List;
 
 import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.PrefixAnn;
-import io.nms.central.microservice.topology.model.Rte;
+import io.nms.central.microservice.topology.model.Route;
 import io.nms.central.microservice.topology.model.Vctp;
 import io.nms.central.microservice.topology.model.Vlink;
 import io.nms.central.microservice.topology.model.VlinkConn;
@@ -231,24 +231,21 @@ public interface TopologyService {
 	TopologyService updatePrefixAnn(String id, PrefixAnn prefixAnn, Handler<AsyncResult<PrefixAnn>> resultHandler);
 	
 	
-	/* RoutingEntry */
+	/* Route */
 	@Fluent	
-	TopologyService addRte(Rte rte, Handler<AsyncResult<Integer>> resultHandler);
+	TopologyService addRoute(Route route, Handler<AsyncResult<Integer>> resultHandler);
 	
 	@Fluent	
-	TopologyService getRte(String rteId, Handler<AsyncResult<Rte>> resultHandler);
+	TopologyService getRoute(String routeId, Handler<AsyncResult<Route>> resultHandler);
 	
 	@Fluent
-	TopologyService getAllRtes(Handler<AsyncResult<List<Rte>>> resultHandler);
+	TopologyService getAllRoutes(Handler<AsyncResult<List<Route>>> resultHandler);
 	
 	@Fluent
-	TopologyService getRtesByNode(String nodeId, Handler<AsyncResult<List<Rte>>> resultHandler);
+	TopologyService getRoutesByNode(String nodeId, Handler<AsyncResult<List<Route>>> resultHandler);
 	
 	@Fluent	
-	TopologyService deleteRte(String rteId, Handler<AsyncResult<Void>> resultHandler);
-	
-	@Fluent 
-	TopologyService updateRte(String id, Rte rte, Handler<AsyncResult<Rte>> resultHandler);
+	TopologyService deleteRoute(String routeId, Handler<AsyncResult<Void>> resultHandler);
 	
 	/* Face */
 	@Fluent	

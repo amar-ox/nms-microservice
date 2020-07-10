@@ -19,6 +19,11 @@ public class PrefixAnnConverter {
             obj.setCreated((String)member.getValue());
           }
           break;
+        case "expiration":
+          if (member.getValue() instanceof String) {
+            obj.setExpiration((String)member.getValue());
+          }
+          break;
         case "id":
           if (member.getValue() instanceof Number) {
             obj.setId(((Number)member.getValue()).intValue());
@@ -29,19 +34,9 @@ public class PrefixAnnConverter {
             obj.setName((String)member.getValue());
           }
           break;
-        case "nodeId":
+        case "originId":
           if (member.getValue() instanceof Number) {
-            obj.setNodeId(((Number)member.getValue()).intValue());
-          }
-          break;
-        case "status":
-          if (member.getValue() instanceof String) {
-            obj.setStatus((String)member.getValue());
-          }
-          break;
-        case "strategy":
-          if (member.getValue() instanceof String) {
-            obj.setStrategy((String)member.getValue());
+            obj.setOriginId(((Number)member.getValue()).intValue());
           }
           break;
         case "updated":
@@ -61,17 +56,14 @@ public class PrefixAnnConverter {
     if (obj.getCreated() != null) {
       json.put("created", obj.getCreated());
     }
+    if (obj.getExpiration() != null) {
+      json.put("expiration", obj.getExpiration());
+    }
     json.put("id", obj.getId());
     if (obj.getName() != null) {
       json.put("name", obj.getName());
     }
-    json.put("nodeId", obj.getNodeId());
-    if (obj.getStatus() != null) {
-      json.put("status", obj.getStatus());
-    }
-    if (obj.getStrategy() != null) {
-      json.put("strategy", obj.getStrategy());
-    }
+    json.put("originId", obj.getOriginId());
     if (obj.getUpdated() != null) {
       json.put("updated", obj.getUpdated());
     }

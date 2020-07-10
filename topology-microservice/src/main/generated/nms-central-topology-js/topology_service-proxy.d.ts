@@ -141,17 +141,15 @@ export default class TopologyService {
 
   updatePrefixAnn(id: string, prefixAnn: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  addRte(rte: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+  addRoute(route: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  getRte(rteId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+  getRoute(routeId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  getAllRtes(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+  getAllRoutes(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
-  getRtesByNode(nodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+  getRoutesByNode(nodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
-  deleteRte(rteId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
-
-  updateRte(id: string, rte: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+  deleteRoute(routeId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addFace(face: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 

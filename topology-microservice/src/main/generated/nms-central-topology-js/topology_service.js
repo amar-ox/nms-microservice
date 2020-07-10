@@ -22,8 +22,8 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JTopologyService = Java.type('io.nms.central.microservice.topology.TopologyService');
 var Vsubnet = Java.type('io.nms.central.microservice.topology.model.Vsubnet');
 var Face = Java.type('io.nms.central.microservice.topology.model.Face');
-var Rte = Java.type('io.nms.central.microservice.topology.model.Rte');
 var Vltp = Java.type('io.nms.central.microservice.topology.model.Vltp');
+var Route = Java.type('io.nms.central.microservice.topology.model.Route');
 var Vlink = Java.type('io.nms.central.microservice.topology.model.Vlink');
 var VlinkConn = Java.type('io.nms.central.microservice.topology.model.VlinkConn');
 var Vtrail = Java.type('io.nms.central.microservice.topology.model.Vtrail');
@@ -102,12 +102,11 @@ var TopologyService = function(j_val) {
   var __super_getAllPrefixAnns = this.getAllPrefixAnns;
   var __super_deletePrefixAnn = this.deletePrefixAnn;
   var __super_updatePrefixAnn = this.updatePrefixAnn;
-  var __super_addRte = this.addRte;
-  var __super_getRte = this.getRte;
-  var __super_getAllRtes = this.getAllRtes;
-  var __super_getRtesByNode = this.getRtesByNode;
-  var __super_deleteRte = this.deleteRte;
-  var __super_updateRte = this.updateRte;
+  var __super_addRoute = this.addRoute;
+  var __super_getRoute = this.getRoute;
+  var __super_getAllRoutes = this.getAllRoutes;
+  var __super_getRoutesByNode = this.getRoutesByNode;
+  var __super_deleteRoute = this.deleteRoute;
   var __super_addFace = this.addFace;
   var __super_generateFacesForLc = this.generateFacesForLc;
   var __super_getFace = this.getFace;
@@ -1484,14 +1483,14 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param rte {Object} 
+   @param route {Object} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.addRte =  function(rte, resultHandler) {
+  this.addRoute =  function(route, resultHandler) {
     var __args = arguments;
     if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
-      j_topologyService["addRte(io.nms.central.microservice.topology.model.Rte,io.vertx.core.Handler)"](__args[0]  != null ? new Rte(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+      j_topologyService["addRoute(io.nms.central.microservice.topology.model.Route,io.vertx.core.Handler)"](__args[0]  != null ? new Route(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
         if (ar.succeeded()) {
           __args[1](ar.result(), null);
         } else {
@@ -1499,8 +1498,8 @@ var TopologyService = function(j_val) {
         }
       }) ;
       return that;
-    } else if (typeof __super_addRte != 'undefined') {
-      return __super_addRte.apply(this, __args);
+    } else if (typeof __super_addRoute != 'undefined') {
+      return __super_addRoute.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -1508,14 +1507,14 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param rteId {string} 
+   @param routeId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.getRte =  function(rteId, resultHandler) {
+  this.getRoute =  function(routeId, resultHandler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_topologyService["getRte(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+      j_topologyService["getRoute(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
         if (ar.succeeded()) {
           __args[1](utils.convReturnDataObject(ar.result()), null);
         } else {
@@ -1523,8 +1522,8 @@ var TopologyService = function(j_val) {
         }
       }) ;
       return that;
-    } else if (typeof __super_getRte != 'undefined') {
-      return __super_getRte.apply(this, __args);
+    } else if (typeof __super_getRoute != 'undefined') {
+      return __super_getRoute.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -1535,10 +1534,10 @@ var TopologyService = function(j_val) {
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.getAllRtes =  function(resultHandler) {
+  this.getAllRoutes =  function(resultHandler) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_topologyService["getAllRtes(io.vertx.core.Handler)"](function(ar) {
+      j_topologyService["getAllRoutes(io.vertx.core.Handler)"](function(ar) {
         if (ar.succeeded()) {
           __args[0](utils.convReturnListSetDataObject(ar.result()), null);
         } else {
@@ -1546,8 +1545,8 @@ var TopologyService = function(j_val) {
         }
       }) ;
       return that;
-    } else if (typeof __super_getAllRtes != 'undefined') {
-      return __super_getAllRtes.apply(this, __args);
+    } else if (typeof __super_getAllRoutes != 'undefined') {
+      return __super_getAllRoutes.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -1559,10 +1558,10 @@ var TopologyService = function(j_val) {
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.getRtesByNode =  function(nodeId, resultHandler) {
+  this.getRoutesByNode =  function(nodeId, resultHandler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_topologyService["getRtesByNode(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+      j_topologyService["getRoutesByNode(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
         if (ar.succeeded()) {
           __args[1](utils.convReturnListSetDataObject(ar.result()), null);
         } else {
@@ -1570,8 +1569,8 @@ var TopologyService = function(j_val) {
         }
       }) ;
       return that;
-    } else if (typeof __super_getRtesByNode != 'undefined') {
-      return __super_getRtesByNode.apply(this, __args);
+    } else if (typeof __super_getRoutesByNode != 'undefined') {
+      return __super_getRoutesByNode.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -1579,14 +1578,14 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param rteId {string} 
+   @param routeId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.deleteRte =  function(rteId, resultHandler) {
+  this.deleteRoute =  function(routeId, resultHandler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_topologyService["deleteRte(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+      j_topologyService["deleteRoute(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
         if (ar.succeeded()) {
           __args[1](null, null);
         } else {
@@ -1594,33 +1593,8 @@ var TopologyService = function(j_val) {
         }
       }) ;
       return that;
-    } else if (typeof __super_deleteRte != 'undefined') {
-      return __super_deleteRte.apply(this, __args);
-    }
-    else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
-   @param id {string} 
-   @param rte {Object} 
-   @param resultHandler {function} 
-   @return {TopologyService}
-   */
-  this.updateRte =  function(id, rte, resultHandler) {
-    var __args = arguments;
-    if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
-      j_topologyService["updateRte(java.lang.String,io.nms.central.microservice.topology.model.Rte,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Rte(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
-        if (ar.succeeded()) {
-          __args[2](utils.convReturnDataObject(ar.result()), null);
-        } else {
-          __args[2](null, ar.cause());
-        }
-      }) ;
-      return that;
-    } else if (typeof __super_updateRte != 'undefined') {
-      return __super_updateRte.apply(this, __args);
+    } else if (typeof __super_deleteRoute != 'undefined') {
+      return __super_deleteRoute.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };

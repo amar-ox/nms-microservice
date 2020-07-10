@@ -44,8 +44,6 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 
   private static final Logger logger = LoggerFactory.getLogger(APIGatewayVerticle.class);
 
-  private OAuth2Auth oauth2;
-
   @Override
   public void start(Future<Void> future) throws Exception {
     super.start();
@@ -58,7 +56,7 @@ public class APIGatewayVerticle extends RestAPIVerticle {
     // cookie and session handler
     enableLocalSession(router);
     
-    Set<String> allowedHeaders = new HashSet<>();
+    /* Set<String> allowedHeaders = new HashSet<>();
 	allowedHeaders.add("x-requested-with");
 	allowedHeaders.add("Access-Control-Allow-Origin");
 	allowedHeaders.add("Origin");
@@ -69,9 +67,10 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 	CorsHandler corsHandler = CorsHandler
 			.create("http://localhost:8080")
 			.allowedHeaders(allowedHeaders);
-	
 	Arrays.asList(HttpMethod.values()).stream().forEach(method -> corsHandler.allowedMethod(method));
-	router.route().handler(corsHandler);
+	router.route().handler(corsHandler); */
+    
+    enableCorsSupport(router);		
 
     // body handler
     router.route().handler(BodyHandler.create());
@@ -80,18 +79,6 @@ public class APIGatewayVerticle extends RestAPIVerticle {
     router.get("/api/v").handler(this::apiVersion);
     
     String hostURI = buildHostURI();
-    
-    // create OAuth 2 instance for Keycloak
-    // oauth2 = KeycloakAuth.create(vertx, OAuth2FlowType.AUTH_CODE, config());    
-    // OAuth2AuthHandler oauth2Handler = OAuth2AuthHandler.create(oauth2, hostURI);
-    // oauth2Handler.setupCallback(router.get("/callback"));
-    // router.route().handler(UserSessionHandler.create(oauth2));
-    // router.route("/api/*").handler(oauth2Handler);    
-    
-    // router.route("/callback").handler(context -> authCallback(oauth2, hostURI, context));
-    // router.get("/uaa").handler(this::authUaaHandler);
-    // router.get("/login").handler(this::login);
-    // router.post("/logout").handler(this::logoutHandler);
     
     // api dispatcher    
     router.route("/api/*").handler(this::dispatchRequests);

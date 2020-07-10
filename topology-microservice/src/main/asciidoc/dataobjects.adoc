@@ -28,16 +28,15 @@
 |===
 ^|Name | Type ^| Description
 |[[created]]`@created`|`String`|-
+|[[expiration]]`@expiration`|`String`|-
 |[[id]]`@id`|`Number (int)`|-
 |[[name]]`@name`|`String`|-
-|[[nodeId]]`@nodeId`|`Number (int)`|-
-|[[status]]`@status`|`String`|-
-|[[strategy]]`@strategy`|`String`|-
+|[[originId]]`@originId`|`Number (int)`|-
 |[[updated]]`@updated`|`String`|-
 |===
 
-[[Rte]]
-== Rte
+[[Route]]
+== Route
 
 
 [cols=">25%,25%,50%"]
@@ -46,13 +45,13 @@
 ^|Name | Type ^| Description
 |[[cost]]`@cost`|`Number (int)`|-
 |[[created]]`@created`|`String`|-
-|[[ctpId]]`@ctpId`|`Number (int)`|-
-|[[fromNodeId]]`@fromNodeId`|`Number (int)`|-
+|[[faceId]]`@faceId`|`Number (int)`|-
 |[[id]]`@id`|`Number (int)`|-
 |[[nextHopId]]`@nextHopId`|`Number (int)`|-
-|[[prefixId]]`@prefixId`|`Number (int)`|-
-|[[prefixName]]`@prefixName`|`String`|-
-|[[status]]`@status`|`String`|-
+|[[nodeId]]`@nodeId`|`Number (int)`|-
+|[[origin]]`@origin`|`String`|-
+|[[paId]]`@paId`|`Number (int)`|-
+|[[prefix]]`@prefix`|`String`|-
 |[[updated]]`@updated`|`String`|-
 |===
 

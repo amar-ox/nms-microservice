@@ -12,5 +12,11 @@ public class InternalSql {
 	
 	public static final String FETCH_ROUTEGEN_LCS = "SELECT...";
 	public static final String FETCH_ROUTEGEN_NODES = "SELECT...";
+	
+	
+	
+	
+	public static final String UPDATE_LTP_BUSY = "UPDATE Vltp "
+	+ "SET busy=IFNULL(?, busy) WHERE id = ?";
 
 }
