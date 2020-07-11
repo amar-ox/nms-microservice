@@ -1,13 +1,16 @@
 package io.nms.central.microservice.topology.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import io.nms.central.microservice.common.service.JdbcRepositoryWrapper;
 import io.nms.central.microservice.topology.TopologyService;
+import io.nms.central.microservice.topology.model.Edge;
 import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.ModelObjectMapper;
+import io.nms.central.microservice.topology.model.Node;
 import io.nms.central.microservice.topology.model.PrefixAnn;
 import io.nms.central.microservice.topology.model.Route;
 import io.nms.central.microservice.topology.model.Vctp;
@@ -19,6 +22,7 @@ import io.nms.central.microservice.topology.model.Vsubnet;
 import io.nms.central.microservice.topology.model.Vtrail;
 import io.nms.central.microservice.topology.model.Vxc;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
@@ -34,9 +38,11 @@ import io.vertx.core.logging.LoggerFactory;
 public class TopologyServiceImpl extends JdbcRepositoryWrapper implements TopologyService {
 
 	// private static final Logger logger = LoggerFactory.getLogger(TopologyServiceImpl.class);
+	private Routing routing;
 
 	public TopologyServiceImpl(Vertx vertx, JsonObject config) {
 		super(vertx, config);
+		routing = new Routing();
 	}
 
 	@Override
@@ -785,6 +791,30 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService deleteRoute(String routeId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(routeId, ApiSql.DELETE_ROUTE, resultHandler);
+		return this;
+	}
+	@Override
+	public TopologyService generateRoutesToPrefix(String name, Handler<AsyncResult<List<Route>>> resultHandler) { 
+		Future<List<Node>> nodes = this.retrieveAll(InternalSql.FETCH_ROUTEGEN_NODES)
+				.map(rawList -> rawList.stream()
+						.map(Node::new)
+						.collect(Collectors.toList()));
+		Future<List<Edge>> edges =this.retrieveAll(InternalSql.FETCH_ROUTEGEN_LCS)
+				.map(rawList -> rawList.stream()
+						.map(Edge::new)
+						.collect(Collectors.toList()));
+		JsonArray params = new JsonArray().add(name);
+		Future<List<PrefixAnn>> pas = this.retrieveMany(params, InternalSql.FETCH_ROUTEGEN_PAS_BY_NAME)
+				.map(rawList -> rawList.stream()
+						.map(PrefixAnn::new)
+						.collect(Collectors.toList()));
+		CompositeFuture.all(Arrays.asList(nodes, edges, pas)).onComplete(ar -> {
+			  if (ar.succeeded()) {
+				  routing.computeRoutes(nodes.result(), edges.result(), pas.result(), resultHandler);
+			  } else {
+				  resultHandler.handle(Future.failedFuture(ar.cause()));
+			  }
+			 });
 		return this;
 	}
 

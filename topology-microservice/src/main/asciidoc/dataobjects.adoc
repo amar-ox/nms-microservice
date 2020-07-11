@@ -1,5 +1,20 @@
 = Cheatsheets
 
+[[Edge]]
+== Edge
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[destFaceId]]`@destFaceId`|`Number (int)`|-
+|[[destNodeId]]`@destNodeId`|`Number (int)`|-
+|[[id]]`@id`|`Number (int)`|-
+|[[srcFaceId]]`@srcFaceId`|`Number (int)`|-
+|[[srcNodeId]]`@srcNodeId`|`Number (int)`|-
+|===
+
 [[Face]]
 == Face
 
@@ -17,6 +32,17 @@
 |[[updated]]`@updated`|`String`|-
 |[[vctpId]]`@vctpId`|`Number (int)`|-
 |[[vlinkConnId]]`@vlinkConnId`|`Number (int)`|-
+|===
+
+[[Node]]
+== Node
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[id]]`@id`|`Number (int)`|-
 |===
 
 [[PrefixAnn]]

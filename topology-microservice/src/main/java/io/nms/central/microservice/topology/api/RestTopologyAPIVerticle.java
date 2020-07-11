@@ -102,6 +102,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// private static final String API_UPDATE_PREFIX_ANN = "/prefixAnn/:prefixAnnId";
 
 	private static final String API_ADD_ROUTE = "/route";
+	private static final String API_GEN_ROUTES = "/genroutes";
 	private static final String API_GET_ROUTE = "/route/:routeId";	
 	private static final String API_GET_ALL_ROUTES = "/routes";
 	private static final String API_GET_ROUTES_BY_NODE = "/routes/node/:nodeId";
@@ -196,6 +197,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		// router.patch(API_UPDATE_PREFIX_ANN).handler(this::apiUpdatePrefixAnn);
 
 		router.post(API_ADD_ROUTE).handler(this::apiAddRoute);
+		router.post(API_GEN_ROUTES).handler(this::apiGenRoutes);
 		router.get(API_GET_ALL_ROUTES).handler(this::apiGetAllRoutes);
 		router.get(API_GET_ROUTES_BY_NODE).handler(this::apiGetRoutesByNode);
 		router.get(API_GET_ROUTE).handler(this::apiGetRoute);
@@ -495,6 +497,11 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiAddRoute(RoutingContext context) {
 		final Route route = Json.decodeValue(context.getBodyAsString(), Route.class);
 		service.addRoute(route, resultHandlerNonEmpty(context, "id"));
+	}
+	private void apiGenRoutes(RoutingContext context) {
+		String prefix = context.getBodyAsJson().getString("prefix");
+		// JsonObject result = new JsonObject().put("message", "faces_created");
+		service.generateRoutesToPrefix(prefix, resultHandlerNonEmpty(context));
 	}
 	private void apiGetRoute(RoutingContext context) {
 		String routeId = context.request().getParam("routeId");
