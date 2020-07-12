@@ -105,7 +105,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_GEN_ROUTES = "/genroutes";
 	private static final String API_GET_ROUTE = "/route/:routeId";	
 	private static final String API_GET_ALL_ROUTES = "/routes";
-	private static final String API_GET_ROUTES_BY_NODE = "/routes/node/:nodeId";
+	private static final String API_GET_ROUTES_BY_NODE = "/node/:nodeId/routes";
 	private static final String API_DELETE_ROUTE = "/route/:routeId";
 
 	private static final String API_ADD_FACE = "/face";
@@ -500,8 +500,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	}
 	private void apiGenRoutes(RoutingContext context) {
 		String prefix = context.getBodyAsJson().getString("prefix");
-		// JsonObject result = new JsonObject().put("message", "faces_created");
-		service.generateRoutesToPrefix(prefix, resultHandlerNonEmpty(context));
+		JsonObject result = new JsonObject().put("message", "routes_created");
+		service.generateRoutesToPrefix(prefix, resultVoidHandler(context, result));
 	}
 	private void apiGetRoute(RoutingContext context) {
 		String routeId = context.request().getParam("routeId");

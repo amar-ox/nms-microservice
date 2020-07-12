@@ -30,8 +30,6 @@ public class Routing {
 			gb.addSuccessor(edge.getSrcNodeId(), edge.getDestNodeId(), edge.getSrcFaceId(), 0);
 			gb.addSuccessor(edge.getDestNodeId(), edge.getSrcNodeId(), edge.getDestFaceId(), 0);
 		});
-		
-		// logger.debug("Net without PAs: " + gb.printGraph());
 
 		// generate correct Integer IDs for prefixAnns:
 		List<Integer> nodeIds = new ArrayList<Integer>(gb.getGraph().keySet());
@@ -51,8 +49,8 @@ public class Routing {
 		for (HashMap.Entry<Integer, PrefixAnn> pa : paMap.entrySet()) {
 			Integer target = pa.getKey();
 			Map<Integer, Stack<Integer>> paths = PathComputation.dijkstra(target, gb.getGraph());
-
 			Set<Integer> processedNodes = new HashSet<Integer>();
+			
 			for (HashMap.Entry<Integer, Stack<Integer>> entry : paths.entrySet()) {
 				Stack<Integer> path = entry.getValue();
 				if (!paMap.containsKey(path.peek())) {
@@ -75,7 +73,7 @@ public class Routing {
 					}
 				}
 			}
-		}		
+		}
 		resultHandler.handle(Future.succeededFuture(routes));
 	}
 

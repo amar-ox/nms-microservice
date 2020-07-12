@@ -9,8 +9,6 @@ import java.util.Stack;
 public class PathComputation {
 
 	public static Map<Integer, Stack<Integer>> dijkstra(int src, Map<Integer, List<NextHop>> network) {
-		
-		
 		// map node IDs from 0
 		List<Integer> nodesMap = new ArrayList<Integer>();
 		for (HashMap.Entry<Integer, List<NextHop>> entry : network.entrySet()) {
@@ -19,7 +17,6 @@ public class PathComputation {
 		int mapSrc = nodesMap.indexOf(src);
 		
 		Map<Integer, Stack<Integer>> sptMap = new HashMap<Integer, Stack<Integer>>();
-
 		int NO_PARENT = -1;
 		// build the adjacency matrix  
 		int N = network.size();
@@ -81,13 +78,11 @@ public class PathComputation {
 			}
 		}
 		
-		// put correct IDs
+		// put back correct IDs
 		Map<Integer, Stack<Integer>> vShPaths = new HashMap<Integer, Stack<Integer>>();
 		for (HashMap.Entry<Integer, Stack<Integer>> entry : sptMap.entrySet()) {
 			Stack<Integer> vNextHops = new Stack<Integer>();
-			 
-			Stack<Integer> nextHops = entry.getValue();
-			for (Integer e : nextHops) {
+			for (Integer e : entry.getValue()) {
 				vNextHops.push(nodesMap.get(e));
 			}
 			vShPaths.put(nodesMap.get(entry.getKey()), vNextHops);

@@ -199,7 +199,8 @@ public class ApiSql {
 			"    `cost` INT NOT NULL,\n" +
 			"    `origin` VARCHAR(20) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
-			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +			
+			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
+			"    UNIQUE KEY (`paId`, `nodeId`),\n" +
 			"    PRIMARY KEY (`id`),\n" +
 			"    FOREIGN KEY (`paId`) \n" +
 			"        REFERENCES PrefixAnn(`id`)\n" + 

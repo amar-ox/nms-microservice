@@ -267,5 +267,5 @@ public interface TopologyService {
 	TopologyService deleteFace(String faceId, Handler<AsyncResult<Void>> resultHandler);
 
 	@Fluent
-	TopologyService generateRoutesToPrefix(String name, Handler<AsyncResult<List<Route>>> resultHandler);	
+	TopologyService generateRoutesToPrefix(String name, Handler<AsyncResult<Void>> resultHandler);	
 }

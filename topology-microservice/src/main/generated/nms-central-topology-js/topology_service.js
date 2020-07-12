@@ -1755,7 +1755,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
       j_topologyService["generateRoutesToPrefix(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
         if (ar.succeeded()) {
-          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+          __args[1](null, null);
         } else {
           __args[1](null, ar.cause());
         }

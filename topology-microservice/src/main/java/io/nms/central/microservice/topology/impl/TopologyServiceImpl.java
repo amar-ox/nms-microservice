@@ -794,7 +794,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
-	public TopologyService generateRoutesToPrefix(String name, Handler<AsyncResult<List<Route>>> resultHandler) { 
+	public TopologyService generateRoutesToPrefix(String name, Handler<AsyncResult<Void>> resultHandler) { 
 		Future<List<Node>> nodes = this.retrieveAll(InternalSql.FETCH_ROUTEGEN_NODES)
 				.map(rawList -> rawList.stream()
 						.map(Node::new)
@@ -810,7 +810,13 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 						.collect(Collectors.toList()));
 		CompositeFuture.all(Arrays.asList(nodes, edges, pas)).onComplete(ar -> {
 			  if (ar.succeeded()) {
-				  routing.computeRoutes(nodes.result(), edges.result(), pas.result(), resultHandler);
+				  routing.computeRoutes(nodes.result(), edges.result(), pas.result(), res -> {
+					  if (res.succeeded()) {
+						  insertRoutes(res.result(), resultHandler);
+					  } else {
+						  resultHandler.handle(Future.failedFuture(res.cause()));
+					  }
+				  });
 			  } else {
 				  resultHandler.handle(Future.failedFuture(ar.cause()));
 			  }
@@ -912,24 +918,36 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 			});
 		return this;
 	}
+	
+	
+	private void insertRoutes(List<Route> routes,  Handler<AsyncResult<Void>> resultHandler) {		
+		List<Future> fts = new ArrayList<>();
+		for (Route r : routes) {
+			Promise<Void> f = Promise.promise();
+			fts.add(f.future());
+			JsonArray params = new JsonArray()
+					.add(r.getPaId())
+					.add(r.getNodeId())
+					.add(r.getNextHopId())
+					.add(r.getFaceId())
+					.add(r.getCost())				
+					.add(r.getOrigin());
+			executeNoResult(params, InternalSql.UPDATE_ROUTE, f.future());
+		}
+		CompositeFuture.all(fts).onComplete(ar -> {
+			if (ar.succeeded()) {
+				resultHandler.handle(Future.succeededFuture());
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
+	}
 
 	
 	
 	
 	/* ---------------------------------- */
-	protected Future<Void> setVltpBusy(Integer vltpId, Boolean busy) {
-		Promise<Void> promise = Promise.promise();
-		JsonArray params = new JsonArray().add(busy).add(vltpId);
-		executeNoResult(params, InternalSql.UPDATE_LTP_BUSY, ar -> {
-			if (ar.succeeded()) {
-				promise.complete();
-			} else {
-				promise.fail(ar.cause());
-			}
-		});
-		return promise.future();
-	}
-
+	
 	@Override
 	public TopologyService updatePrefixAnn(String id, PrefixAnn prefixAnn,
 			Handler<AsyncResult<PrefixAnn>> resultHandler) {

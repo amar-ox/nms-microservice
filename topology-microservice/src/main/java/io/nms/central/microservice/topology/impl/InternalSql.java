@@ -28,5 +28,11 @@ public class InternalSql {
 	
 	public static final String UPDATE_LTP_BUSY = "UPDATE Vltp "
 	+ "SET busy=IFNULL(?, busy) WHERE id = ?";
+	
+	
+	
+	public static final String UPDATE_ROUTE = "INSERT INTO Route (paId, nodeId, nextHopId, faceId, cost, origin) "
+			+ "VALUES (?, ?, ?, ?, ?, ?) "
+			+ "ON DUPLICATE KEY UPDATE nextHopId = VALUES(nextHopId), faceId = VALUES(faceId), cost = VALUES(cost)";
 
 }
