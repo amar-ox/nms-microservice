@@ -100,17 +100,19 @@ var TopologyService = function(j_val) {
   var __super_addPrefixAnn = this.addPrefixAnn;
   var __super_getPrefixAnn = this.getPrefixAnn;
   var __super_getAllPrefixAnns = this.getAllPrefixAnns;
+  var __super_getPrefixAnnsByVsubnet = this.getPrefixAnnsByVsubnet;
   var __super_deletePrefixAnn = this.deletePrefixAnn;
-  var __super_updatePrefixAnn = this.updatePrefixAnn;
   var __super_addRoute = this.addRoute;
   var __super_getRoute = this.getRoute;
   var __super_getAllRoutes = this.getAllRoutes;
+  var __super_getRoutesByVsubnet = this.getRoutesByVsubnet;
   var __super_getRoutesByNode = this.getRoutesByNode;
   var __super_deleteRoute = this.deleteRoute;
   var __super_addFace = this.addFace;
   var __super_generateFacesForLc = this.generateFacesForLc;
   var __super_getFace = this.getFace;
   var __super_getAllFaces = this.getAllFaces;
+  var __super_getFacesByVsubnet = this.getFacesByVsubnet;
   var __super_getFacesByNode = this.getFacesByNode;
   var __super_deleteFace = this.deleteFace;
   var __super_generateRoutesToPrefix = this.generateRoutesToPrefix;
@@ -1435,6 +1437,30 @@ var TopologyService = function(j_val) {
   /**
 
    @public
+   @param vsubnetId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getPrefixAnnsByVsubnet =  function(vsubnetId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getPrefixAnnsByVsubnet(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getPrefixAnnsByVsubnet != 'undefined') {
+      return __super_getPrefixAnnsByVsubnet.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
    @param prefixAnnId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
@@ -1452,31 +1478,6 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_deletePrefixAnn != 'undefined') {
       return __super_deletePrefixAnn.apply(this, __args);
-    }
-    else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
-   @param id {string} 
-   @param prefixAnn {Object} 
-   @param resultHandler {function} 
-   @return {TopologyService}
-   */
-  this.updatePrefixAnn =  function(id, prefixAnn, resultHandler) {
-    var __args = arguments;
-    if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
-      j_topologyService["updatePrefixAnn(java.lang.String,io.nms.central.microservice.topology.model.PrefixAnn,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new PrefixAnn(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
-        if (ar.succeeded()) {
-          __args[2](utils.convReturnDataObject(ar.result()), null);
-        } else {
-          __args[2](null, ar.cause());
-        }
-      }) ;
-      return that;
-    } else if (typeof __super_updatePrefixAnn != 'undefined') {
-      return __super_updatePrefixAnn.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -1548,6 +1549,30 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_getAllRoutes != 'undefined') {
       return __super_getAllRoutes.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vsubnetId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getRoutesByVsubnet =  function(vsubnetId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getRoutesByVsubnet(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getRoutesByVsubnet != 'undefined') {
+      return __super_getRoutesByVsubnet.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -1691,6 +1716,30 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_getAllFaces != 'undefined') {
       return __super_getAllFaces.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param vsubnetId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getFacesByVsubnet =  function(vsubnetId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getFacesByVsubnet(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getFacesByVsubnet != 'undefined') {
+      return __super_getFacesByVsubnet.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };

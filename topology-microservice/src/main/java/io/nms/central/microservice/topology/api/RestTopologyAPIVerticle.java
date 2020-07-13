@@ -97,7 +97,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 
 	private static final String API_ADD_PREFIX_ANN = "/prefixAnn";
 	private static final String API_GET_PREFIX_ANN = "/prefixAnn/:prefixAnnId";	
-	private static final String API_GET_ALL_PREFIX_ANNS = "/prefixAnns";	
+	private static final String API_GET_ALL_PREFIX_ANNS = "/prefixAnns";
+	private static final String API_GET_PREFIX_ANNS_BY_SUBNET = "/subnet/:subnetId/prefixAnns";
 	private static final String API_DELETE_PREFIX_ANN = "/prefixAnn/:prefixAnnId";
 	// private static final String API_UPDATE_PREFIX_ANN = "/prefixAnn/:prefixAnnId";
 
@@ -105,6 +106,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_GEN_ROUTES = "/genroutes";
 	private static final String API_GET_ROUTE = "/route/:routeId";	
 	private static final String API_GET_ALL_ROUTES = "/routes";
+	private static final String API_GET_ROUTES_BY_SUBNET = "/subnet/:subnetId/routes";
 	private static final String API_GET_ROUTES_BY_NODE = "/node/:nodeId/routes";
 	private static final String API_DELETE_ROUTE = "/route/:routeId";
 
@@ -112,6 +114,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_GEN_FACES = "/genfaces";
 	private static final String API_GET_FACE = "/face/:faceId";	
 	private static final String API_GET_ALL_FACES = "/faces";
+	private static final String API_GET_FACES_BY_SUBNET = "/subnet/:subnetId/faces";
 	private static final String API_GET_FACES_BY_NODE = "/node/:nodeId/faces";
 	private static final String API_DELETE_FACE = "/face/:faceId";
 
@@ -192,6 +195,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 
 		router.post(API_ADD_PREFIX_ANN).handler(this::apiAddPrefixAnn);
 		router.get(API_GET_ALL_PREFIX_ANNS).handler(this::apiGetAllPrefixAnns);
+		router.get(API_GET_PREFIX_ANNS_BY_SUBNET).handler(this::apiGetPrefixAnnsBySubnet);
 		router.get(API_GET_PREFIX_ANN).handler(this::apiGetPrefixAnn);
 		router.delete(API_DELETE_PREFIX_ANN).handler(this::apiDeletePrefixAnn);
 		// router.patch(API_UPDATE_PREFIX_ANN).handler(this::apiUpdatePrefixAnn);
@@ -199,6 +203,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.post(API_ADD_ROUTE).handler(this::apiAddRoute);
 		router.post(API_GEN_ROUTES).handler(this::apiGenRoutes);
 		router.get(API_GET_ALL_ROUTES).handler(this::apiGetAllRoutes);
+		router.get(API_GET_ROUTES_BY_SUBNET).handler(this::apiGetRoutesBySubnet);
 		router.get(API_GET_ROUTES_BY_NODE).handler(this::apiGetRoutesByNode);
 		router.get(API_GET_ROUTE).handler(this::apiGetRoute);
 		router.delete(API_DELETE_ROUTE).handler(this::apiDeleteRoute);
@@ -206,6 +211,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.post(API_ADD_FACE).handler(this::apiAddFace);
 		router.post(API_GEN_FACES).handler(this::apiGenFaces);
 		router.get(API_GET_ALL_FACES).handler(this::apiGetAllFaces);
+		router.get(API_GET_FACES_BY_SUBNET).handler(this::apiGetFacesBySubnet);
 		router.get(API_GET_FACES_BY_NODE).handler(this::apiGetFacesByNode);
 		router.get(API_GET_FACE).handler(this::apiGetFace);
 		router.delete(API_DELETE_FACE).handler(this::apiDeleteFace);
@@ -482,14 +488,13 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiGetAllPrefixAnns(RoutingContext context) {
 		service.getAllPrefixAnns(resultHandler(context, Json::encodePrettily));
 	}
+	private void apiGetPrefixAnnsBySubnet(RoutingContext context) {	
+		String subnetId = context.request().getParam("subnetId");		
+		service.getPrefixAnnsByVsubnet(subnetId, resultHandler(context, Json::encodePrettily));
+	}
 	private void apiDeletePrefixAnn(RoutingContext context) {
 		String prefixAnnId = context.request().getParam("prefixAnnId");			
 		service.deletePrefixAnn(prefixAnnId, deleteResultHandler(context));
-	}
-	private void apiUpdatePrefixAnn(RoutingContext context) {
-		String id = context.request().getParam("prefixAnnId");
-		final PrefixAnn prefixAnn = Json.decodeValue(context.getBodyAsString(), PrefixAnn.class);		
-		service.updatePrefixAnn(id, prefixAnn, resultHandlerNonEmpty(context));
 	}
 
 
@@ -509,6 +514,10 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	}
 	private void apiGetAllRoutes(RoutingContext context) {
 		service.getAllRoutes(resultHandler(context, Json::encodePrettily));
+	}
+	private void apiGetRoutesBySubnet(RoutingContext context) {	
+		String subnetId = context.request().getParam("subnetId");		
+		service.getRoutesByVsubnet(subnetId, resultHandler(context, Json::encodePrettily));
 	}
 	private void apiGetRoutesByNode(RoutingContext context) {	
 		String nodeId = context.request().getParam("nodeId");		
@@ -536,6 +545,10 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	}
 	private void apiGetAllFaces(RoutingContext context) {
 		service.getAllFaces(resultHandler(context, Json::encodePrettily));
+	}
+	private void apiGetFacesBySubnet(RoutingContext context) {	
+		String subnetId = context.request().getParam("subnetId");		
+		service.getFacesByVsubnet(subnetId, resultHandler(context, Json::encodePrettily));
 	}
 	private void apiGetFacesByNode(RoutingContext context) {	
 		String nodeId = context.request().getParam("nodeId");		

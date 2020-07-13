@@ -225,10 +225,10 @@ public interface TopologyService {
 	TopologyService getAllPrefixAnns(Handler<AsyncResult<List<PrefixAnn>>> resultHandler);
 	
 	@Fluent	
-	TopologyService deletePrefixAnn(String prefixAnnId, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService getPrefixAnnsByVsubnet(String vsubnetId, Handler<AsyncResult<List<PrefixAnn>>> resultHandler);
 	
-	@Fluent
-	TopologyService updatePrefixAnn(String id, PrefixAnn prefixAnn, Handler<AsyncResult<PrefixAnn>> resultHandler);
+	@Fluent	
+	TopologyService deletePrefixAnn(String prefixAnnId, Handler<AsyncResult<Void>> resultHandler);
 	
 	
 	/* Route */
@@ -240,6 +240,9 @@ public interface TopologyService {
 	
 	@Fluent
 	TopologyService getAllRoutes(Handler<AsyncResult<List<Route>>> resultHandler);
+	
+	@Fluent	
+	TopologyService getRoutesByVsubnet(String vsubnetId, Handler<AsyncResult<List<Route>>> resultHandler);
 	
 	@Fluent
 	TopologyService getRoutesByNode(String nodeId, Handler<AsyncResult<List<Route>>> resultHandler);
@@ -259,6 +262,9 @@ public interface TopologyService {
 	
 	@Fluent	
 	TopologyService getAllFaces(Handler<AsyncResult<List<Face>>> resultHandler);
+	
+	@Fluent	
+	TopologyService getFacesByVsubnet(String vsubnetId, Handler<AsyncResult<List<Face>>> resultHandler);
 	
 	@Fluent	
 	TopologyService getFacesByNode(String nodeId, Handler<AsyncResult<List<Face>>> resultHandler);

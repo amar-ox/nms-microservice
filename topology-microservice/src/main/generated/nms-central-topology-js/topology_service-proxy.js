@@ -1041,6 +1041,24 @@
     /**
 
      @public
+     @param vsubnetId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.getPrefixAnnsByVsubnet =  function(vsubnetId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"vsubnetId":__args[0]}, {"action":"getPrefixAnnsByVsubnet"}, function(err, result) { __args[1](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
      @param prefixAnnId {string} 
      @param resultHandler {function} 
      @return {TopologyService}
@@ -1052,25 +1070,6 @@
           throw new Error('Proxy is closed');
         }
         j_eb.send(j_address, {"prefixAnnId":__args[0]}, {"action":"deletePrefixAnn"}, function(err, result) { __args[1](err, result && result.body); });
-        return that;
-      } else throw new TypeError('function invoked with invalid arguments');
-    };
-
-    /**
-
-     @public
-     @param id {string} 
-     @param prefixAnn {Object} 
-     @param resultHandler {function} 
-     @return {TopologyService}
-     */
-    this.updatePrefixAnn =  function(id, prefixAnn, resultHandler) {
-      var __args = arguments;
-      if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
-        if (closed) {
-          throw new Error('Proxy is closed');
-        }
-        j_eb.send(j_address, {"id":__args[0], "prefixAnn":__args[1]}, {"action":"updatePrefixAnn"}, function(err, result) { __args[2](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -1124,6 +1123,24 @@
           throw new Error('Proxy is closed');
         }
         j_eb.send(j_address, {}, {"action":"getAllRoutes"}, function(err, result) { __args[0](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
+     @param vsubnetId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.getRoutesByVsubnet =  function(vsubnetId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"vsubnetId":__args[0]}, {"action":"getRoutesByVsubnet"}, function(err, result) { __args[1](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -1231,6 +1248,24 @@
           throw new Error('Proxy is closed');
         }
         j_eb.send(j_address, {}, {"action":"getAllFaces"}, function(err, result) { __args[0](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
+     @param vsubnetId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.getFacesByVsubnet =  function(vsubnetId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"vsubnetId":__args[0]}, {"action":"getFacesByVsubnet"}, function(err, result) { __args[1](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };

@@ -741,6 +741,16 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
+	public TopologyService getPrefixAnnsByVsubnet(String vsubnetId, Handler<AsyncResult<List<PrefixAnn>>> resultHandler) {
+		JsonArray params = new JsonArray().add(vsubnetId);
+		this.retrieveMany(params, ApiSql.FETCH_PREFIX_ANNS_BY_VSUBNET)
+		.map(rawList -> rawList.stream()
+				.map(PrefixAnn::new)
+				.collect(Collectors.toList()))
+		.onComplete(resultHandler);
+		return this;
+	}
+	@Override
 	public TopologyService deletePrefixAnn(String prefixAnnId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(prefixAnnId, ApiSql.DELETE_PREFIX_ANN, resultHandler);
 		return this;
@@ -771,6 +781,16 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService getAllRoutes(Handler<AsyncResult<List<Route>>> resultHandler) {
 		this.retrieveAll(ApiSql.FETCH_ALL_ROUTES)
+		.map(rawList -> rawList.stream()
+				.map(Route::new)
+				.collect(Collectors.toList()))
+		.onComplete(resultHandler);
+		return this;
+	}
+	@Override
+	public TopologyService getRoutesByVsubnet(String vsubnetId, Handler<AsyncResult<List<Route>>> resultHandler) {
+		JsonArray params = new JsonArray().add(vsubnetId);
+		this.retrieveMany(params, ApiSql.FETCH_ROUTES_BY_VSUBNET)
 		.map(rawList -> rawList.stream()
 				.map(Route::new)
 				.collect(Collectors.toList()))
@@ -839,7 +859,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		insertAndGetId(params, ApiSql.INSERT_FACE, resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService getFace(String faceId, Handler<AsyncResult<Face>> resultHandler) {
 		this.retrieveOne(faceId, ApiSql.FETCH_FACE_BY_ID)
@@ -847,7 +866,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 			.onComplete(resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService getAllFaces(Handler<AsyncResult<List<Face>>> resultHandler) {
 		this.retrieveAll(ApiSql.FETCH_ALL_FACES)
@@ -856,7 +874,16 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 			.onComplete(resultHandler);
 		return this;
 	}
-
+	@Override
+	public TopologyService getFacesByVsubnet(String vsubnetId, Handler<AsyncResult<List<Face>>> resultHandler) {
+		JsonArray params = new JsonArray().add(vsubnetId);
+		this.retrieveMany(params, ApiSql.FETCH_FACES_BY_VSUBNET)
+		.map(rawList -> rawList.stream()
+				.map(Face::new)
+				.collect(Collectors.toList()))
+		.onComplete(resultHandler);
+		return this;
+	}
 	@Override
 	public TopologyService getFacesByNode(String nodeId, Handler<AsyncResult<List<Face>>> resultHandler) {
 		JsonArray params = new JsonArray().add(nodeId);
@@ -866,13 +893,11 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 			.onComplete(resultHandler);
 		return this;
 	}
-
 	@Override
 	public TopologyService deleteFace(String faceId, Handler<AsyncResult<Void>> resultHandler) {
 		this.removeOne(faceId, ApiSql.DELETE_FACE, resultHandler);
 		return this;
 	}
-	
 	@Override
 	public TopologyService generateFacesForLc(String linkConnId, Handler<AsyncResult<Void>> resultHandler) {
 		this.retrieveOne(linkConnId, InternalSql.FETCH_FACEGEN_INFO)
@@ -920,6 +945,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	
 	
+	
+	/* ---------------------------------- */
 	private void insertRoutes(List<Route> routes,  Handler<AsyncResult<Void>> resultHandler) {		
 		List<Future> fts = new ArrayList<>();
 		for (Route r : routes) {
@@ -941,19 +968,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				resultHandler.handle(Future.failedFuture(ar.cause()));
 			}
 		});
-	}
-
-	
-	
-	
-	/* ---------------------------------- */
-	
-	@Override
-	public TopologyService updatePrefixAnn(String id, PrefixAnn prefixAnn,
-			Handler<AsyncResult<PrefixAnn>> resultHandler) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	}	
 }
 
 

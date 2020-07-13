@@ -137,15 +137,17 @@ export default class TopologyService {
 
   getAllPrefixAnns(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
-  deletePrefixAnn(prefixAnnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+  getPrefixAnnsByVsubnet(vsubnetId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
-  updatePrefixAnn(id: string, prefixAnn: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+  deletePrefixAnn(prefixAnnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addRoute(route: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   getRoute(routeId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   getAllRoutes(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  getRoutesByVsubnet(vsubnetId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
   getRoutesByNode(nodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
@@ -158,6 +160,8 @@ export default class TopologyService {
   getFace(faceId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   getAllFaces(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  getFacesByVsubnet(vsubnetId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
   getFacesByNode(nodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 

@@ -769,14 +769,8 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
-        case "deletePrefixAnn": {
-          service.deletePrefixAnn((java.lang.String)json.getValue("prefixAnnId"),
-                        HelperUtils.createHandler(msg));
-          break;
-        }
-        case "updatePrefixAnn": {
-          service.updatePrefixAnn((java.lang.String)json.getValue("id"),
-                        json.getJsonObject("prefixAnn") == null ? null : new io.nms.central.microservice.topology.model.PrefixAnn(json.getJsonObject("prefixAnn")),
+        case "getPrefixAnnsByVsubnet": {
+          service.getPrefixAnnsByVsubnet((java.lang.String)json.getValue("vsubnetId"),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
@@ -785,9 +779,14 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                             msg.reply(new ServiceException(-1, res.cause().getMessage()));
                           }
                         } else {
-                          msg.reply(res.result() == null ? null : res.result().toJson());
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
                         }
                      });
+          break;
+        }
+        case "deletePrefixAnn": {
+          service.deletePrefixAnn((java.lang.String)json.getValue("prefixAnnId"),
+                        HelperUtils.createHandler(msg));
           break;
         }
         case "addRoute": {
@@ -812,6 +811,21 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
         }
         case "getAllRoutes": {
           service.getAllRoutes(res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "getRoutesByVsubnet": {
+          service.getRoutesByVsubnet((java.lang.String)json.getValue("vsubnetId"),
+                        res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
                             msg.reply(res.cause());
@@ -871,6 +885,21 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
         }
         case "getAllFaces": {
           service.getAllFaces(res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "getFacesByVsubnet": {
+          service.getFacesByVsubnet((java.lang.String)json.getValue("vsubnetId"),
+                        res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
                             msg.reply(res.cause());

@@ -355,6 +355,48 @@ public class ApiSql {
 			+ "INNER JOIN Vlink ON Vltp.id=Vlink.srcVltpId INNER JOIN Vltp as destLtp ON Vlink.destVltpId=destLtp.id "
 			+ "WHERE Vnode.vsubnetId = ?";
 	
+	// Assuming that: a linkConn is in a subnet if its source-node is in that subnet
+		// get all the VlinkConns of a Vsubnet
+		public static final String FETCH_VLINKCONNS_BY_VSUBNET = "SELECT "
+				+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, VlinkConn.created, VlinkConn.updated, "
+				+ "VlinkConn.srcVctpId, VlinkConn.destVctpId, VlinkConn.vlinkId, "
+				+ "Vltp.id AS srcVltpId, destLtp.id AS destVltpId, "
+				+ "Vltp.vnodeId AS srcVnodeId, destLtp.vnodeId AS destVnodeId, "
+				+ "Vnode.vsubnetId " 
+				+ "FROM Vnode "
+				+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId INNER JOIN Vctp ON Vltp.id=Vctp.vltpId "
+				+ "INNER JOIN VlinkConn ON Vctp.id=VlinkConn.srcVctpId INNER JOIN Vctp as destCtp ON VlinkConn.destVctpId=destCtp.id "
+				+ "INNER JOIN Vltp AS destLtp ON destCtp.vltpId=destLtp.id "
+				+ "WHERE Vnode.vsubnetId = ?";
+		
+		// get all the Vtrails of a Vsubnet
+		public static final String FETCH_VTRAILS_BY_VSUBNET = "SELECT "
+				+ "Vtrail.id, Vtrail.name, Vtrail.label, Vtrail.description, Vtrail.info, Vtrail.status, Vtrail.created, Vtrail.updated, "
+				+ "Vtrail.srcVctpId, Vtrail.destVctpId "
+				+ "FROM Vnode "
+				+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId INNER JOIN Vctp ON Vltp.id=Vctp.vltpId "
+				+ "INNER JOIN Vtrail ON Vctp.id=Vtrail.srcVctpId INNER JOIN Vctp as destCtp ON Vtrail.destVctpId=destCtp.id "
+				+ "WHERE Vnode.vsubnetId = ?";
+		
+		public static final String FETCH_PREFIX_ANNS_BY_VSUBNET = "SELECT "
+				+ "PrefixAnn.id, PrefixAnn.name, PrefixAnn.originId, PrefixAnn.expiration, PrefixAnn.created, PrefixAnn.updated "
+				+ "FROM Vnode "
+				+ "INNER JOIN PrefixAnn ON Vnode.id=PrefixAnn.originId "
+				+ "WHERE Vnode.vsubnetId = ?";
+		
+		public static final String FETCH_ROUTES_BY_VSUBNET = "SELECT "
+				+ "Route.id, Route.paId, PrefixAnn.name AS prefix, Route.nodeId, Route.nextHopId, Route.faceId, Route.cost, Route.origin, "
+				+ "Route.created, Route.updated "
+				+ "FROM Vnode "
+				+ "INNER JOIN Route ON Vnode.id=Route.nodeId INNER JOIN PrefixAnn on Route.paId=PrefixAnn.id "
+				+ "WHERE Vnode.vsubnetId = ?";
+		
+		public static final String FETCH_FACES_BY_VSUBNET = "SELECT "
+				+ "Face.id, Face.label, Face.local, Face.remote, Face.scheme, Face.created, Face.updated, Face.vctpId, Face.vlinkConnId "
+				+ "FROM Vnode "
+				+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId INNER JOIN Vctp ON Vltp.id=Vctp.vltpId INNER JOIN Face ON Vctp.id=Face.vctpId "
+				+ "WHERE Vnode.vsubnetId = ?";
+	
 	// get all the Vltps of a Vnode (without Vctps)
 	// use: FETCH_VLTP_BY_ID to get a Vltp with its Vctps
 	public static final String FETCH_VLTPS_BY_VNODE = "SELECT "
@@ -392,30 +434,7 @@ public class ApiSql {
 			+ "FROM ((VlinkConn "
 			+ "INNER JOIN Vctp AS sCtp ON VlinkConn.srcVctpId=sCtp.id INNER JOIN Vltp AS sLtp ON sCtp.vltpId=sLtp.id) "
 			+ "INNER JOIN Vctp AS dCtp ON VlinkConn.destVctpId=dCtp.id INNER JOIN Vltp AS dLtp ON dCtp.vltpId=dLtp.id) "
-			+ "WHERE VlinkConn.vlinkId = ?";
-	
-	// Assuming that: a linkConn is in a subnet if its source-node is in that subnet
-	// get all the VlinkConns of a Vsubnet
-	public static final String FETCH_VLINKCONNS_BY_VSUBNET = "SELECT "
-			+ "VlinkConn.id, VlinkConn.name, VlinkConn.label, VlinkConn.description, VlinkConn.info, VlinkConn.status, VlinkConn.created, VlinkConn.updated, "
-			+ "VlinkConn.srcVctpId, VlinkConn.destVctpId, VlinkConn.vlinkId, "
-			+ "Vltp.id AS srcVltpId, destLtp.id AS destVltpId, "
-			+ "Vltp.vnodeId AS srcVnodeId, destLtp.vnodeId AS destVnodeId, "
-			+ "Vnode.vsubnetId " 
-			+ "FROM Vnode "
-			+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId INNER JOIN Vctp ON Vltp.id=Vctp.vltpId "
-			+ "INNER JOIN VlinkConn ON Vctp.id=VlinkConn.srcVctpId INNER JOIN Vctp as destCtp ON VlinkConn.destVctpId=destCtp.id "
-			+ "INNER JOIN Vltp AS destLtp ON destCtp.vltpId=destLtp.id "
-			+ "WHERE Vnode.vsubnetId = ?";
-	
-	// get all the Vtrails of a Vsubnet
-	public static final String FETCH_VTRAILS_BY_VSUBNET = "SELECT "
-			+ "Vtrail.id, Vtrail.name, Vtrail.label, Vtrail.description, Vtrail.info, Vtrail.status, Vtrail.created, Vtrail.updated, "
-			+ "Vtrail.srcVctpId, Vtrail.destVctpId "
-			+ "FROM Vnode "
-			+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId INNER JOIN Vctp ON Vltp.id=Vctp.vltpId "
-			+ "INNER JOIN Vtrail ON Vctp.id=Vtrail.srcVctpId INNER JOIN Vctp as destCtp ON Vtrail.destVctpId=destCtp.id "
-			+ "WHERE Vnode.vsubnetId = ?";
+			+ "WHERE VlinkConn.vlinkId = ?";	
 
 	// get all the Vxcs defined in a Vnode
 	public static final String FETCH_VXC_BY_VNODE = "SELECT "
