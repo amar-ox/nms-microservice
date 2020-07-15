@@ -6,6 +6,7 @@ import java.util.Optional;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -201,9 +202,53 @@ public class JdbcRepositoryWrapper {
 	}
 
 	protected Future<SQLConnection> getConnection() {
-		Future<SQLConnection> future = Future.future();
-		client.getConnection(future.completer());
-		return future;
+		Promise<SQLConnection> promise = Promise.promise();
+		client.getConnection(promise);
+		return promise.future();
+	}
+	
+	protected Future<SQLConnection> txnBegin() {
+		Promise<SQLConnection> promise = Promise.promise();
+		client.getConnection(ar -> {
+			if (ar.succeeded()) {
+				SQLConnection conn = ar.result(); 
+				conn.setAutoCommit(false, res -> {
+					if (res.succeeded()) {
+						promise.complete(conn);
+					} else {
+						promise.fail(res.cause());
+					}
+				});
+			} else {
+				promise.fail(ar.cause());
+			}
+		});
+		return promise.future();
+	}
+	
+	protected Future<SQLConnection> txnExecute(SQLConnection conn, String sql, JsonArray params) {
+		Promise<SQLConnection> promise = Promise.promise();
+		conn.updateWithParams(sql, params, r -> {
+			if (r.succeeded()) {
+				promise.complete(conn);
+			} else {
+				promise.fail(r.cause());
+			}
+		});
+		return promise.future();
+	}
+	
+	protected Future<Void> txnEnd(SQLConnection conn) {
+		Promise<Void> promise = Promise.promise();
+		conn.commit(ar -> {
+			conn.close();
+			if (ar.succeeded()) {				
+				promise.complete();
+			} else {
+				promise.fail(ar.cause());				
+			}
+		});
+		return promise.future();
 	}
 
 }

@@ -13,9 +13,8 @@ import io.nms.central.microservice.topology.model.Edge;
 import io.nms.central.microservice.topology.model.Node;
 import io.nms.central.microservice.topology.model.PrefixAnn;
 import io.nms.central.microservice.topology.model.Route;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 
 public class Routing {
 	
@@ -23,8 +22,9 @@ public class Routing {
 
 	public Routing () {}
 
-	public void computeRoutes(List<Node> nodes, List<Edge> edges, List<PrefixAnn> pas, 
-			Handler<AsyncResult<List<Route>>> resultHandler) {
+	public Future<List<Route>> computeRoutes(List<Node> nodes, List<Edge> edges, List<PrefixAnn> pas) {
+		Promise<List<Route>> promise = Promise.promise();
+		
 		GraphBuilder gb = new GraphBuilder();
 		edges.forEach(edge -> {
 			gb.addSuccessor(edge.getSrcNodeId(), edge.getDestNodeId(), edge.getSrcFaceId(), 0);
@@ -74,7 +74,8 @@ public class Routing {
 				}
 			}
 		}
-		resultHandler.handle(Future.succeededFuture(routes));
+		promise.complete(routes);
+		return promise.future();
 	}
 
 }

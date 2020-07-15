@@ -359,8 +359,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// Link API
 	private void apiAddLink(RoutingContext context) {
 		final Vlink link = Json.decodeValue(context.getBodyAsString(), Vlink.class);		
-		// JsonObject result = new JsonObject().put("message", "link_added");
-		service.addVlink(link, resultHandlerNonEmpty(context, "id"));				
+		JsonObject result = new JsonObject().put("message", "link_added");
+		service.addVlink(link, resultVoidHandler(context, result));				
 	}
 	private void apiGetLink(RoutingContext context) {
 		String linkId = context.request().getParam("linkId");
@@ -386,8 +386,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// LinkConn API
 	private void apiAddLinkConn(RoutingContext context) {
 		final VlinkConn vlinkConn = Json.decodeValue(context.getBodyAsString(), VlinkConn.class);		
-		// JsonObject result = new JsonObject().put("message", "linkConn_added");
-		service.addVlinkConn(vlinkConn, resultHandlerNonEmpty(context, "id"));				
+		JsonObject result = new JsonObject().put("message", "linkConn_added");
+		service.addVlinkConn(vlinkConn, resultVoidHandler(context, result));				
 	}
 	private void apiGetLinkConn(RoutingContext context) {
 		String linkConnId = context.request().getParam("linkConnId");		

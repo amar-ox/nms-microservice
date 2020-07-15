@@ -130,7 +130,7 @@ public interface TopologyService {
 	
 	/* Vlink */
 	@Fluent	
-	TopologyService addVlink(Vlink vlink, Handler<AsyncResult<Integer>> resultHandler);
+	TopologyService addVlink(Vlink vlink, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent	
 	TopologyService getVlink(String vlinkId, Handler<AsyncResult<Vlink>> resultHandler);
@@ -150,7 +150,7 @@ public interface TopologyService {
 
 	/* VlinkConn */
 	@Fluent	
-	TopologyService addVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<Integer>> resultHandler);
+	TopologyService addVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent	
 	TopologyService getVlinkConn(String vlinkConnId, Handler<AsyncResult<VlinkConn>> resultHandler);

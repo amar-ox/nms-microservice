@@ -80,8 +80,8 @@ public class ApiSql {
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
 			"    `type` VARCHAR(10) NOT NULL,\n" + 
-			"    `srcVltpId` INT NOT NULL,\n" + 
-			"    `destVltpId` INT NOT NULL,\n" + 
+			"    `srcVltpId` INT NOT NULL UNIQUE,\n" + 
+			"    `destVltpId` INT NOT NULL UNIQUE,\n" + 
 			"    PRIMARY KEY (`id`),\n" + 
 			"    FOREIGN KEY (`srcVltpId`) \n" + 
 			"        REFERENCES Vltp(`id`)\n" + 
@@ -90,7 +90,7 @@ public class ApiSql {
 			"    FOREIGN KEY (`destVltpId`) \n" + 
 			"        REFERENCES Vltp(`id`)\n" + 
 			"        ON DELETE CASCADE\n" + 
-			"        ON UPDATE CASCADE\n" + 
+			"        ON UPDATE CASCADE\n" +
 			")";
 	public static final String CREATE_TABLE_VLINKCONN = "CREATE TABLE IF NOT EXISTS VlinkConn (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
@@ -102,8 +102,8 @@ public class ApiSql {
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
 			"    `vlinkId` INT NOT NULL,\n" +
-			"    `srcVctpId` INT NOT NULL,\n" + 
-			"    `destVctpId` INT NOT NULL,\n" +
+			"    `srcVctpId` INT NOT NULL UNIQUE,\n" + 
+			"    `destVctpId` INT NOT NULL UNIQUE,\n" +
 			"    PRIMARY KEY (`id`),\n" + 
 			"    FOREIGN KEY (`vlinkId`) \n" + 
 			"        REFERENCES Vlink(`id`)\n" + 
@@ -151,8 +151,8 @@ public class ApiSql {
 			"    `type` VARCHAR(10) NOT NULL,\n" +  
 			"    `vnodeId` INT NOT NULL,\n" +
 			"    `vtrailId` INT NOT NULL,\n" +
-			"    `srcVctpId` INT NOT NULL,\n" + 
-			"    `destVctpId` INT NOT NULL,\n" +
+			"    `srcVctpId` INT NOT NULL UNIQUE,\n" + 
+			"    `destVctpId` INT NOT NULL UNIQUE,\n" +
 			"    `dropVctpId` INT DEFAULT NULL,\n" +
 			"    PRIMARY KEY (`id`),\n" + 
 			"    FOREIGN KEY (`vnodeId`) \n" + 
@@ -227,7 +227,7 @@ public class ApiSql {
 			"    `label` VARCHAR(60) NOT NULL,\n" +			
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
-			"    `vctpId` INT NOT NULL,\n" +
+			"    `vctpId` INT NOT NULL UNIQUE,\n" +
 			"    `vlinkConnId` INT NOT NULL,\n" +
 			"    PRIMARY KEY (`id`),\n" + 
 			"    FOREIGN KEY (`vctpId`) \n" + 
