@@ -180,7 +180,6 @@ public class ApiSql {
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
 			"    `name` VARCHAR(255) NOT NULL,\n" + 
 			"    `originId` INT NOT NULL,\n" +
-			"    `expiration` DATETIME NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
 			"    PRIMARY KEY (`id`),\n" +
@@ -260,8 +259,11 @@ public class ApiSql {
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_VXC_1 = "INSERT INTO Vxc (name, label, description, info, status, type, vnodeId, vtrailId, srcVctpId, destVctpId) "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	public static final String INSERT_PREFIX_ANN = "INSERT INTO PrefixAnn (name, originId, expiration) "
-			+ "VALUES (?, ?, ?)";
+	
+	// insert ignore for PUT
+	public static final String INSERT_PREFIX_ANN = "INSERT IGNORE INTO PrefixAnn (name, originId) "
+			+ "VALUES (?, ?)";
+	
 	public static final String INSERT_ROUTE = "INSERT INTO Route (paId, nodeId, nextHopId, faceId, cost, origin) "
 			+ "VALUES (?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_FACE = "INSERT INTO Face (label, local, remote, scheme, vctpId, vlinkConnId) "
@@ -322,7 +324,7 @@ public class ApiSql {
 	
 	
 	public static final String FETCH_ALL_PREFIX_ANNS = "SELECT "
-			+ "id, name, originId, expiration, created, updated "
+			+ "id, name, originId, created, updated "
 			+ "FROM PrefixAnn";
 	
 	public static final String FETCH_ALL_ROUTES = "SELECT "
@@ -379,7 +381,7 @@ public class ApiSql {
 				+ "WHERE Vnode.vsubnetId = ?";
 		
 		public static final String FETCH_PREFIX_ANNS_BY_VSUBNET = "SELECT "
-				+ "PrefixAnn.id, PrefixAnn.name, PrefixAnn.originId, PrefixAnn.expiration, PrefixAnn.created, PrefixAnn.updated "
+				+ "PrefixAnn.id, PrefixAnn.name, PrefixAnn.originId, PrefixAnn.created, PrefixAnn.updated "
 				+ "FROM Vnode "
 				+ "INNER JOIN PrefixAnn ON Vnode.id=PrefixAnn.originId "
 				+ "WHERE Vnode.vsubnetId = ?";
@@ -451,6 +453,11 @@ public class ApiSql {
 			+ "Route.id, Route.paId, PrefixAnn.name AS prefix, Route.nodeId, Route.nextHopId, Route.faceId, Route.cost, Route.origin, "
 			+ "Route.created, Route.updated "
 			+ "FROM Route INNER JOIN PrefixAnn on Route.paId=PrefixAnn.id WHERE Route.nodeId = ?";
+	
+	public static final String FETCH_PREFIX_ANNS_BY_NODE = "SELECT "
+			+ "PrefixAnn.id, PrefixAnn.name, PrefixAnn.originId, PrefixAnn.created, PrefixAnn.updated "
+			+ "FROM PrefixAnn "
+			+ "WHERE PrefixAnn.originId = ?";
 	
 	// get all Face on a node
 	public static final String FETCH_FACES_BY_NODE = "SELECT "
@@ -535,7 +542,7 @@ public class ApiSql {
 
 	
 	public static final String FETCH_PREFIX_ANN_BY_ID = "SELECT "
-			+ "id, name, originId, expiration, created, updated "
+			+ "id, name, originId, created, updated "
 			+ "FROM PrefixAnn WHERE id=?";
 	
 	public static final String FETCH_ROUTE_BY_ID = "SELECT "
@@ -568,7 +575,6 @@ public class ApiSql {
 
 
 	/*-------------------- UPDATE ITEMS BY ID --------------------*/
-	// external references can not be modified
 	
 	public static final String UPDATE_VSUBNET = "UPDATE Vsubnet "
 			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status) "

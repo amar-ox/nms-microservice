@@ -23,7 +23,7 @@ public class Face {
 		
 		// face fields
 	private int vctpId;
-	private int vlinkConnId;	
+	private int vlinkConnId;
 	
 	
 	/*-----------------------------------------------*/

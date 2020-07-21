@@ -33,6 +33,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.sql.SQLConnection;
 
 /**
  *
@@ -383,7 +384,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** Vlink **********/
 	// INSERT_VLINK = "INSERT INTO Vlink (name, label, description, info, status, type, srcVltpId, destVltpId) "
 	@Override 
-	public TopologyService addVlink(Vlink vlink, Handler<AsyncResult<Void>> resultHandler) {
+	public TopologyService addVlink(Vlink vlink, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vlink.getName())
 				.add(vlink.getLabel())
@@ -393,14 +394,15 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vlink.getType())
 				.add(vlink.getSrcVltpId())
 				.add(vlink.getDestVltpId());
-		JsonArray p1 = new JsonArray().add(true).add(vlink.getSrcVltpId());
-		JsonArray p2 = new JsonArray().add(true).add(vlink.getDestVltpId());
+		JsonArray updSrcLtp = new JsonArray().add(true).add(vlink.getSrcVltpId());
+		JsonArray updDestLtp = new JsonArray().add(true).add(vlink.getDestVltpId());
 		
-		txnBegin()
-			.compose(conn -> txnExecute(conn, ApiSql.INSERT_VLINK, params))
-			.compose(conn -> txnExecute(conn, InternalSql.UPDATE_LTP_BUSY, p1))
-			.compose(conn -> txnExecute(conn, InternalSql.UPDATE_LTP_BUSY, p2))
-			.compose(conn -> txnEnd(conn))
+		Future<SQLConnection> f =  txnBegin();
+		Future<Integer> fId = f.compose(r -> txnExecute(f.result(), ApiSql.INSERT_VLINK, params));
+			fId.compose(r -> txnExecuteNoResult(f.result(), InternalSql.UPDATE_LTP_BUSY, updSrcLtp))
+			.compose(r -> txnExecuteNoResult(f.result(), InternalSql.UPDATE_LTP_BUSY, updDestLtp))
+			.compose(r -> txnEnd(f.result()))
+			.map(fId.result())
 			.onComplete(resultHandler);
 		return this;
 	}
@@ -447,15 +449,15 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 			.map(option -> option.map(Vlink::new).orElse(null))
 			.onComplete(ar -> {
 				if (ar.result() != null) {
-					JsonArray p1 = new JsonArray().add(vlinkId);
-					JsonArray p2 = new JsonArray().add(false).add(ar.result().getSrcVltpId());
-					JsonArray p3 = new JsonArray().add(false).add(ar.result().getDestVltpId());
-					txnBegin()
-						.compose(conn -> txnExecute(conn, ApiSql.DELETE_VLINK, p1))
-						.compose(conn -> txnExecute(conn, InternalSql.UPDATE_LTP_BUSY, p2))
-						.compose(conn -> txnExecute(conn, InternalSql.UPDATE_LTP_BUSY, p3))
-						.compose(conn -> txnEnd(conn))
-						.onComplete(resultHandler);	
+					JsonArray delLink = new JsonArray().add(vlinkId);
+					JsonArray updSrcLtp = new JsonArray().add(false).add(ar.result().getSrcVltpId());
+					JsonArray updDestLtp = new JsonArray().add(false).add(ar.result().getDestVltpId());
+					Future<SQLConnection> f =  txnBegin();
+					f.compose(r -> txnExecuteNoResult(f.result(), ApiSql.DELETE_VLINK, delLink))
+						.compose(r -> txnExecuteNoResult(f.result(), InternalSql.UPDATE_LTP_BUSY, updSrcLtp))
+						.compose(r -> txnExecuteNoResult(f.result(), InternalSql.UPDATE_LTP_BUSY, updDestLtp))
+						.compose(r -> txnEnd(f.result()))
+						.onComplete(resultHandler);
 				} else {
 					resultHandler.handle(Future.failedFuture("Vlink not found"));
 				}
@@ -480,25 +482,57 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** VlinkConn **********/
 	// INSERT_VLINKCONN = "INSERT INTO VlinkConn (name, label, description, info, status, srcVctpId, destVctpId) "
 	@Override
-	public TopologyService addVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<Void>> resultHandler) {
-		JsonArray params = new JsonArray()
-				.add(vlinkConn.getName())
-				.add(vlinkConn.getLabel())
-				.add(vlinkConn.getDescription())
-				.add(new JsonObject(vlinkConn.getInfo()).encode())
-				.add(vlinkConn.getStatus())
-				.add(vlinkConn.getSrcVctpId())
-				.add(vlinkConn.getDestVctpId())
-				.add(vlinkConn.getVlinkId());
-		JsonArray p1 = new JsonArray().add(true).add(vlinkConn.getSrcVctpId());
-		JsonArray p2 = new JsonArray().add(true).add(vlinkConn.getDestVctpId());
-		
-		txnBegin()
-			.compose(conn -> txnExecute(conn, ApiSql.INSERT_VLINKCONN, params))
-			.compose(conn -> txnExecute(conn, InternalSql.UPDATE_CTP_BUSY, p1))
-			.compose(conn -> txnExecute(conn, InternalSql.UPDATE_CTP_BUSY, p2))
-			.compose(conn -> txnEnd(conn))
-			.onComplete(resultHandler);		
+	public TopologyService addVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<Integer>> resultHandler) {
+			generateCtps(vlinkConn)
+			.onComplete(ar -> {
+				if (ar.succeeded()) {
+					List<Vctp> vctps = ar.result();
+					JsonArray srcVctp = new JsonArray()
+							.add(vctps.get(0).getName())
+							.add(vctps.get(0).getLabel())
+							.add(vctps.get(0).getDescription())
+							.add(new JsonObject().encode())
+							.add(vctps.get(0).getStatus())
+							.add(vctps.get(0).isBusy())
+							.add(vctps.get(0).getVltpId());
+					JsonArray destVctp = new JsonArray()
+							.add(vctps.get(1).getName())
+							.add(vctps.get(1).getLabel())
+							.add(vctps.get(1).getDescription())
+							.add(new JsonObject().encode())
+							.add(vctps.get(1).getStatus())
+							.add(vctps.get(1).isBusy())
+							.add(vctps.get(1).getVltpId());
+					
+					Future<SQLConnection> f = txnBegin();
+					Future<Integer> sCtpId = f.compose(r -> txnExecute(f.result(), ApiSql.INSERT_VCTP, srcVctp));
+					Future<Integer> dCtpId = f.compose(r -> txnExecute(f.result(), ApiSql.INSERT_VCTP, destVctp));
+					
+					CompositeFuture.all(sCtpId, dCtpId).onComplete(res -> {
+						if (res.succeeded()) {
+							vlinkConn.setSrcVctpId(sCtpId.result());
+							vlinkConn.setDestVctpId(dCtpId.result());
+							JsonArray vlc = new JsonArray()
+									.add(vlinkConn.getName())
+									.add(vlinkConn.getLabel())
+									.add(vlinkConn.getDescription())
+									.add(new JsonObject(vlinkConn.getInfo()).encode())
+									.add(vlinkConn.getStatus())
+									.add(vlinkConn.getSrcVctpId())
+									.add(vlinkConn.getDestVctpId())
+									.add(vlinkConn.getVlinkId());
+							Future<Integer> fId = txnExecute(f.result(), ApiSql.INSERT_VLINKCONN, vlc);
+								fId.compose(r -> txnEnd(f.result()))
+								.map(fId.result())
+								.onComplete(resultHandler);
+						} else {
+							resultHandler.handle(Future.failedFuture("Failed to create CTPs"));
+						}
+					});		
+				} else {
+					resultHandler.handle(Future.failedFuture(ar.cause()));
+				}
+			});
 		return this;
 	}
 	@Override
@@ -562,14 +596,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		.map(option -> option.map(VlinkConn::new).orElse(null))
 		.onComplete(ar -> {
 			if (ar.result() != null) {
-				JsonArray p1 = new JsonArray().add(vlinkConnId);
-				JsonArray p2 = new JsonArray().add(false).add(ar.result().getSrcVctpId());
-				JsonArray p3 = new JsonArray().add(false).add(ar.result().getDestVctpId());
-				txnBegin()
-					.compose(conn -> txnExecute(conn, ApiSql.DELETE_VLINKCONN, p1))
-					.compose(conn -> txnExecute(conn, InternalSql.UPDATE_CTP_BUSY, p2))
-					.compose(conn -> txnExecute(conn, InternalSql.UPDATE_CTP_BUSY, p3))
-					.compose(conn -> txnEnd(conn))
+				JsonArray delLc = new JsonArray().add(vlinkConnId);
+				JsonArray delSrcVctp = new JsonArray().add(ar.result().getSrcVctpId());
+				JsonArray delDestVctp = new JsonArray().add(ar.result().getDestVctpId());
+				Future<SQLConnection> f = txnBegin();
+				f.compose(r -> txnExecuteNoResult(f.result(), ApiSql.DELETE_VLINKCONN, delLc))
+					.compose(r -> txnExecuteNoResult(f.result(), ApiSql.DELETE_VCTP, delSrcVctp))
+					.compose(r -> txnExecuteNoResult(f.result(), ApiSql.DELETE_VCTP, delDestVctp))
+					.compose(r -> txnEnd(f.result()))
 					.onComplete(resultHandler);	
 			} else {
 				resultHandler.handle(Future.failedFuture("VlinkConn not found"));
@@ -766,8 +800,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	public TopologyService addPrefixAnn(PrefixAnn prefixAnn, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(prefixAnn.getName())
-				.add(prefixAnn.getOriginId())
-				.add(prefixAnn.getExpiration());
+				.add(prefixAnn.getOriginId());
 		insertAndGetId(params, ApiSql.INSERT_PREFIX_ANN, resultHandler);
 		return this;
 	}
@@ -797,6 +830,17 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		.map(rawList -> rawList.stream()
 				.map(PrefixAnn::new)
 				.collect(Collectors.toList()))
+		.onComplete(resultHandler);
+		return this;
+	}
+	@Override
+	public TopologyService getPrefixAnnsByVnode(String nodeId, Handler<AsyncResult<List<PrefixAnn>>> resultHandler) {
+		JsonArray params = new JsonArray().add(nodeId);
+		this.retrieveMany(params, ApiSql.FETCH_PREFIX_ANNS_BY_NODE)
+		.map(rawList -> rawList.stream()
+				.map(PrefixAnn::new)
+				.collect(Collectors.toList())
+				)
 		.onComplete(resultHandler);
 		return this;
 	}
@@ -942,47 +986,103 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	@Override
 	public TopologyService generateFacesForLc(String linkConnId, Handler<AsyncResult<Void>> resultHandler) {
-		retrieveOne(linkConnId, InternalSql.FETCH_FACEGEN_INFO)
-			.map(option -> option.orElseGet(JsonObject::new))
-			.compose(info -> generateFaces(info))
+		generateFaces(linkConnId)
 			.compose(faces -> upsertFaces(faces))
 			.onComplete(resultHandler);			
 		return this;
-	} 
+	}
 	
 
 	
-	/* ---------------------------------- */
-	private Future<List<Face>> generateFaces(JsonObject info) {
-		Promise<List<Face>> promise = Promise.promise();
-								
-		String sLtpPort = info.getString("sLtpPort");
-		String dLtpPort = info.getString("dLtpPort");
-		
-		if (sLtpPort == null || dLtpPort == null ) {
-			promise.fail("No port in LTPs");
-		} else {
-			List<Face> faces = new ArrayList<>(2);	
+	/* ---------------- BG ------------------ */
+	private Future<List<Vctp>> generateCtps(VlinkConn vlc) {
+		Promise<List<Vctp>> promise = Promise.promise();
+		retrieveOne(vlc.getVlinkId(), InternalSql.FETCH_CTPGEN_INFO).onComplete(ar -> {
+			if (ar.succeeded()) {
+				if (ar.result().isPresent()) {
+					JsonObject info = ar.result().get();
+					Integer sLtpId = info.getInteger("sLtpId");
+					Integer dLtpId = info.getInteger("dLtpId");			
+					
+					if (sLtpId != null && dLtpId != null ) {
+						List<Vctp> ctps = new ArrayList<Vctp>(2);
+						String lcName = vlc.getName().split("\\|")[1];
+						String sLtpName = info.getString("sLtpName", "");
+						String dLtpName = info.getString("dLtpName", "");
+				
+						Vctp ctp1 = new Vctp();
+						ctp1.setName(sLtpName + "|" + lcName);
+						ctp1.setLabel("autogen ctp");
+						ctp1.setDescription("");
+						ctp1.setBusy(true);
+						ctp1.setVltpId(sLtpId);
+						ctps.add(ctp1);
 			
-			Face face1 = new Face();
-			face1.setLabel("autogen");
-			face1.setScheme("ether");
-			face1.setVlinkConnId(info.getInteger("vlinkConnId"));
-			face1.setVctpId(info.getInteger("sVctpId"));						
-			face1.setLocal(sLtpPort);
-			face1.setRemote(dLtpPort);
-			faces.add(face1);
+						Vctp ctp2 = new Vctp();
+						ctp2.setName(dLtpName + "|" + lcName);
+						ctp2.setLabel("autogen ctp");
+						ctp2.setDescription("");
+						ctp2.setBusy(true);
+						ctp2.setVltpId(dLtpId);
+						ctps.add(ctp2);
+						
+						promise.complete(ctps);
+					} else {
+						promise.fail("No Vlink info found");
+					}
+				} else {
+					promise.fail("No Vlink info found");
+				}					
+			} else {
+				promise.fail(ar.cause());
+			}
+		});
+		return promise.future();
+	}
+	
+	private Future<List<Face>> generateFaces(String vlcId) {
+		Promise<List<Face>> promise = Promise.promise();
 		
-			Face face2 = new Face();
-			face2.setLabel("autogen");
-			face2.setScheme("ether");
-			face2.setVlinkConnId(info.getInteger("vlinkConnId"));
-			face2.setVctpId(info.getInteger("dVctpId"));						
-			face2.setLocal(dLtpPort);
-			face2.setRemote(sLtpPort);
-			faces.add(face2);
-			promise.complete(faces);
-		}
+		retrieveOne(vlcId, InternalSql.FETCH_FACEGEN_INFO).onComplete(ar -> {
+			if (ar.succeeded()) {
+				if (ar.result().isPresent()) {
+					JsonObject info = ar.result().get();
+					String sLtpPort = info.getString("sLtpPort");
+					String dLtpPort = info.getString("dLtpPort");
+					
+					List<Face> faces = new ArrayList<Face>(2);
+					
+					if (sLtpPort != null && dLtpPort != null ) {
+						Face face1 = new Face();
+						face1.setLabel("autogen");
+						face1.setScheme("ether");
+						face1.setVlinkConnId(info.getInteger("vlinkConnId"));
+						face1.setVctpId(info.getInteger("sVctpId"));						
+						face1.setLocal(sLtpPort);
+						face1.setRemote(dLtpPort);
+						faces.add(face1);
+					
+						Face face2 = new Face();
+						face2.setLabel("autogen");
+						face2.setScheme("ether");
+						face2.setVlinkConnId(info.getInteger("vlinkConnId"));
+						face2.setVctpId(info.getInteger("dVctpId"));						
+						face2.setLocal(dLtpPort);
+						face2.setRemote(sLtpPort);
+						faces.add(face2);
+						
+						promise.complete(faces);
+					}					
+					else {
+						promise.fail("No Vlink info found");
+					}
+				} else {
+					promise.fail("No Vlink info found");
+				}					
+			} else {
+				promise.fail(ar.cause());
+			}
+		});
 		return promise.future();
 	}
 	

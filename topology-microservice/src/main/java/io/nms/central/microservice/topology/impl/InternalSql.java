@@ -21,6 +21,13 @@ public class InternalSql {
 			+ "INNER JOIN "
 			+ "Vctp AS dCtp ON dCtp.id=VlinkConn.destVctpId INNER JOIN Vltp AS dLtp ON dLtp.id=dCtp.vltpId INNER JOIN Face AS dF ON dCtp.id=dF.vctpId)";
 	
+	public static final String FETCH_CTPGEN_INFO = "SELECT "
+			+ "sLtp.id AS sLtpId, dLtp.id AS dLtpId, sLtp.name AS sLtpName, dLtp.name AS dLtpName "
+			+ "FROM ((Vlink "
+			+ "INNER JOIN Vltp AS sLtp ON sLtp.id=srcVltpId) "
+			+ "INNER JOIN Vltp AS dLtp ON dLtp.id=destVltpId) "
+			+ "WHERE Vlink.id = ?";
+	
 	public static final String FETCH_ROUTEGEN_NODES = "SELECT id FROM Vnode";
 	
 	public static final String FETCH_ROUTEGEN_PAS = "SELECT id, name, originId FROM PrefixAnn";

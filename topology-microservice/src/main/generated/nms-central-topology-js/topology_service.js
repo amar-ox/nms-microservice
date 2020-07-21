@@ -101,6 +101,7 @@ var TopologyService = function(j_val) {
   var __super_getPrefixAnn = this.getPrefixAnn;
   var __super_getAllPrefixAnns = this.getAllPrefixAnns;
   var __super_getPrefixAnnsByVsubnet = this.getPrefixAnnsByVsubnet;
+  var __super_getPrefixAnnsByVnode = this.getPrefixAnnsByVnode;
   var __super_deletePrefixAnn = this.deletePrefixAnn;
   var __super_addRoute = this.addRoute;
   var __super_getRoute = this.getRoute;
@@ -751,7 +752,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
       j_topologyService["addVlink(io.nms.central.microservice.topology.model.Vlink,io.vertx.core.Handler)"](__args[0]  != null ? new Vlink(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[1](null, null);
+          __args[1](ar.result(), null);
         } else {
           __args[1](null, ar.cause());
         }
@@ -895,7 +896,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
       j_topologyService["addVlinkConn(io.nms.central.microservice.topology.model.VlinkConn,io.vertx.core.Handler)"](__args[0]  != null ? new VlinkConn(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[1](null, null);
+          __args[1](ar.result(), null);
         } else {
           __args[1](null, ar.cause());
         }
@@ -1454,6 +1455,30 @@ var TopologyService = function(j_val) {
       return that;
     } else if (typeof __super_getPrefixAnnsByVsubnet != 'undefined') {
       return __super_getPrefixAnnsByVsubnet.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param nodeId {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.getPrefixAnnsByVnode =  function(nodeId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["getPrefixAnnsByVnode(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_getPrefixAnnsByVnode != 'undefined') {
+      return __super_getPrefixAnnsByVnode.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };

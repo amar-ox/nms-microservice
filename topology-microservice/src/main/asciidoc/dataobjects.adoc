@@ -54,7 +54,6 @@
 |===
 ^|Name | Type ^| Description
 |[[created]]`@created`|`String`|-
-|[[expiration]]`@expiration`|`String`|-
 |[[id]]`@id`|`Number (int)`|-
 |[[name]]`@name`|`String`|-
 |[[originId]]`@originId`|`Number (int)`|-

@@ -275,6 +275,22 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
       }
     };
   }
+  
+  protected Handler<AsyncResult<Integer>> createResultHandler(RoutingContext context, String location) {
+	    return ar -> {
+	      if (ar.succeeded()) {
+	    	  Integer res = ar.result();
+	          context.response()
+	          	.setStatusCode(201)
+	            .putHeader("content-type", "application/json")
+	            .putHeader("Location", location + "/" + res)
+	            .end();
+	      } else {
+	        internalError(context, ar.cause());
+	        ar.cause().printStackTrace();
+	      }
+	    };
+	  }
 
   /**
    * This method generates handler for async methods in REST DELETE APIs.

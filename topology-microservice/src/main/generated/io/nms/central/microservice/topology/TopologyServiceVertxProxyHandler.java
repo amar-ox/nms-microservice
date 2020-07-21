@@ -784,6 +784,21 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
+        case "getPrefixAnnsByVnode": {
+          service.getPrefixAnnsByVnode((java.lang.String)json.getValue("nodeId"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
         case "deletePrefixAnn": {
           service.deletePrefixAnn((java.lang.String)json.getValue("prefixAnnId"),
                         HelperUtils.createHandler(msg));

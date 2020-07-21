@@ -19,11 +19,6 @@ public class PrefixAnnConverter {
             obj.setCreated((String)member.getValue());
           }
           break;
-        case "expiration":
-          if (member.getValue() instanceof String) {
-            obj.setExpiration((String)member.getValue());
-          }
-          break;
         case "id":
           if (member.getValue() instanceof Number) {
             obj.setId(((Number)member.getValue()).intValue());
@@ -55,9 +50,6 @@ public class PrefixAnnConverter {
   public static void toJson(PrefixAnn obj, java.util.Map<String, Object> json) {
     if (obj.getCreated() != null) {
       json.put("created", obj.getCreated());
-    }
-    if (obj.getExpiration() != null) {
-      json.put("expiration", obj.getExpiration());
     }
     json.put("id", obj.getId());
     if (obj.getName() != null) {

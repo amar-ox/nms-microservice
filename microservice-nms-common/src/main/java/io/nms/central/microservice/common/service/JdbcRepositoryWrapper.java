@@ -63,17 +63,34 @@ public class JdbcRepositoryWrapper {
 		}));
 	}
 	
-	protected <R> void insertAndGetId(JsonArray params, String sql, Handler<AsyncResult<Integer>> resultHandler) {
+	protected void insertAndGetId(JsonArray params, String sql, Handler<AsyncResult<Integer>> resultHandler) {
 		client.getConnection(connHandler(resultHandler, connection -> {
 			connection.updateWithParams(sql, params, r -> {
 				if (r.succeeded()) {
 					UpdateResult updateResult = r.result();
-					// logger.debug("updeateResult: "+updateResult.toJson().encodePrettily());
-					Integer autoId = 0;
 					if (updateResult.getUpdated() == 1) {
-						autoId = updateResult.getKeys().getInteger(0);
+						resultHandler.handle(Future.succeededFuture(updateResult.getKeys().getInteger(0)));
+					} else {
+						resultHandler.handle(Future.failedFuture("Not inserted"));
 					}
-					resultHandler.handle(Future.succeededFuture(autoId));
+				} else {
+					resultHandler.handle(Future.failedFuture(r.cause()));
+				}
+				connection.close();
+			});
+		}));
+	}
+	
+	protected void upsert(JsonArray params, String sql, Handler<AsyncResult<Integer>> resultHandler) {
+		client.getConnection(connHandler(resultHandler, connection -> {
+			connection.updateWithParams(sql, params, r -> {
+				if (r.succeeded()) {
+					UpdateResult updateResult = r.result();
+					Integer id = 0;
+					if (updateResult.getUpdated() == 1) {
+						id = updateResult.getKeys().getInteger(0);
+					}
+					resultHandler.handle(Future.succeededFuture(id));
 				} else {
 					resultHandler.handle(Future.failedFuture(r.cause()));
 				}
@@ -226,11 +243,28 @@ public class JdbcRepositoryWrapper {
 		return promise.future();
 	}
 	
-	protected Future<SQLConnection> txnExecute(SQLConnection conn, String sql, JsonArray params) {
-		Promise<SQLConnection> promise = Promise.promise();
+	protected Future<Integer> txnExecute(SQLConnection conn, String sql, JsonArray params) {
+		Promise<Integer> promise = Promise.promise();
 		conn.updateWithParams(sql, params, r -> {
 			if (r.succeeded()) {
-				promise.complete(conn);
+				UpdateResult updateResult = r.result();
+				if (updateResult.getUpdated() == 1) {
+					promise.complete(updateResult.getKeys().getInteger(0));					 
+				} else {
+					promise.fail("Not inserted");
+				}
+			} else {
+				promise.fail(r.cause());
+			}
+		});
+		return promise.future();
+	}
+	
+	protected Future<Void> txnExecuteNoResult(SQLConnection conn, String sql, JsonArray params) {
+		Promise<Void> promise = Promise.promise();
+		conn.updateWithParams(sql, params, r -> {
+			if (r.succeeded()) {
+				promise.complete();
 			} else {
 				promise.fail(r.cause());
 			}

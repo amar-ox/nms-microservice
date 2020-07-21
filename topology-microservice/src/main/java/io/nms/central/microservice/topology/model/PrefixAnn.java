@@ -20,7 +20,6 @@ public class PrefixAnn {
 	private String updated;
 		
 	private int originId;
-	private String expiration;
 	
 	/*-----------------------------------------------*/
 	public PrefixAnn() {}
@@ -97,13 +96,4 @@ public class PrefixAnn {
 	public void setOriginId(int originId) {
 		this.originId = originId;
 	}
-
-	public String getExpiration() {
-		return expiration;
-	}
-
-	public void setExpiration(String expiration) {
-		this.expiration = expiration;
-	}
-	
 }

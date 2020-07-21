@@ -139,6 +139,8 @@ export default class TopologyService {
 
   getPrefixAnnsByVsubnet(vsubnetId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
+  getPrefixAnnsByVnode(nodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
   deletePrefixAnn(prefixAnnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addRoute(route: any, resultHandler: (err: any, result: any) => any) : TopologyService;

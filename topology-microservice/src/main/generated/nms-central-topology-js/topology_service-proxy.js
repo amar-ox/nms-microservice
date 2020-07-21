@@ -1059,6 +1059,24 @@
     /**
 
      @public
+     @param nodeId {string} 
+     @param resultHandler {function} 
+     @return {TopologyService}
+     */
+    this.getPrefixAnnsByVnode =  function(nodeId, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"nodeId":__args[0]}, {"action":"getPrefixAnnsByVnode"}, function(err, result) { __args[1](err, result && result.body); });
+        return that;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
      @param prefixAnnId {string} 
      @param resultHandler {function} 
      @return {TopologyService}
