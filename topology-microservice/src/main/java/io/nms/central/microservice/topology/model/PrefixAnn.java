@@ -18,7 +18,8 @@ public class PrefixAnn {
 	private String name;
 	private String created;
 	private String updated;
-		
+
+	private boolean available; 
 	private int originId;
 	
 	/*-----------------------------------------------*/
@@ -95,5 +96,13 @@ public class PrefixAnn {
 
 	public void setOriginId(int originId) {
 		this.originId = originId;
+	}
+
+	public boolean getAvailable() {
+		return available;
+	}
+
+	public void setAvailable(boolean available) {
+		this.available = available;
 	}
 }

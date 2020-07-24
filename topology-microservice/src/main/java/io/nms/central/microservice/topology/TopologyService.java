@@ -18,6 +18,7 @@ import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonObject;
 
 /**
  * A service interface managing products.
@@ -59,7 +60,7 @@ public interface TopologyService {
 	TopologyService deleteVsubnet(String vsubnetId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVsubnet(String id, Vsubnet vsubnet, Handler<AsyncResult<Vsubnet>> resultHandler);
+	TopologyService updateVsubnet(String id, Vsubnet vsubnet, Handler<AsyncResult<Integer>> resultHandler);
 	
 	
 	/* Vnode */
@@ -79,7 +80,7 @@ public interface TopologyService {
 	TopologyService deleteVnode(String vnodeId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVnode(String id, Vnode vnode, Handler<AsyncResult<Vnode>> resultHandler);
+	TopologyService updateVnode(String id, Vnode vnode, Handler<AsyncResult<Integer>> resultHandler);
 	
 	
 	/* Vltp */
@@ -99,7 +100,7 @@ public interface TopologyService {
 	TopologyService deleteVltp(String vltpId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVltp(String id, Vltp vltp, Handler<AsyncResult<Vltp>> resultHandler);
+	TopologyService updateVltp(String id, Vltp vltp, Handler<AsyncResult<Integer>> resultHandler);
 	
 
 	/* Vctp */
@@ -119,13 +120,10 @@ public interface TopologyService {
 	TopologyService getVctpsByVnode(String vnodeId, Handler<AsyncResult<List<Vctp>>> resultHandler);
 	
 	@Fluent	
-	TopologyService getVctpsByVlink(String vlinkId, Handler<AsyncResult<List<Vctp>>> resultHandler);
-	
-	@Fluent	
 	TopologyService deleteVctp(String vctpId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVctp(String id, Vctp vctp, Handler<AsyncResult<Vctp>> resultHandler);
+	TopologyService updateVctp(String id, Vctp vctp, Handler<AsyncResult<Integer>> resultHandler);
 	
 	
 	/* Vlink */
@@ -145,7 +143,7 @@ public interface TopologyService {
 	TopologyService deleteVlink(String vlinkId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVlink(String id, Vlink vlink, Handler<AsyncResult<Vlink>> resultHandler);
+	TopologyService updateVlink(String id, Vlink vlink, Handler<AsyncResult<Integer>> resultHandler);
 	
 
 	/* VlinkConn */
@@ -168,7 +166,7 @@ public interface TopologyService {
 	TopologyService deleteVlinkConn(String vlinkConnId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVlinkConn(String id, VlinkConn vlinkConn, Handler<AsyncResult<VlinkConn>> resultHandler);
+	TopologyService updateVlinkConn(String id, VlinkConn vlinkConn, Handler<AsyncResult<Integer>> resultHandler);
 	
 	
 	/* Vtrail */
@@ -188,7 +186,7 @@ public interface TopologyService {
 	TopologyService getVtrailsByVsubnet(String vsubnetId, Handler<AsyncResult<List<Vtrail>>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVtrail(String id, Vtrail vtrail, Handler<AsyncResult<Vtrail>> resultHandler);
+	TopologyService updateVtrail(String id, Vtrail vtrail, Handler<AsyncResult<Integer>> resultHandler);
 	
 	
 	/* Vxc */
@@ -211,7 +209,7 @@ public interface TopologyService {
 	TopologyService deleteVxc(String vxcId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVxc(String id, Vxc vxc, Handler<AsyncResult<Vxc>> resultHandler);
+	TopologyService updateVxc(String id, Vxc vxc, Handler<AsyncResult<Integer>> resultHandler);
 	
 	
 	/* PrefixAnn */
@@ -255,10 +253,7 @@ public interface TopologyService {
 	
 	/* Face */
 	@Fluent	
-	TopologyService addFace(Face face, Handler<AsyncResult<Integer>> resultHandler);
-	
-	@Fluent	
-	TopologyService generateFacesForLc(String linkConnId, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService addFace(Face face, Handler<AsyncResult<Integer>> resultHandler);	
 	
 	@Fluent	
 	TopologyService getFace(String faceId, Handler<AsyncResult<Face>> resultHandler);
@@ -275,6 +270,6 @@ public interface TopologyService {
 	@Fluent	
 	TopologyService deleteFace(String faceId, Handler<AsyncResult<Void>> resultHandler);
 
-	@Fluent
-	TopologyService generateRoutesToPrefix(String name, Handler<AsyncResult<Void>> resultHandler);	
+	@Fluent	
+	TopologyService reportDispatcher(JsonObject report, Handler<AsyncResult<Void>> resultHandler);
 }

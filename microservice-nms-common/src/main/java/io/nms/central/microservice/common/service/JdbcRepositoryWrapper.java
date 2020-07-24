@@ -50,7 +50,7 @@ public class JdbcRepositoryWrapper {
 		}));
 	}
 
-	protected <R> void execute(JsonArray params, String sql, R ret, Handler<AsyncResult<R>> resultHandler) {
+	/* protected <R> void execute(JsonArray params, String sql, R ret, Handler<AsyncResult<R>> resultHandler) {
 		client.getConnection(connHandler(resultHandler, connection -> {
 			connection.updateWithParams(sql, params, r -> {
 				if (r.succeeded()) {
@@ -61,7 +61,7 @@ public class JdbcRepositoryWrapper {
 				connection.close();
 			});
 		}));
-	}
+	} */
 	
 	protected void insertAndGetId(JsonArray params, String sql, Handler<AsyncResult<Integer>> resultHandler) {
 		client.getConnection(connHandler(resultHandler, connection -> {
@@ -98,6 +98,21 @@ public class JdbcRepositoryWrapper {
 			});
 		}));
 	}
+	
+	/* execute and return the number of updated elements */
+	protected void update(JsonArray params, String sql, Handler<AsyncResult<Integer>> resultHandler) {
+		client.getConnection(connHandler(resultHandler, connection -> {
+			connection.updateWithParams(sql, params, r -> {
+				if (r.succeeded()) {
+					UpdateResult updateResult = r.result();					
+					resultHandler.handle(Future.succeededFuture(updateResult.getUpdated()));
+				} else {
+					resultHandler.handle(Future.failedFuture(r.cause()));
+				}
+				connection.close();
+			});
+		}));
+	}
 
 	protected <K> Future<Optional<JsonObject>> retrieveOne(K param, String sql) {
 		return getConnection()
@@ -109,7 +124,6 @@ public class JdbcRepositoryWrapper {
 							if (resList == null || resList.isEmpty()) {
 								future.complete(Optional.empty());
 							} else {
-								// logger.debug("retrieveOne: "+resList.get(0).encodePrettily());
 								future.complete(Optional.of(resList.get(0)));
 							}
 						} else {
@@ -120,36 +134,35 @@ public class JdbcRepositoryWrapper {
 					return future;
 				});
 	}
-
-	protected int calcPage(int page, int limit) {
-		if (page <= 0)
-			return 0;
-		return limit * (page - 1);
+	
+	protected <K> Future<Optional<JsonObject>> retrieveOne(JsonArray params, String sql) {
+		return getConnection()
+				.compose(connection -> {
+					Promise<Optional<JsonObject>> promise = Promise.promise();
+					connection.queryWithParams(sql, params, r -> {
+						if (r.succeeded()) {
+							List<JsonObject> resList = r.result().getRows();
+							if (resList == null || resList.isEmpty()) {
+								promise.complete(Optional.empty());
+							} else {
+								promise.complete(Optional.of(resList.get(0)));
+							}
+						} else {
+							promise.fail(r.cause());
+						}
+						connection.close();
+					});
+					return promise.future();
+				});
 	}
 
-	protected Future<List<JsonObject>> retrieveByPage(int page, int limit, String sql) {
-		JsonArray params = new JsonArray().add(calcPage(page, limit)).add(limit);
-		return getConnection().compose(connection -> {
-			Future<List<JsonObject>> future = Future.future();
-			connection.queryWithParams(sql, params, r -> {
-				if (r.succeeded()) {
-					future.complete(r.result().getRows());
-				} else {
-					future.fail(r.cause());
-				}
-				connection.close();
-			});
-			return future;
-		});
-	}
-
+	
 	protected Future<List<JsonObject>> retrieveMany(JsonArray param, String sql) {
 		return getConnection().compose(connection -> {
 			Future<List<JsonObject>> future = Future.future();
 			connection.queryWithParams(sql, param, r -> {
 				if (r.succeeded()) {
-					future.complete(r.result().getRows());
-					// logger.debug("retrieveMany: "+r.result().getRows().get(0).encodePrettily());
+					future.complete(r.result().getRows());					
 				} else {
 					future.fail(r.cause());
 				}
@@ -284,5 +297,29 @@ public class JdbcRepositoryWrapper {
 		});
 		return promise.future();
 	}
+	
+	
+	/*
+	 protected int calcPage(int page, int limit) {
+		if (page <= 0)
+			return 0;
+		return limit * (page - 1);
+	}
+
+	protected Future<List<JsonObject>> retrieveByPage(int page, int limit, String sql) {
+		JsonArray params = new JsonArray().add(calcPage(page, limit)).add(limit);
+		return getConnection().compose(connection -> {
+			Future<List<JsonObject>> future = Future.future();
+			connection.queryWithParams(sql, params, r -> {
+				if (r.succeeded()) {
+					future.complete(r.result().getRows());
+				} else {
+					future.fail(r.cause());
+				}
+				connection.close();
+			});
+			return future;
+		});
+	} */
 
 }

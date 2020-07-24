@@ -16,6 +16,7 @@ public class Face {
 	private String label;
 	private String created;
 	private String updated;
+	private String status = "DOWN";
 	
 	private String local;
 	private String remote;
@@ -131,6 +132,14 @@ public class Face {
 
 	public void setVlinkConnId(int vlinkConnId) {
 		this.vlinkConnId = vlinkConnId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 }

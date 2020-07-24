@@ -68,7 +68,6 @@ var TopologyService = function(j_val) {
   var __super_getAllVctps = this.getAllVctps;
   var __super_getVctpsByVltp = this.getVctpsByVltp;
   var __super_getVctpsByVnode = this.getVctpsByVnode;
-  var __super_getVctpsByVlink = this.getVctpsByVlink;
   var __super_deleteVctp = this.deleteVctp;
   var __super_updateVctp = this.updateVctp;
   var __super_addVlink = this.addVlink;
@@ -110,13 +109,12 @@ var TopologyService = function(j_val) {
   var __super_getRoutesByNode = this.getRoutesByNode;
   var __super_deleteRoute = this.deleteRoute;
   var __super_addFace = this.addFace;
-  var __super_generateFacesForLc = this.generateFacesForLc;
   var __super_getFace = this.getFace;
   var __super_getAllFaces = this.getAllFaces;
   var __super_getFacesByVsubnet = this.getFacesByVsubnet;
   var __super_getFacesByNode = this.getFacesByNode;
   var __super_deleteFace = this.deleteFace;
-  var __super_generateRoutesToPrefix = this.generateRoutesToPrefix;
+  var __super_reportDispatcher = this.reportDispatcher;
   /**
 
    @public
@@ -248,7 +246,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVsubnet(java.lang.String,io.nms.central.microservice.topology.model.Vsubnet,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vsubnet(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](utils.convReturnDataObject(ar.result()), null);
+          __args[2](ar.result(), null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -392,7 +390,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVnode(java.lang.String,io.nms.central.microservice.topology.model.Vnode,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vnode(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](utils.convReturnDataObject(ar.result()), null);
+          __args[2](ar.result(), null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -536,7 +534,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVltp(java.lang.String,io.nms.central.microservice.topology.model.Vltp,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vltp(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](utils.convReturnDataObject(ar.result()), null);
+          __args[2](ar.result(), null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -670,30 +668,6 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param vlinkId {string} 
-   @param resultHandler {function} 
-   @return {TopologyService}
-   */
-  this.getVctpsByVlink =  function(vlinkId, resultHandler) {
-    var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_topologyService["getVctpsByVlink(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
-        if (ar.succeeded()) {
-          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
-        } else {
-          __args[1](null, ar.cause());
-        }
-      }) ;
-      return that;
-    } else if (typeof __super_getVctpsByVlink != 'undefined') {
-      return __super_getVctpsByVlink.apply(this, __args);
-    }
-    else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
    @param vctpId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
@@ -728,7 +702,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVctp(java.lang.String,io.nms.central.microservice.topology.model.Vctp,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vctp(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](utils.convReturnDataObject(ar.result()), null);
+          __args[2](ar.result(), null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -872,7 +846,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVlink(java.lang.String,io.nms.central.microservice.topology.model.Vlink,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vlink(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](utils.convReturnDataObject(ar.result()), null);
+          __args[2](ar.result(), null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -1040,7 +1014,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVlinkConn(java.lang.String,io.nms.central.microservice.topology.model.VlinkConn,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new VlinkConn(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](utils.convReturnDataObject(ar.result()), null);
+          __args[2](ar.result(), null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -1184,7 +1158,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVtrail(java.lang.String,io.nms.central.microservice.topology.model.Vtrail,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vtrail(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](utils.convReturnDataObject(ar.result()), null);
+          __args[2](ar.result(), null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -1352,7 +1326,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVxc(java.lang.String,io.nms.central.microservice.topology.model.Vxc,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vxc(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](utils.convReturnDataObject(ar.result()), null);
+          __args[2](ar.result(), null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -1677,30 +1651,6 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param linkConnId {string} 
-   @param resultHandler {function} 
-   @return {TopologyService}
-   */
-  this.generateFacesForLc =  function(linkConnId, resultHandler) {
-    var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_topologyService["generateFacesForLc(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
-        if (ar.succeeded()) {
-          __args[1](null, null);
-        } else {
-          __args[1](null, ar.cause());
-        }
-      }) ;
-      return that;
-    } else if (typeof __super_generateFacesForLc != 'undefined') {
-      return __super_generateFacesForLc.apply(this, __args);
-    }
-    else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
    @param faceId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
@@ -1820,14 +1770,14 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param name {string} 
+   @param report {Object} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.generateRoutesToPrefix =  function(name, resultHandler) {
+  this.reportDispatcher =  function(report, resultHandler) {
     var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_topologyService["generateRoutesToPrefix(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_topologyService["reportDispatcher(io.vertx.core.json.JsonObject,io.vertx.core.Handler)"](utils.convParamJsonObject(__args[0]), function(ar) {
         if (ar.succeeded()) {
           __args[1](null, null);
         } else {
@@ -1835,8 +1785,8 @@ var TopologyService = function(j_val) {
         }
       }) ;
       return that;
-    } else if (typeof __super_generateRoutesToPrefix != 'undefined') {
-      return __super_generateRoutesToPrefix.apply(this, __args);
+    } else if (typeof __super_reportDispatcher != 'undefined') {
+      return __super_reportDispatcher.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };

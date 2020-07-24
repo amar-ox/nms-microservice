@@ -465,24 +465,6 @@
     /**
 
      @public
-     @param vlinkId {string} 
-     @param resultHandler {function} 
-     @return {TopologyService}
-     */
-    this.getVctpsByVlink =  function(vlinkId, resultHandler) {
-      var __args = arguments;
-      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-        if (closed) {
-          throw new Error('Proxy is closed');
-        }
-        j_eb.send(j_address, {"vlinkId":__args[0]}, {"action":"getVctpsByVlink"}, function(err, result) { __args[1](err, result && result.body); });
-        return that;
-      } else throw new TypeError('function invoked with invalid arguments');
-    };
-
-    /**
-
-     @public
      @param vctpId {string} 
      @param resultHandler {function} 
      @return {TopologyService}
@@ -1220,24 +1202,6 @@
     /**
 
      @public
-     @param linkConnId {string} 
-     @param resultHandler {function} 
-     @return {TopologyService}
-     */
-    this.generateFacesForLc =  function(linkConnId, resultHandler) {
-      var __args = arguments;
-      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-        if (closed) {
-          throw new Error('Proxy is closed');
-        }
-        j_eb.send(j_address, {"linkConnId":__args[0]}, {"action":"generateFacesForLc"}, function(err, result) { __args[1](err, result && result.body); });
-        return that;
-      } else throw new TypeError('function invoked with invalid arguments');
-    };
-
-    /**
-
-     @public
      @param faceId {string} 
      @param resultHandler {function} 
      @return {TopologyService}
@@ -1327,17 +1291,17 @@
     /**
 
      @public
-     @param name {string} 
+     @param report {Object} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.generateRoutesToPrefix =  function(name, resultHandler) {
+    this.reportDispatcher =  function(report, resultHandler) {
       var __args = arguments;
-      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"name":__args[0]}, {"action":"generateRoutesToPrefix"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"report":__args[0]}, {"action":"reportDispatcher"}, function(err, result) { __args[1](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };

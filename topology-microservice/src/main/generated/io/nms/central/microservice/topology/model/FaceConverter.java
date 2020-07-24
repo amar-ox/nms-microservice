@@ -44,6 +44,11 @@ public class FaceConverter {
             obj.setScheme((String)member.getValue());
           }
           break;
+        case "status":
+          if (member.getValue() instanceof String) {
+            obj.setStatus((String)member.getValue());
+          }
+          break;
         case "updated":
           if (member.getValue() instanceof String) {
             obj.setUpdated((String)member.getValue());
@@ -83,6 +88,9 @@ public class FaceConverter {
     }
     if (obj.getScheme() != null) {
       json.put("scheme", obj.getScheme());
+    }
+    if (obj.getStatus() != null) {
+      json.put("status", obj.getStatus());
     }
     if (obj.getUpdated() != null) {
       json.put("updated", obj.getUpdated());

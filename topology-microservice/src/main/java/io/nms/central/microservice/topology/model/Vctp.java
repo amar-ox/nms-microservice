@@ -17,17 +17,15 @@ public class Vctp {
 	private String label;
 	private String description;
 	private String created;
-	private String updated;
-	private String status = "DOWN";	
+	private String updated;	
 	private Map<String, Object> info = new HashMap<String, Object>(); // contains connection info (vlan or wavelength)	
 		
 		// vctp fields
 	private int vltpId;
-	private Boolean busy;
 	
 	// in object only
 	private int vlinkId;
-	
+
 	
 	
 	/*-----------------------------------------------*/
@@ -103,15 +101,7 @@ public class Vctp {
 
 	public void setVlinkId(int vlinkId) {
 		this.vlinkId = vlinkId;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
+	}	
 
 	public String getCreated() {
 		return created;
@@ -143,13 +133,5 @@ public class Vctp {
 
 	public void setInfo(Map<String, Object> info) {
 		this.info = info;
-	}
-
-	public Boolean isBusy() {
-		return busy;
-	}
-
-	public void setBusy(Boolean busy) {
-		this.busy = busy;
 	}
 }

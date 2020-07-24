@@ -73,8 +73,6 @@ export default class TopologyService {
 
   getVctpsByVnode(vnodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
-  getVctpsByVlink(vlinkId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
-
   deleteVctp(vctpId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   updateVctp(id: string, vctp: any, resultHandler: (err: any, result: any) => any) : TopologyService;
@@ -157,8 +155,6 @@ export default class TopologyService {
 
   addFace(face: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  generateFacesForLc(linkConnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
-
   getFace(faceId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   getAllFaces(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
@@ -169,5 +165,5 @@ export default class TopologyService {
 
   deleteFace(faceId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  generateRoutesToPrefix(name: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+  reportDispatcher(report: Object, resultHandler: (err: any, result: any) => any) : TopologyService;
 }

@@ -29,6 +29,7 @@
 |[[local]]`@local`|`String`|-
 |[[remote]]`@remote`|`String`|-
 |[[scheme]]`@scheme`|`String`|-
+|[[status]]`@status`|`String`|-
 |[[updated]]`@updated`|`String`|-
 |[[vctpId]]`@vctpId`|`Number (int)`|-
 |[[vlinkConnId]]`@vlinkConnId`|`Number (int)`|-
@@ -53,6 +54,7 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
+|[[available]]`@available`|`Boolean`|-
 |[[created]]`@created`|`String`|-
 |[[id]]`@id`|`Number (int)`|-
 |[[name]]`@name`|`String`|-
@@ -88,13 +90,11 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[busy]]`@busy`|`Boolean`|-
 |[[created]]`@created`|`String`|-
 |[[description]]`@description`|`String`|-
 |[[id]]`@id`|`Number (int)`|-
 |[[label]]`@label`|`String`|-
 |[[name]]`@name`|`String`|-
-|[[status]]`@status`|`String`|-
 |[[updated]]`@updated`|`String`|-
 |[[vlinkId]]`@vlinkId`|`Number (int)`|-
 |[[vltpId]]`@vltpId`|`Number (int)`|-

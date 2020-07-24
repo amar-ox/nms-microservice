@@ -35,6 +35,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	public static final String SERVICE_NAME = "topology-rest-api";
 
 	private static final String API_VERSION = "/v";
+	
+	private static final String API_REPORT = "/reports";
 
 	private static final String API_ONE_SUBNET = "/subnet/:subnetId";
 	private static final String API_ALL_SUBNETS = "/subnets";
@@ -51,7 +53,6 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_ALL_CTPS = "/ctps";
 	private static final String API_CTPS_BY_LTP = "/ltp/:ltpId/ctps";
 	private static final String API_CTPS_BY_NODE = "/node/:nodeId/ctps";
-	private static final String API_CTPS_BY_LINK = "/link/:linkId/ctps";
 
 	private static final String API_ONE_LINK = "/link/:linkId";	
 	private static final String API_ALL_LINKS = "/links";
@@ -80,13 +81,13 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_ALL_ROUTES = "/routes";
 	private static final String API_ROUTES_BY_SUBNET = "/subnet/:subnetId/routes";
 	private static final String API_ROUTES_BY_NODE = "/node/:nodeId/routes";
-	private static final String API_GEN_ROUTES = "/genroutes";
+	// private static final String API_GEN_ROUTES = "/genroutes";
 
 	private static final String API_ONE_FACE = "/face/:faceId";	
 	private static final String API_ALL_FACES = "/faces";
 	private static final String API_FACES_BY_SUBNET = "/subnet/:subnetId/faces";
 	private static final String API_FACES_BY_NODE = "/node/:nodeId/faces";
-	private static final String API_GEN_FACES = "/genfaces";
+	// private static final String API_GEN_FACES = "/genfaces";
 
 
 	private final TopologyService service;
@@ -103,6 +104,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.route().handler(BodyHandler.create());
 		// API route handler
 		router.get(API_VERSION).handler(this::apiVersion);
+		
+		router.put(API_REPORT).handler(this::apiProcessReport);
 
 		router.post(API_ALL_SUBNETS).handler(this::apiAddSubnet);
 		router.get(API_ALL_SUBNETS).handler(this::apiGetAllSubnets);
@@ -128,7 +131,6 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.get(API_ALL_CTPS).handler(this::apiGetAllCtps);
 		router.get(API_CTPS_BY_LTP).handler(this::apiGetCtpsByLtp);
 		router.get(API_CTPS_BY_NODE).handler(this::apiGetCtpsByNode);
-		router.get(API_CTPS_BY_LINK).handler(this::apiGetCtpsByLink);
 		router.get(API_ONE_CTP).handler(this::apiGetCtp);
 		router.delete(API_ONE_CTP).handler(this::apiDeleteCtp);
 		router.put(API_ONE_CTP).handler(this::apiUpdateCtp);
@@ -170,7 +172,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.get(API_ONE_FACE).handler(this::apiGetFace);
 		router.delete(API_ONE_FACE).handler(this::apiDeleteFace);
 
-		router.post(API_GEN_FACES).handler(this::apiGenFaces);
+		// router.post(API_GEN_FACES).handler(this::apiGenFaces);
 
 		router.post(API_ALL_PAS).handler(this::apiAddPrefixAnn);
 		router.get(API_ALL_PAS).handler(this::apiGetAllPrefixAnns);
@@ -186,7 +188,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.get(API_ONE_ROUTE).handler(this::apiGetRoute);
 		router.delete(API_ONE_ROUTE).handler(this::apiDeleteRoute);
 
-		router.post(API_GEN_ROUTES).handler(this::apiGenRoutes);
+		// router.post(API_GEN_ROUTES).handler(this::apiGenRoutes);
 
 		// get HTTP host and port from configuration, or use default value
 		String host = config().getString("topology.http.address", "0.0.0.0");
@@ -203,6 +205,13 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		.end(new JsonObject()
 				.put("name", SERVICE_NAME)
 				.put("version", "v1").encodePrettily());
+	}
+	
+	// Report API (for TEST)
+	private void apiProcessReport(RoutingContext context) {
+		final JsonObject report = context.getBodyAsJson();
+		JsonObject result = new JsonObject().put("message", "report processed");
+		service.reportDispatcher(report, resultVoidHandler(context, result));
 	}
 
 	// Node API
@@ -223,9 +232,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	}
 	private void apiUpdateSubnet(RoutingContext context) {
 		String id = context.request().getParam("subnetId");
-		final Vsubnet vsubnet = Json.decodeValue(context.getBodyAsString(), Vsubnet.class);
-		logger.debug("apiUpdateSubnet: "+vsubnet.toString());		
-		service.updateVsubnet(id, vsubnet, resultHandlerNonEmpty(context));
+		final Vsubnet vsubnet = Json.decodeValue(context.getBodyAsString(), Vsubnet.class);		
+		service.updateVsubnet(id, vsubnet, resultHandlerNonEmpty(context, "n_updated"));
 	}
 
 
@@ -252,7 +260,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateNode(RoutingContext context) {
 		String id = context.request().getParam("nodeId");
 		final Vnode vnode = Json.decodeValue(context.getBodyAsString(), Vnode.class);		
-		service.updateVnode(id, vnode, resultHandlerNonEmpty(context));
+		service.updateVnode(id, vnode, resultHandlerNonEmpty(context, "n_updated"));
 	}
 
 
@@ -279,7 +287,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateLtp(RoutingContext context) {
 		String id = context.request().getParam("ltpId");
 		final Vltp vltp = Json.decodeValue(context.getBodyAsString(), Vltp.class);		
-		service.updateVltp(id, vltp, resultHandlerNonEmpty(context));
+		service.updateVltp(id, vltp, resultHandlerNonEmpty(context, "n_updated"));
 	}
 
 
@@ -300,10 +308,6 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		String nodeId = context.request().getParam("nodeId");		
 		service.getVctpsByVnode(nodeId, resultHandler(context, Json::encodePrettily));		
 	}
-	private void apiGetCtpsByLink(RoutingContext context) {
-		String linkId = context.request().getParam("linkId");		
-		service.getVctpsByVlink(linkId, resultHandler(context, Json::encodePrettily));		
-	}
 	private void apiGetAllCtps(RoutingContext context) {		
 		service.getAllVctps(resultHandler(context, Json::encodePrettily));
 	}
@@ -314,7 +318,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateCtp(RoutingContext context) {
 		String id = context.request().getParam("ctpId");
 		final Vctp vctp = Json.decodeValue(context.getBodyAsString(), Vctp.class);		
-		service.updateVctp(id, vctp, resultHandlerNonEmpty(context));
+		service.updateVctp(id, vctp, resultHandlerNonEmpty(context, "n_updated"));
 	}
 
 
@@ -341,7 +345,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateLink(RoutingContext context) {
 		String id = context.request().getParam("linkId");
 		final Vlink vlink = Json.decodeValue(context.getBodyAsString(), Vlink.class);		
-		service.updateVlink(id, vlink, resultHandlerNonEmpty(context));
+		service.updateVlink(id, vlink, resultHandlerNonEmpty(context, "n_updated"));
 	}
 
 	// LinkConn API
@@ -371,7 +375,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateLinkConn(RoutingContext context) {
 		String id = context.request().getParam("linkConnId");
 		final VlinkConn vlinkConn = Json.decodeValue(context.getBodyAsString(), VlinkConn.class);		
-		service.updateVlinkConn(id, vlinkConn, resultHandlerNonEmpty(context));
+		service.updateVlinkConn(id, vlinkConn, resultHandlerNonEmpty(context, "n_updated"));
 	}
 
 
@@ -398,7 +402,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateTrail(RoutingContext context) {
 		String id = context.request().getParam("trailId");
 		final Vtrail vtrail = Json.decodeValue(context.getBodyAsString(), Vtrail.class);		
-		service.updateVtrail(id, vtrail, resultHandlerNonEmpty(context));
+		service.updateVtrail(id, vtrail, resultHandlerNonEmpty(context, "n_updated"));
 	}
 
 
@@ -429,7 +433,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateXc(RoutingContext context) {
 		String id = context.request().getParam("xcId");
 		final Vxc vxc = Json.decodeValue(context.getBodyAsString(), Vxc.class);		
-		service.updateVxc(id, vxc, resultHandlerNonEmpty(context));
+		service.updateVxc(id, vxc, resultHandlerNonEmpty(context, "n_updated"));
 	}
 
 
@@ -437,12 +441,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiAddFace(RoutingContext context) {
 		final Face face = Json.decodeValue(context.getBodyAsString(), Face.class);			
 		service.addFace(face, createResultHandler(context, API_ONE_FACE));
-	}
-	private void apiGenFaces(RoutingContext context) {
-		Integer linkConnId = context.getBodyAsJson().getInteger("vlinkConnId");
-		JsonObject result = new JsonObject().put("message", "faces_created");
-		service.generateFacesForLc(String.valueOf(linkConnId), resultVoidHandler(context, result));
-	}
+	}	
 	private void apiGetFace(RoutingContext context) {
 		String faceId = context.request().getParam("faceId");
 		service.getFace(faceId, resultHandlerNonEmpty(context));
@@ -495,11 +494,6 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiAddRoute(RoutingContext context) {
 		final Route route = Json.decodeValue(context.getBodyAsString(), Route.class);
 		service.addRoute(route, createResultHandler(context, API_ONE_ROUTE));
-	}
-	private void apiGenRoutes(RoutingContext context) {
-		String prefix = context.getBodyAsJson().getString("prefix");
-		JsonObject result = new JsonObject().put("message", "routes_created");
-		service.generateRoutesToPrefix(prefix, resultVoidHandler(context, result));
 	}
 	private void apiGetRoute(RoutingContext context) {
 		String routeId = context.request().getParam("routeId");

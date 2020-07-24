@@ -45,7 +45,7 @@ public class ApiSql {
 			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +  		
-			"    `busy` BOOLEAN DEFAULT 0,\n" +
+			"    `busy` BOOLEAN NOT NULL,\n" +
 			"    `vnodeId` INT NOT NULL,\n" + 
 			"    PRIMARY KEY (`id`),\n" + 
 			"    FOREIGN KEY (`vnodeId`) \n" + 
@@ -59,10 +59,8 @@ public class ApiSql {
 			"    `label` VARCHAR(60) NOT NULL,\n" + 
 			"    `description` VARCHAR(255),\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
-			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
-			"    `busy` BOOLEAN DEFAULT 0,\n" +
 			"    `vltpId` INT NOT NULL,\n" +  
 			"    PRIMARY KEY (`id`),\n" + 
 			"    FOREIGN KEY (`vltpId`) \n" + 
@@ -180,6 +178,7 @@ public class ApiSql {
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
 			"    `name` VARCHAR(255) NOT NULL,\n" + 
 			"    `originId` INT NOT NULL,\n" +
+			"    `available` BOOLEAN NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
 			"    PRIMARY KEY (`id`),\n" +
@@ -223,7 +222,8 @@ public class ApiSql {
 			"    `local` VARCHAR(60) NOT NULL,\n" +
 			"    `remote` VARCHAR(60) NOT NULL,\n" +
 			"    `scheme` VARCHAR(30) NOT NULL,\n" +
-			"    `label` VARCHAR(60) NOT NULL,\n" +			
+			"    `label` VARCHAR(60) NOT NULL,\n" +
+			"    `status` VARCHAR(10) NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
 			"    `vctpId` INT NOT NULL UNIQUE,\n" +
@@ -247,8 +247,8 @@ public class ApiSql {
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_VLTP = "INSERT INTO Vltp (name, label, description, info, status, busy, vnodeId) "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
-	public static final String INSERT_VCTP = "INSERT INTO Vctp (name, label, description, info, status, busy, vltpId) "
-			+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+	public static final String INSERT_VCTP = "INSERT INTO Vctp (name, label, description, info, vltpId) "
+			+ "VALUES (?, ?, ?, ?, ?)";
 	public static final String INSERT_VLINK = "INSERT INTO Vlink (name, label, description, info, status, type, srcVltpId, destVltpId) "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	public static final String INSERT_VLINKCONN = "INSERT INTO VlinkConn (name, label, description, info, status, srcVctpId, destVctpId, vlinkId) "
@@ -261,38 +261,30 @@ public class ApiSql {
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	
 	// insert ignore for PUT
-	public static final String INSERT_PREFIX_ANN = "INSERT IGNORE INTO PrefixAnn (name, originId) "
-			+ "VALUES (?, ?)";
-	
-	public static final String INSERT_ROUTE = "INSERT INTO Route (paId, nodeId, nextHopId, faceId, cost, origin) "
-			+ "VALUES (?, ?, ?, ?, ?, ?)";
-	public static final String INSERT_FACE = "INSERT INTO Face (label, local, remote, scheme, vctpId, vlinkConnId) "
-			+ "VALUES (?, ?, ?, ?, ?, ?)";
+	public static final String INSERT_PA = "INSERT IGNORE INTO PrefixAnn (name, originId, available) VALUES (?, ?, ?)";
+	public static final String INSERT_ROUTE = "INSERT INTO Route (paId, nodeId, nextHopId, faceId, cost, origin) VALUES (?, ?, ?, ?, ?, ?)";
+	public static final String INSERT_FACE = "INSERT INTO Face (label, status, local, remote, scheme, vctpId, vlinkConnId) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 	
 	/*-------------------- FETCH ALL ITEMS --------------------*/
 	
 	// get all Vsubnets (without Vnodes and Vlinks)
 	public static final String FETCH_ALL_VSUBNETS = "SELECT "
-			+ "id, name, label, description, info, status, created, updated "
-			+ "FROM Vsubnet";
+			+ "id, name, label, description, info, status, created, updated FROM Vsubnet";
 
 	// get all Vnodes without Vltps
 	// use: FETCH_VNODE_BY_ID to get a Vnode with its Vltps
 	public static final String FETCH_ALL_VNODES = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, posx, posy, location, type, vsubnetId "
-			+ "FROM Vnode";
+			+ "id, name, label, description, info, status, created, updated, posx, posy, location, type, vsubnetId FROM Vnode";
 
 	// get all Vltps without Vctps
 	// use: FETCH_VLTP_BY_ID to get a Vltp with its Vctps
 	public static final String FETCH_ALL_VLTPS = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, busy, vnodeId "
-			+ "FROM Vltp";
+			+ "id, name, label, description, info, status, created, updated, busy, vnodeId FROM Vltp";
 
 	// get all Vctps
 	public static final String FETCH_ALL_VCTPS = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, busy, vltpId "
-			+ "FROM Vctp"; 
+			+ "id, name, label, description, info, created, updated, vltpId FROM Vctp"; 
 
 	// get all Vlinks without VlinkConns
 	// use: FETCH_VLINK_BY_ID to get a Vltp with its Vctps
@@ -314,18 +306,15 @@ public class ApiSql {
 	// get all Vtrails without Vxc
 	// use: FETCH_VTRAIL_BY_ID to get a Vtrail with its Vxcs 
 	public static final String FETCH_ALL_VTRAILS = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, srcVctpId, destVctpId "
-			+ "FROM Vtrail"; 
+			+ "id, name, label, description, info, status, created, updated, srcVctpId, destVctpId FROM Vtrail"; 
 
 	// get all Vxcs
 	public static final String FETCH_ALL_VXCS = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId "
-			+ "FROM Vxc"; 
+			+ "id, name, label, description, info, status, created, updated, type, vnodeId, vtrailId, srcVctpId, destVctpId, dropVctpId FROM Vxc"; 
 	
 	
-	public static final String FETCH_ALL_PREFIX_ANNS = "SELECT "
-			+ "id, name, originId, created, updated "
-			+ "FROM PrefixAnn";
+	public static final String FETCH_ALL_PAS = "SELECT "
+			+ "id, name, originId, available, created, updated FROM PrefixAnn";
 	
 	public static final String FETCH_ALL_ROUTES = "SELECT "
 			+ "Route.id, Route.paId, PrefixAnn.name AS prefix, Route.nodeId, Route.nextHopId, Route.faceId, Route.cost, Route.origin, "
@@ -333,8 +322,7 @@ public class ApiSql {
 			+ "FROM Route INNER JOIN PrefixAnn on Route.paId=PrefixAnn.id";
 
 	public static final String FETCH_ALL_FACES = "SELECT "
-			+ "id, label, local, remote, scheme, created, updated, vctpId, vlinkConnId "
-			+ "FROM Face"; 
+			+ "id, label, status, local, remote, scheme, created, updated, vctpId, vlinkConnId FROM Face"; 
 
 	/*-------------------- FETCH ITEMS BY ANOTHER --------------------*/
 	
@@ -380,8 +368,8 @@ public class ApiSql {
 				+ "INNER JOIN Vtrail ON Vctp.id=Vtrail.srcVctpId INNER JOIN Vctp as destCtp ON Vtrail.destVctpId=destCtp.id "
 				+ "WHERE Vnode.vsubnetId = ?";
 		
-		public static final String FETCH_PREFIX_ANNS_BY_VSUBNET = "SELECT "
-				+ "PrefixAnn.id, PrefixAnn.name, PrefixAnn.originId, PrefixAnn.created, PrefixAnn.updated "
+		public static final String FETCH_PAS_BY_VSUBNET = "SELECT "
+				+ "PrefixAnn.id, PrefixAnn.name, PrefixAnn.originId, PrefixAnn.available, PrefixAnn.created, PrefixAnn.updated "
 				+ "FROM Vnode "
 				+ "INNER JOIN PrefixAnn ON Vnode.id=PrefixAnn.originId "
 				+ "WHERE Vnode.vsubnetId = ?";
@@ -394,7 +382,7 @@ public class ApiSql {
 				+ "WHERE Vnode.vsubnetId = ?";
 		
 		public static final String FETCH_FACES_BY_VSUBNET = "SELECT "
-				+ "Face.id, Face.label, Face.local, Face.remote, Face.scheme, Face.created, Face.updated, Face.vctpId, Face.vlinkConnId "
+				+ "Face.id, Face.label, Face.status, Face.local, Face.remote, Face.scheme, Face.created, Face.updated, Face.vctpId, Face.vlinkConnId "
 				+ "FROM Vnode "
 				+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId INNER JOIN Vctp ON Vltp.id=Vctp.vltpId INNER JOIN Face ON Vctp.id=Face.vctpId "
 				+ "WHERE Vnode.vsubnetId = ?";
@@ -407,23 +395,22 @@ public class ApiSql {
 
 	// get all the Vctps of a Vltp
 	public static final String FETCH_VCTPS_BY_VLTP = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, busy, vltpId "
+			+ "id, name, label, description, info, created, updated, vltpId "
 			+ "FROM Vctp WHERE vltpId = ?";
 	
 	// get all the Vctps reachable over a Vlink
-	public static final String FETCH_VCTPS_BY_VLINK = "SELECT "
+	/* public static final String FETCH_VCTPS_BY_VLINK = "SELECT "
 			+ "allCtps.id, allCtps.name, allCtps.label, allCtps.description, allCtps.info, allCtps.status, allCtps.created, allCtps.updated, "
 			+ "allCtps.busy, allCtps.vltpId, Vlink.id AS vlinkId " 
 			+ "FROM ((Vlink "
 			+ "INNER JOIN Vltp AS sLtp ON Vlink.srcVltpId=sLtp.id) "
 			+ "INNER JOIN Vltp AS dLtp ON Vlink.destVltpId=dLtp.id) "
 			+ "INNER JOIN Vctp AS allCtps ON allCtps.vltpId=sLtp.id OR allCtps.vltpId=dLtp.id "	
-			+ "WHERE Vlink.id = ?";
+			+ "WHERE Vlink.id = ?"; */
 	
 	// get all the Vctps of a Vltp
 	public static final String FETCH_VCTPS_BY_VNODE = "SELECT "
-			+ "Vctp.id, Vctp.name, Vctp.label, Vctp.description, Vctp.info, Vctp.status, Vctp.created, Vctp.updated, "
-			+ "Vctp.busy, Vctp.vltpId "
+			+ "Vctp.id, Vctp.name, Vctp.label, Vctp.description, Vctp.info, Vctp.created, Vctp.updated, Vctp.vltpId "
 			+ "FROM Vnode "
 			+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId INNER JOIN Vctp ON Vltp.id=Vctp.vltpId "
 			+ "WHERE Vnode.Id = ?";
@@ -454,14 +441,14 @@ public class ApiSql {
 			+ "Route.created, Route.updated "
 			+ "FROM Route INNER JOIN PrefixAnn on Route.paId=PrefixAnn.id WHERE Route.nodeId = ?";
 	
-	public static final String FETCH_PREFIX_ANNS_BY_NODE = "SELECT "
-			+ "PrefixAnn.id, PrefixAnn.name, PrefixAnn.originId, PrefixAnn.created, PrefixAnn.updated "
+	public static final String FETCH_PAS_BY_NODE = "SELECT "
+			+ "PrefixAnn.id, PrefixAnn.name, PrefixAnn.originId, PrefixAnn.available, PrefixAnn.created, PrefixAnn.updated "
 			+ "FROM PrefixAnn "
 			+ "WHERE PrefixAnn.originId = ?";
 	
 	// get all Face on a node
 	public static final String FETCH_FACES_BY_NODE = "SELECT "
-			+ "Face.id, Face.label, Face.local, Face.remote, Face.scheme, Face.created, Face.updated, Face.vctpId, Face.vlinkConnId "
+			+ "Face.id, Face.label, Face.status, Face.local, Face.remote, Face.scheme, Face.created, Face.updated, Face.vctpId, Face.vlinkConnId "
 			+ "FROM Vnode "
 			+ "INNER JOIN Vltp on Vltp.vnodeId=Vnode.id "
 			+ "INNER JOIN Vctp on Vctp.vltpId=Vltp.id "
@@ -490,13 +477,12 @@ public class ApiSql {
 	public static final String FETCH_VLTP_BY_ID = "SELECT "
 			+ "Vltp.id, Vltp.name, Vltp.label, Vltp.description, Vltp.info, Vltp.status, Vltp.created, Vltp.updated, Vltp.busy, Vltp.vnodeId, "
 			+ "Vctp.id AS vctpId, Vctp.name AS vctpName, Vctp.label AS vctpLabel, Vctp.description AS vctpDescription, "
-			+ "Vctp.info AS vctpInfo, Vctp.status AS vctpStatus, Vctp.created AS vctpCreated, Vctp.updated AS vctpUpdated, "
-			+ "Vctp.busy AS vctpBusy, Vctp.vltpId AS vctpVltpId "
+			+ "Vctp.info AS vctpInfo, Vctp.created AS vctpCreated, Vctp.updated AS vctpUpdated, Vctp.vltpId AS vctpVltpId "
 			+ "FROM `Vltp` LEFT JOIN `Vctp` ON Vltp.id=Vctp.vltpId WHERE Vltp.id = ?";
 
 	// get a Vctp
 	public static final String FETCH_VCTP_BY_ID = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, busy, vltpId "
+			+ "id, name, label, description, info, created, updated, vltpId "
 			+ "FROM Vctp WHERE id = ?";
 
 	// get a Vlink and its VlinkConns
@@ -541,8 +527,8 @@ public class ApiSql {
 			+ "FROM Vxc WHERE id = ?"; 
 
 	
-	public static final String FETCH_PREFIX_ANN_BY_ID = "SELECT "
-			+ "id, name, originId, created, updated "
+	public static final String FETCH_PA_BY_ID = "SELECT "
+			+ "id, name, originId, available, created, updated "
 			+ "FROM PrefixAnn WHERE id=?";
 	
 	public static final String FETCH_ROUTE_BY_ID = "SELECT "
@@ -551,7 +537,7 @@ public class ApiSql {
 			+ "FROM Route INNER JOIN PrefixAnn on Route.paId=PrefixAnn.id WHERE Route.id=?";
 
 	public static final String FETCH_FACE_BY_ID = "SELECT "
-			+ "id, label, local, remote, scheme, created, updated, vctpId, vlinkConnId "
+			+ "id, label, status, local, remote, scheme, created, updated, vctpId, vlinkConnId "
 			+ "FROM Face WHERE id = ?"; 
 	
 	
@@ -588,8 +574,7 @@ public class ApiSql {
 			+ "busy=IFNULL(?, busy) "
 			+ "WHERE id = ?";
 	public static final String UPDATE_VCTP = "UPDATE Vctp "
-			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "
-			+ "busy=IFNULL(?, busy) "
+			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info) "
 			+ "WHERE id = ?";
 	public static final String UPDATE_VLINK = "UPDATE Vlink "
 			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "

@@ -14,6 +14,11 @@ public class PrefixAnnConverter {
   public static void fromJson(Iterable<java.util.Map.Entry<String, Object>> json, PrefixAnn obj) {
     for (java.util.Map.Entry<String, Object> member : json) {
       switch (member.getKey()) {
+        case "available":
+          if (member.getValue() instanceof Boolean) {
+            obj.setAvailable((Boolean)member.getValue());
+          }
+          break;
         case "created":
           if (member.getValue() instanceof String) {
             obj.setCreated((String)member.getValue());
@@ -48,6 +53,7 @@ public class PrefixAnnConverter {
   }
 
   public static void toJson(PrefixAnn obj, java.util.Map<String, Object> json) {
+    json.put("available", obj.getAvailable());
     if (obj.getCreated() != null) {
       json.put("created", obj.getCreated());
     }
