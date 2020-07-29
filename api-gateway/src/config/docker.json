@@ -7,14 +7,5 @@
     "timeout": 10000,
     "max-failures": 5
   },
-  "realm": "master",
-  "auth-server-url": "http://localhost:8080/auth",
-  "ssl-required": "external",
-  "resource": "nms",
-  "verify-token-audience": true,
-  "credentials": {
-    "secret": "e2330a8f-6ac5-4ca9-9c44-ce57e04f5852"
-  },
-  "confidential-port": 0,
-  "policy-enforcer": {}
+  "nms.ui.http.port": 8888
 }

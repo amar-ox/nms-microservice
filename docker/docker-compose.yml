@@ -19,27 +19,30 @@ services:
     depends_on:
       - mongo
     expose:
-      - "8082"
-  topology-microservice:
-    image: nms/topology-microservice
-    links:
-      - mysql
-    depends_on:
-      - mysql
-    expose:
-      - "8085"
-  fault-microservice:
-    image: nms/fault-microservice
+      - "8082"  
+  notification-microservice:
+    image: nms/notification-microservice
     links:
       - mongo
     depends_on:
       - mongo
     expose:
       - "8086"
+  topology-microservice:
+    image: nms/topology-microservice
+    links:
+      - mysql
+      - notification-microservice
+    depends_on:
+      - mysql
+      - notification-microservice
+    expose:
+      - "8085"
   api-gateway:
     image: nms/api-gateway
     ports:
       - "8787:8787"
+      - "8888:8888"
     environment:
       - JAVA_OPTS="-Xms128m -Xmx256m"
     extra_hosts:

@@ -51,7 +51,6 @@ import java.util.List;
 import io.nms.central.microservice.topology.model.Route;
 import io.nms.central.microservice.topology.model.VlinkConn;
 import io.nms.central.microservice.topology.model.Vtrail;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.AsyncResult;
 import io.nms.central.microservice.topology.model.PrefixAnn;
 import io.vertx.core.Handler;
@@ -848,9 +847,40 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                         HelperUtils.createHandler(msg));
           break;
         }
-        case "reportDispatcher": {
-          service.reportDispatcher((io.vertx.core.json.JsonObject)json.getValue("report"),
+        case "updateNodeStatus": {
+          service.updateNodeStatus(json.getValue("id") == null ? null : (json.getLong("id").intValue()),
+                        (java.lang.String)json.getValue("name"),
+                        (java.lang.String)json.getValue("status"),
                         HelperUtils.createHandler(msg));
+          break;
+        }
+        case "generateAllRoutes": {
+          service.generateAllRoutes(res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "generateRoutesToPrefix": {
+          service.generateRoutesToPrefix((java.lang.String)json.getValue("name"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
           break;
         }
         default: throw new IllegalStateException("Invalid action: " + action);

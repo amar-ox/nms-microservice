@@ -17,6 +17,7 @@ import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 
@@ -269,7 +270,16 @@ public interface TopologyService {
 	
 	@Fluent	
 	TopologyService deleteFace(String faceId, Handler<AsyncResult<Void>> resultHandler);
-
-	@Fluent	
-	TopologyService reportDispatcher(JsonObject report, Handler<AsyncResult<Void>> resultHandler);
+	
+	
+	/* Processing */
+	@Fluent
+	TopologyService updateNodeStatus(int id, String name, String status, Handler<AsyncResult<Void>> resultHandler);
+	
+	@Fluent
+	TopologyService generateAllRoutes(Handler<AsyncResult<List<Route>>> resultHandler);
+	
+	@Fluent
+	TopologyService generateRoutesToPrefix(String name, Handler<AsyncResult<List<Route>>> resultHandler);
+	
 }

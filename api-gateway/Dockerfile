@@ -6,6 +6,7 @@ ENV VERTICLE_FILE target/api-gateway-fat.jar
 ENV VERTICLE_HOME /opt/verticles
 
 EXPOSE 8787
+EXPOSE 8888
 
 COPY $VERTICLE_FILE $VERTICLE_HOME/
 COPY src/config/docker.json $VERTICLE_HOME/

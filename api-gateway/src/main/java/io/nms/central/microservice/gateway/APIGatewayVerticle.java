@@ -1,32 +1,23 @@
 package io.nms.central.microservice.gateway;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import io.nms.central.microservice.common.RestAPIVerticle;
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
-import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.core.net.JksOptions;
-import io.vertx.ext.auth.oauth2.OAuth2Auth;
-import io.vertx.ext.auth.oauth2.OAuth2FlowType;
-import io.vertx.ext.auth.oauth2.providers.KeycloakAuth;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-import io.vertx.ext.web.handler.CorsHandler;
-import io.vertx.ext.web.handler.OAuth2AuthHandler;
-import io.vertx.ext.web.handler.StaticHandler;
-import io.vertx.ext.web.handler.UserSessionHandler;
 import io.vertx.servicediscovery.Record;
 import io.vertx.servicediscovery.ServiceDiscovery;
 import io.vertx.servicediscovery.types.HttpEndpoint;
@@ -45,7 +36,7 @@ public class APIGatewayVerticle extends RestAPIVerticle {
   private static final Logger logger = LoggerFactory.getLogger(APIGatewayVerticle.class);
 
   @Override
-  public void start(Future<Void> future) throws Exception {
+  public void start(Promise<Void> promise) throws Exception {
     super.start();
 
     // get HTTP host and port from configuration, or use default value
@@ -55,22 +46,8 @@ public class APIGatewayVerticle extends RestAPIVerticle {
     Router router = Router.router(vertx);
     // cookie and session handler
     enableLocalSession(router);
-    
-    /* Set<String> allowedHeaders = new HashSet<>();
-	allowedHeaders.add("x-requested-with");
-	allowedHeaders.add("Access-Control-Allow-Origin");
-	allowedHeaders.add("Origin");
-	allowedHeaders.add("Content-Type");
-	allowedHeaders.add("Accept");
-	allowedHeaders.add("X-PINGARUNER");
-
-	CorsHandler corsHandler = CorsHandler
-			.create("http://localhost:8080")
-			.allowedHeaders(allowedHeaders);
-	Arrays.asList(HttpMethod.values()).stream().forEach(method -> corsHandler.allowedMethod(method));
-	router.route().handler(corsHandler); */
-    
-    enableCorsSupport(router);		
+     
+    enableCorsSupport(router);
 
     // body handler
     router.route().handler(BodyHandler.create());
@@ -93,19 +70,28 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 
     // create http server
     vertx.createHttpServer(httpServerOptions)
-      .requestHandler(router::accept)
+      .requestHandler(router)
       .listen(port, host, ar -> {
         if (ar.succeeded()) {
-          publishApiGateway(host, port);
-          future.complete();
+          publishApiGateway(host, port)
+          		.compose(r -> deployEventbusVerticle())
+          		.onComplete(promise);
+          // future.complete(future);
           logger.info("API Gateway is running on port " + port);
           // publish log
           publishGatewayLog("api_gateway_init_success:" + port);
         } else {
-          future.fail(ar.cause());
+          promise.fail(ar.cause());
         }
       });
   }
+  
+  private Future<Void> deployEventbusVerticle() {
+	   Promise<String> promise = Promise.promise();
+	    vertx.deployVerticle(new NmsUIVerticle(),
+	      new DeploymentOptions().setConfig(config()), promise.future());
+	    return promise.future().map(r -> null);
+}
 
   private void dispatchRequests(RoutingContext context) {
     int initialOffset = 5; // length of `/api/`

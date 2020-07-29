@@ -36,8 +36,6 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 
 	private static final String API_VERSION = "/v";
 	
-	private static final String API_REPORT = "/reports";
-
 	private static final String API_ONE_SUBNET = "/subnet/:subnetId";
 	private static final String API_ALL_SUBNETS = "/subnets";
 
@@ -104,8 +102,6 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.route().handler(BodyHandler.create());
 		// API route handler
 		router.get(API_VERSION).handler(this::apiVersion);
-		
-		router.put(API_REPORT).handler(this::apiProcessReport);
 
 		router.post(API_ALL_SUBNETS).handler(this::apiAddSubnet);
 		router.get(API_ALL_SUBNETS).handler(this::apiGetAllSubnets);
@@ -207,13 +203,6 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 				.put("version", "v1").encodePrettily());
 	}
 	
-	// Report API (for TEST)
-	private void apiProcessReport(RoutingContext context) {
-		final JsonObject report = context.getBodyAsJson();
-		JsonObject result = new JsonObject().put("message", "report processed");
-		service.reportDispatcher(report, resultVoidHandler(context, result));
-	}
-
 	// Node API
 	private void apiAddSubnet(RoutingContext context) {
 		final Vsubnet vsubnet = Json.decodeValue(context.getBodyAsString(), Vsubnet.class);

@@ -15,7 +15,7 @@ public class Vnode {
 	
 	// in SQL table
 		// common fields
-	private int id;
+	private int id = 0;
 	private String name;
 	private String label;
 	private String description;

@@ -165,5 +165,9 @@ export default class TopologyService {
 
   deleteFace(faceId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  reportDispatcher(report: Object, resultHandler: (err: any, result: any) => any) : TopologyService;
+  updateNodeStatus(id: number, name: string, status: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+
+  generateAllRoutes(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
+
+  generateRoutesToPrefix(name: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 }

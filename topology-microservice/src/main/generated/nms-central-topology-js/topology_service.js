@@ -114,7 +114,9 @@ var TopologyService = function(j_val) {
   var __super_getFacesByVsubnet = this.getFacesByVsubnet;
   var __super_getFacesByNode = this.getFacesByNode;
   var __super_deleteFace = this.deleteFace;
-  var __super_reportDispatcher = this.reportDispatcher;
+  var __super_updateNodeStatus = this.updateNodeStatus;
+  var __super_generateAllRoutes = this.generateAllRoutes;
+  var __super_generateRoutesToPrefix = this.generateRoutesToPrefix;
   /**
 
    @public
@@ -1770,23 +1772,72 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param report {Object} 
+   @param id {number} 
+   @param name {string} 
+   @param status {string} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.reportDispatcher =  function(report, resultHandler) {
+  this.updateNodeStatus =  function(id, name, status, resultHandler) {
     var __args = arguments;
-    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
-      j_topologyService["reportDispatcher(io.vertx.core.json.JsonObject,io.vertx.core.Handler)"](utils.convParamJsonObject(__args[0]), function(ar) {
+    if (__args.length === 4 && typeof __args[0] ==='number' && typeof __args[1] === 'string' && typeof __args[2] === 'string' && typeof __args[3] === 'function') {
+      j_topologyService["updateNodeStatus(int,java.lang.String,java.lang.String,io.vertx.core.Handler)"](__args[0], __args[1], __args[2], function(ar) {
         if (ar.succeeded()) {
-          __args[1](null, null);
+          __args[3](null, null);
+        } else {
+          __args[3](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_updateNodeStatus != 'undefined') {
+      return __super_updateNodeStatus.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.generateAllRoutes =  function(resultHandler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_topologyService["generateAllRoutes(io.vertx.core.Handler)"](function(ar) {
+        if (ar.succeeded()) {
+          __args[0](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[0](null, ar.cause());
+        }
+      }) ;
+      return that;
+    } else if (typeof __super_generateAllRoutes != 'undefined') {
+      return __super_generateAllRoutes.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param name {string} 
+   @param resultHandler {function} 
+   @return {TopologyService}
+   */
+  this.generateRoutesToPrefix =  function(name, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_topologyService["generateRoutesToPrefix(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
         } else {
           __args[1](null, ar.cause());
         }
       }) ;
       return that;
-    } else if (typeof __super_reportDispatcher != 'undefined') {
-      return __super_reportDispatcher.apply(this, __args);
+    } else if (typeof __super_generateRoutesToPrefix != 'undefined') {
+      return __super_generateRoutesToPrefix.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };

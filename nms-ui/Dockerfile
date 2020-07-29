@@ -5,7 +5,7 @@ ENV VERTICLE_FILE target/nms-ui-fat.jar
 # Set the location of the verticles
 ENV VERTICLE_HOME /opt/verticles
 
-EXPOSE 8080
+EXPOSE 8888
 
 COPY $VERTICLE_FILE $VERTICLE_HOME/
 COPY src/config/docker.json $VERTICLE_HOME/

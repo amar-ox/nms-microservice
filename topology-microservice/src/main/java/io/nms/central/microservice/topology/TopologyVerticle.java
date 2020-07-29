@@ -32,7 +32,8 @@ public class TopologyVerticle extends BaseMicroserviceVerticle {
     
     initTopologyDatabase(topologyService)
     	.compose(databaseOkay -> publishEventBusService(SERVICE_NAME, SERVICE_ADDRESS, TopologyService.class))
-    	.compose(servicePublished -> deployRestVerticle(topologyService))
+    	 .compose(servicePublished -> deployHandler(topologyService))
+    	.compose(handlerPrepared -> deployRestVerticle(topologyService))
     	.onComplete(future);
   }
   
@@ -45,6 +46,13 @@ public class TopologyVerticle extends BaseMicroserviceVerticle {
 	    });*/
 	    return initPromise.future();
   }
+  
+  private Future<Void> deployHandler(TopologyService service) {
+	    Promise<String> promise = Promise.promise();
+	    vertx.deployVerticle(new ReportHandler(service),
+	      new DeploymentOptions().setConfig(config()), promise);
+	    return promise.future().map(r -> null);
+	 }
 
   private Future<Void> deployRestVerticle(TopologyService service) {
     Promise<String> promise = Promise.promise();

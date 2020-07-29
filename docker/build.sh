@@ -8,4 +8,4 @@ docker build -t "nms/api-gateway" $DIR/../api-gateway
 #docker build -t "nms/cache-infrastructure" $DIR/../cache-infrastructure
 docker build -t "nms/telemetry-microservice" $DIR/../telemetry-microservice
 docker build -t "nms/topology-microservice" $DIR/../topology-microservice
-docker build -t "nms/fault-microservice" $DIR/../fault-microservice
+docker build -t "nms/notification-microservice" $DIR/../notification-microservice

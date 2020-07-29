@@ -17,8 +17,7 @@
     <!-- service components -->    
     <module>telemetry-microservice</module>    
     <module>topology-microservice</module>
-    <module>fault-microservice</module>
-    <!-- module>nms-ui</module -->
+    <module>notification-microservice</module>
   </modules>
 
   <properties>

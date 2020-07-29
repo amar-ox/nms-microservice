@@ -90,12 +90,12 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService getVsubnet(String vsubnetId, Handler<AsyncResult<Vsubnet>> resultHandler) {
 		this.retrieveOne(vsubnetId, ApiSql.FETCH_VSUBNET_BY_ID)
-		.map(option -> option.map(json -> {
-			Vsubnet vsubnet = new Vsubnet(json);
-			vsubnet.setInfo(new JsonObject(json.getString("info")).getMap());
-			return vsubnet;
-		}).orElse(null))
-		.onComplete(resultHandler);
+			.map(option -> option.map(json -> {
+					Vsubnet vsubnet = new Vsubnet(json);
+					vsubnet.setInfo(new JsonObject(json.getString("info")).getMap());
+					return vsubnet;
+				}).orElse(null))
+			.onComplete(resultHandler);
 		return this;
 	}
 	@Override
@@ -153,8 +153,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	public TopologyService getVnode(String vnodeId, Handler<AsyncResult<Vnode>> resultHandler) {
 		JsonArray params = new JsonArray().add(vnodeId);
 		this.retrieveMany(params, ApiSql.FETCH_VNODE_BY_ID)
-		.map(rawList -> ModelObjectMapper.toVnodeFromJsonRows(rawList))
-		.onComplete(resultHandler);
+			.map(rawList -> ModelObjectMapper.toVnodeFromJsonRows(rawList))
+			.onComplete(resultHandler);
 		return this;
 	}
 	@Override
@@ -209,15 +209,26 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	// INSERT_VLTP = "INSERT INTO Vltp (name, label, description, info, status, busy, vnodeId) "
 	@Override 
 	public TopologyService addVltp(Vltp vltp, Handler<AsyncResult<Integer>> resultHandler) {
-		JsonArray params = new JsonArray()
-				.add(vltp.getName())
-				.add(vltp.getLabel())
-				.add(vltp.getDescription())
-				.add(new JsonObject(vltp.getInfo()).encode())
-				.add(vltp.getStatus())
-				.add(vltp.isBusy())
-				.add(vltp.getVnodeId());
-		insertAndGetId(params, ApiSql.INSERT_VLTP, resultHandler);
+		getVnode(String.valueOf(vltp.getVnodeId()), ar -> {
+			if (ar.succeeded()) {
+				Vnode vnode = ar.result();
+				if (vnode.getId() > 0) {
+					JsonArray params = new JsonArray()
+						.add(vltp.getName())
+						.add(vltp.getLabel())
+						.add(vltp.getDescription())
+						.add(new JsonObject(vltp.getInfo()).encode())
+						.add(vnode.getStatus())
+						.add(vltp.isBusy())
+						.add(vltp.getVnodeId());
+					insertAndGetId(params, ApiSql.INSERT_VLTP, resultHandler);
+				} else {
+					resultHandler.handle(Future.failedFuture(new IllegalStateException("Node not found")));
+				}
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
 		return this;
 	}
 	@Override
@@ -756,9 +767,13 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(prefixAnn.getAvailable());
 		insertAndGetId(params, ApiSql.INSERT_PA, paId -> {
 			if (paId.succeeded()) {
-				generateRoutesToPrefix(prefixAnn.getName())
-						.map(paId.result())
-						.onComplete(resultHandler);
+				generateRoutesToPrefix(prefixAnn.getName(), ar -> {
+					if (ar.succeeded()) {
+						resultHandler.handle(Future.succeededFuture(paId.result()));
+					} else {
+						resultHandler.handle(Future.failedFuture(ar.cause()));
+					}
+				});
 			} else {
 				resultHandler.handle(Future.failedFuture(paId.cause()));
 			}
@@ -924,7 +939,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 
 
 	/* ---------------- BG ------------------ */
-	private Future<List<Vctp>> generateCtps(VlinkConn vlc) {
+	public Future<List<Vctp>> generateCtps(VlinkConn vlc) {
 		Promise<List<Vctp>> promise = Promise.promise();
 		Future<List<Vctp>> vctps = retrieveOne(vlc.getVlinkId(), InternalSql.FETCH_CTPGEN_INFO)
 				.map(option -> option.orElseGet(JsonObject::new))
@@ -935,22 +950,29 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return promise.future();
 	}
 
-	private Future<List<Face>> generateFaces(int linkConnId) {
+	public Future<List<Face>> generateFaces(int linkConnId) {
 		Promise<List<Face>> promise = Promise.promise();
 		Future<List<Face>> faces = retrieveOne(linkConnId, InternalSql.FETCH_FACEGEN_INFO)
 				.map(option -> option.orElseGet(JsonObject::new))
 				.compose(info -> routing.computeFaces(info));
 		// TODO: test if any update
 		faces.compose(f -> upsertFaces(f))
-				.compose(r -> generateAllRoutes())
-				.map(faces.result())
-				.onComplete(promise);
+			.onSuccess(r -> {
+				generateAllRoutes(ar -> {
+					if (ar.succeeded()) {
+						promise.complete(faces.result());
+					} else {
+						promise.fail(ar.cause());
+					}
+				});
+			})
+			.onFailure(e -> {
+				promise.fail(e.getCause());
+			});
 		return promise.future();
 	}
-
-	private Future<List<Route>> generateRoutesToPrefix(String name) { 
-		Promise<List<Route>> promise = Promise.promise();
-
+	@Override
+	public TopologyService generateRoutesToPrefix(String name, Handler<AsyncResult<List<Route>>> resultHandler) {
 		Future<List<Node>> nodes = this.retrieveAll(InternalSql.FETCH_ROUTEGEN_NODES)
 				.map(rawList -> rawList.stream()
 						.map(Node::new)
@@ -970,13 +992,11 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.compose(r -> routing.computeRoutes(nodes.result(), edges.result(), pas.result()));
 		routes.compose(r -> upsertRoutes(r, false))
 		.map(routes.result())
-		.onComplete(promise);
-
-		return promise.future();
+		.onComplete(resultHandler);
+		return this;
 	}
-	private Future<List<Route>> generateAllRoutes() {
-		Promise<List<Route>> promise = Promise.promise();
-
+	@Override
+	public TopologyService generateAllRoutes(Handler<AsyncResult<List<Route>>> resultHandler) {
 		Future<List<Node>> nodes = this.retrieveAll(InternalSql.FETCH_ROUTEGEN_NODES)
 				.map(rawList -> rawList.stream()
 						.map(Node::new)
@@ -995,9 +1015,9 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.compose(r -> routing.computeRoutes(nodes.result(), edges.result(), pas.result()));
 		routes.compose(r -> upsertRoutes(r, true))
 			.map(routes.result())
-			.onComplete(promise);
+			.onComplete(resultHandler);
 
-		return promise.future();
+		return this;
 	}
 
 	private Future<Void> upsertRoutes(List<Route> routes, boolean clean) {
@@ -1079,49 +1099,16 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return promise.future();
 	}
 
-
-
-	/* Report handler  */
-	public TopologyService reportDispatcher(JsonObject report, Handler<AsyncResult<Void>> resultHandler) {
-		String type = report.getString("type");
-		int id = report.getInteger("id", 0);
-		String name = report.getString("name", "");		
-		String status = report.getString("status");
-				
-		if (name == null && id == 0) {
-			resultHandler.handle(Future.failedFuture("name/id missing"));
-			return this;
-		}
-		if (type == null || status == null) {
-			resultHandler.handle(Future.failedFuture("type missing"));
-			return this;
-		}
-		
-		if (type.equals("node")) {
-			updateNodeStatus(id, name, status)
-					.onSuccess(ar -> {
-						generateAllRoutes().map((Void) null).onComplete(resultHandler);
-					})
-					.onFailure(ar -> {
-						resultHandler.handle(Future.failedFuture(ar.getCause()));
-					});
-		} else {
-			resultHandler.handle(Future.failedFuture("type not supported"));
-		}
-		return this;
-	}
-
-	// update function per entity
-	private Future<Void> updateNodeStatus(int id, String name, String status) {
-		Promise<Void> promise = Promise.promise();
+	@Override
+	public TopologyService updateNodeStatus(int id, String name, String status, Handler<AsyncResult<Void>> resultHandler) {
 		JsonArray params = new JsonArray().add(status).add(id).add(name);
 		update(params, InternalSql.UPDATE_NODE_STATUS, u -> {
 			if (u.succeeded()) {
 				// number of rows actually changed 
 				// if status changed to DOWN: update LTPs
 				if (u.result() == 1) {
-					params.remove(0);
-					retrieveMany(params, InternalSql.FETCH_LTPS_BY_NODE).onComplete(ar -> {
+					JsonArray pLtps = new JsonArray().add(id).add(name);
+					retrieveMany(pLtps, InternalSql.FETCH_LTPS_BY_NODE).onComplete(ar -> {
 						if (ar.succeeded()) {
 							// Update LTPs status
 							List<JsonObject> ltps = ar.result();
@@ -1133,27 +1120,28 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 							}
 							
 							// Update PAs availability
+							// TODO: get nodeId if not provided
 							Promise<Void> p = Promise.promise();
 							futures.add(p.future());			
 							JsonArray updPAs = new JsonArray().add((status.equals("UP"))).add(id);
 							executeNoResult(updPAs, InternalSql.UPDATE_PA_STATUS_BY_NODE, p);
 							
-							CompositeFuture.all(futures).map((Void) null).onComplete(promise);
+							CompositeFuture.all(futures).map((Void) null).onComplete(resultHandler);
 						} else {
-							promise.fail("Failed to fetch LTPs");
+							resultHandler.handle(Future.failedFuture(ar.cause()));
 						}
 					});
 				} else {
-					promise.complete();
+					resultHandler.handle(Future.succeededFuture());
 				}
 			} else {
-				promise.fail(u.cause());
+				resultHandler.handle(Future.failedFuture(u.cause()));
 			}
 		});
-		return promise.future();
+		return this;
 	}
 	
-	private Future<Void> updateLtpStatus(int id, String name, String status) {
+	public Future<Void> updateLtpStatus(int id, String name, String status) {
 		Promise<Void> promise = Promise.promise();
 		JsonArray params = new JsonArray().add(status).add(id).add(name);
 		update(params, InternalSql.UPDATE_LTP_STATUS, u -> {
@@ -1186,7 +1174,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return promise.future();
 	}
 	
-	private Future<Void> updateLinkStatus(int id, String name, String status) {
+	public Future<Void> updateLinkStatus(int id, String name, String status) {
 		Promise<Void> promise = Promise.promise();
 		
 		Promise<Boolean> linkStatus = Promise.promise();
@@ -1239,7 +1227,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return promise.future();
 	}
 	
-	private Future<Void> updateLcStatus(int id, String name, String status) {
+	public Future<Void> updateLcStatus(int id, String name, String status) {
 		Promise<Void> promise = Promise.promise();
 		JsonArray params = new JsonArray().add(status).add(id).add(name);
 		update(params, InternalSql.UPDATE_LC_STATUS, u -> {
@@ -1270,7 +1258,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 			}
 		});
 		return promise.future();
-	}
+	}	
 }
 
 
