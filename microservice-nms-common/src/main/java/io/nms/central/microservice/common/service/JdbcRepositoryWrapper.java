@@ -104,7 +104,7 @@ public class JdbcRepositoryWrapper {
 		client.getConnection(connHandler(resultHandler, connection -> {
 			connection.updateWithParams(sql, params, r -> {
 				if (r.succeeded()) {
-					UpdateResult updateResult = r.result();					
+					UpdateResult updateResult = r.result();
 					resultHandler.handle(Future.succeededFuture(updateResult.getUpdated()));
 				} else {
 					resultHandler.handle(Future.failedFuture(r.cause()));
@@ -135,7 +135,7 @@ public class JdbcRepositoryWrapper {
 				});
 	}
 	
-	protected <K> Future<Optional<JsonObject>> retrieveOne(JsonArray params, String sql) {
+	protected Future<Optional<JsonObject>> retrieveOne(JsonArray params, String sql) {
 		return getConnection()
 				.compose(connection -> {
 					Promise<Optional<JsonObject>> promise = Promise.promise();
@@ -154,6 +154,26 @@ public class JdbcRepositoryWrapper {
 					});
 					return promise.future();
 				});
+	}
+	
+	protected <K> Future<Optional<List<JsonObject>>> retrieveOneNested(K param, String sql) {
+		return getConnection().compose(connection -> {
+			Promise<Optional<List<JsonObject>>> promise = Promise.promise();
+			connection.queryWithParams(sql, new JsonArray().add(param), r -> {
+				if (r.succeeded()) {
+					List<JsonObject> resList = r.result().getRows();
+					if (resList == null || resList.isEmpty()) {
+						promise.complete(Optional.empty());
+					} else {
+						promise.complete(Optional.of(resList));
+					}					
+				} else {
+					promise.fail(r.cause());
+				}
+				connection.close();
+			});
+			return promise.future();
+		});
 	}
 
 	

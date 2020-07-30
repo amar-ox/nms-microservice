@@ -32,6 +32,7 @@ public class InternalSql {
 			+ "INNER JOIN "
 			+ "Vctp AS dCtp ON dCtp.id=VlinkConn.destVctpId INNER JOIN Vltp AS dLtp ON dLtp.id=dCtp.vltpId INNER JOIN Face AS dF ON dCtp.id=dF.vctpId) "
 			+ "WHERE VlinkConn.status = 'UP'";
+	
 	// get info needed to compute routes :nodes
 	public static final String FETCH_ROUTEGEN_NODES = "SELECT id FROM Vnode WHERE status = 'UP'";
 	
@@ -63,7 +64,13 @@ public class InternalSql {
 	public static final String UPDATE_LINK_STATUS = "UPDATE Vlink SET status=IFNULL(?, status) WHERE id = ? OR name = ?";
 	public static final String UPDATE_LC_STATUS = "UPDATE VlinkConn SET status=IFNULL(?, status) WHERE id = ? OR name = ?";
 	public static final String UPDATE_FACE_STATUS = "UPDATE Face SET status=IFNULL(?, status) WHERE id = ?";
-	public static final String UPDATE_PA_STATUS_BY_NODE = "UPDATE PrefixAnn SET available=IFNULL(?, available) WHERE originId = ?";
+	public static final String UPDATE_PA_STATUS_BY_NODE = "UPDATE PrefixAnn, "
+	+ "("  
+	+ "    SELECT id " 
+	+ "    FROM Vnode "
+	+ "    WHERE Vnode.id = ? OR Vnode.name = ? "
+	+ ") as n "
+	+ "SET available=IFNULL(?, available) WHERE PrefixAnn.originId = n.id";
 	
 	// get LTPs of a node by id or name
 	public static final String FETCH_LTPS_BY_NODE = "SELECT "
@@ -83,7 +90,7 @@ public class InternalSql {
 			+ "Vltp.id "
 			+ "FROM Vlink "
 			+ "INNER JOIN Vltp ON Vltp.id=Vlink.srcVltpId OR Vltp.id=Vlink.destVltpId "
-			+ "WHERE (Vlink.id = ? OR Vlink.name = ?) AND Vltp.status = 'UP'" ;
+			+ "WHERE (Vlink.id = ? OR Vlink.name = ?) AND Vltp.status = 'UP'";
 	
 	// get LinkConns of a Link by id or name
 	public static final String FETCH_LCS_BY_LINK = "SELECT "
