@@ -27,5 +27,13 @@ export default class NotificationService {
 
   constructor (eb: any, address: string);
 
-  processReport(report: Object, resultHandler: (err: any, result: Object) => any) : void;
+  processStatus(status: any, resultHandler: (err: any, result: any) => any) : void;
+
+  saveStatus(status: any, resultHandler: (err: any, result: any) => any) : void;
+
+  retrieveStatus(id: string, resultHandler: (err: any, result: any) => any) : void;
+
+  removeStatus(id: string, resultHandler: (err: any, result: any) => any) : void;
+
+  removeAllStatus(resultHandler: (err: any, result: any) => any) : void;
 }

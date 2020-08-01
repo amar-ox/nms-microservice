@@ -28,7 +28,7 @@ public class NotificationVerticle extends BaseMicroserviceVerticle {
     ProxyHelper.registerService(NotificationService.class, vertx, notificationService, SERVICE_ADDRESS);
     
     publishEventBusService(SERVICE_NAME, SERVICE_ADDRESS, NotificationService.class)
-    	.compose(servicePublished ->  publishMessageSource("reports-message-source", NotificationService.REPORTS_ADDRESS))
+    	.compose(servicePublished ->  publishMessageSource("status-message-source", NotificationService.STATUS_ADDRESS))
     	.compose(sourcePublished -> deployRestVerticle(notificationService))
     	.onComplete(future);
   }

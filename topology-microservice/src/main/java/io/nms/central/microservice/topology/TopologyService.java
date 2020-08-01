@@ -43,6 +43,8 @@ public interface TopologyService {
 	 */
 	String SERVICE_ADDRESS = "service.topology";
 	
+	String UPDATE_ADDRESS = "nms.update";
+	
 	@Fluent	
 	TopologyService initializePersistence(Handler<AsyncResult<List<Integer>>> resultHandler);
 
@@ -274,7 +276,7 @@ public interface TopologyService {
 	
 	/* Processing */
 	@Fluent
-	TopologyService updateNodeStatus(int id, String name, String status, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService updateNodeStatus(int id, String status, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent
 	TopologyService generateAllRoutes(Handler<AsyncResult<List<Route>>> resultHandler);

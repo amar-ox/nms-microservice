@@ -20,6 +20,7 @@ var utils = require('vertx-js/util/utils');
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
 var JNotificationService = Java.type('io.nms.central.microservice.notification.NotificationService');
+var Status = Java.type('io.nms.central.microservice.common.Status');
 
 /**
  A service interface managing products.
@@ -34,25 +35,116 @@ var NotificationService = function(j_val) {
   var j_notificationService = j_val;
   var that = this;
 
-  var __super_processReport = this.processReport;
+  var __super_processStatus = this.processStatus;
+  var __super_saveStatus = this.saveStatus;
+  var __super_retrieveStatus = this.retrieveStatus;
+  var __super_removeStatus = this.removeStatus;
+  var __super_removeAllStatus = this.removeAllStatus;
   /**
 
    @public
-   @param report {Object} 
+   @param status {Object} 
    @param resultHandler {function} 
    */
-  this.processReport =  function(report, resultHandler) {
+  this.processStatus =  function(status, resultHandler) {
     var __args = arguments;
     if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
-      j_notificationService["processReport(io.vertx.core.json.JsonObject,io.vertx.core.Handler)"](utils.convParamJsonObject(report), function(ar) {
+      j_notificationService["processStatus(io.nms.central.microservice.common.Status,io.vertx.core.Handler)"](__args[0]  != null ? new Status(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
         if (ar.succeeded()) {
-          resultHandler(utils.convReturnJson(ar.result()), null);
+          __args[1](null, null);
         } else {
-          resultHandler(null, ar.cause());
+          __args[1](null, ar.cause());
         }
       });
-    } else if (typeof __super_processReport != 'undefined') {
-      return __super_processReport.apply(this, __args);
+    } else if (typeof __super_processStatus != 'undefined') {
+      return __super_processStatus.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param status {Object} 
+   @param resultHandler {function} 
+   */
+  this.saveStatus =  function(status, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_notificationService["saveStatus(io.nms.central.microservice.common.Status,io.vertx.core.Handler)"](__args[0]  != null ? new Status(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+        if (ar.succeeded()) {
+          __args[1](null, null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      });
+    } else if (typeof __super_saveStatus != 'undefined') {
+      return __super_saveStatus.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param id {string} 
+   @param resultHandler {function} 
+   */
+  this.retrieveStatus =  function(id, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_notificationService["retrieveStatus(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      });
+    } else if (typeof __super_retrieveStatus != 'undefined') {
+      return __super_retrieveStatus.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param id {string} 
+   @param resultHandler {function} 
+   */
+  this.removeStatus =  function(id, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_notificationService["removeStatus(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](null, null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      });
+    } else if (typeof __super_removeStatus != 'undefined') {
+      return __super_removeStatus.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param resultHandler {function} 
+   */
+  this.removeAllStatus =  function(resultHandler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_notificationService["removeAllStatus(io.vertx.core.Handler)"](function(ar) {
+        if (ar.succeeded()) {
+          __args[0](null, null);
+        } else {
+          __args[0](null, ar.cause());
+        }
+      });
+    } else if (typeof __super_removeAllStatus != 'undefined') {
+      return __super_removeAllStatus.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -81,6 +173,5 @@ NotificationService._create = function(jdel) {var obj = Object.create(Notificati
 }
 NotificationService.SERVICE_NAME = JNotificationService.SERVICE_NAME;
 NotificationService.SERVICE_ADDRESS = JNotificationService.SERVICE_ADDRESS;
-NotificationService.REPORTS_ADDRESS = JNotificationService.REPORTS_ADDRESS;
-NotificationService.UPDATE_ADDRESS = JNotificationService.UPDATE_ADDRESS;
+NotificationService.STATUS_ADDRESS = JNotificationService.STATUS_ADDRESS;
 module.exports = NotificationService;

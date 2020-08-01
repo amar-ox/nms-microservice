@@ -1292,18 +1292,17 @@
 
      @public
      @param id {number} 
-     @param name {string} 
      @param status {string} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.updateNodeStatus =  function(id, name, status, resultHandler) {
+    this.updateNodeStatus =  function(id, status, resultHandler) {
       var __args = arguments;
-      if (__args.length === 4 && typeof __args[0] ==='number' && typeof __args[1] === 'string' && typeof __args[2] === 'string' && typeof __args[3] === 'function') {
+      if (__args.length === 3 && typeof __args[0] ==='number' && typeof __args[1] === 'string' && typeof __args[2] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"id":__args[0], "name":__args[1], "status":__args[2]}, {"action":"updateNodeStatus"}, function(err, result) { __args[3](err, result && result.body); });
+        j_eb.send(j_address, {"id":__args[0], "status":__args[1]}, {"action":"updateNodeStatus"}, function(err, result) { __args[2](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };

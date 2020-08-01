@@ -1,12 +1,10 @@
 package io.nms.central.microservice.notification.api;
 
 import io.nms.central.microservice.common.RestAPIVerticle;
+import io.nms.central.microservice.common.Status;
 import io.nms.central.microservice.notification.NotificationService;
 import io.vertx.core.Future;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -25,7 +23,8 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 
 	private static final String API_VERSION = "/v";
 	
-	private static final String API_ONE_REPORT = "/report/:reportId";
+	private static final String API_ONE_STATUS = "/status/:statusId";
+	private static final String API_STATUS = "/status";
 
 
 	private final NotificationService service;
@@ -43,7 +42,11 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 		// API route handler
 		router.get(API_VERSION).handler(this::apiVersion);
 		
-		router.put(API_ONE_REPORT).handler(this::apiProcessReport);
+		router.put(API_ONE_STATUS).handler(this::apiProcessStatus);
+		router.get(API_ONE_STATUS).handler(this::apiGetStatus);
+		
+		router.delete(API_ONE_STATUS).handler(this::apiDeleteStatus);
+		router.delete(API_STATUS).handler(this::apiDeleteAllStatus);
 
 		// get HTTP host and port from configuration, or use default value
 		String host = config().getString("notification.http.address", "0.0.0.0");
@@ -62,11 +65,35 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 				.put("version", "v1").encodePrettily());
 	}
 
-	// Report API (for TEST)
-		private void apiProcessReport(RoutingContext context) {
-			String reportId = context.request().getParam("reportId");
-			final JsonObject report = context.getBodyAsJson();
-			// JsonObject result = new JsonObject().put("message", "report processed");
-			service.processReport(report, resultHandler(context, JsonObject::encode));
+		private void apiProcessStatus(RoutingContext context) {
+			Status status = new Status(new JsonObject(context.getBodyAsString()));
+		    if (status.getResId() == null) {
+		      badRequest(context, new IllegalStateException("Resource Id is missing"));
+		    } else {
+		      String statusId = context.request().getParam("statusId");
+		      status.setId(statusId);
+		      JsonObject result = new JsonObject().put("message", "report processed");
+		      service.processStatus(status, resultVoidHandler(context, result));
+		    }
 		}
+		
+		private void apiGetStatus(RoutingContext context) {
+			String statusId = context.request().getParam("statusId");		
+			service.retrieveStatus(statusId, resultHandlerNonEmpty(context));
+		}
+		
+		private void apiDeleteStatus(RoutingContext context) {
+			String statusId = context.request().getParam("statusId");		
+			service.removeStatus(statusId, deleteResultHandler(context));
+		}
+		
+		private void apiDeleteAllStatus(RoutingContext context) {		
+			service.removeAllStatus(deleteResultHandler(context));
+		}
+		
+		
+		
+		
+		
+		
 }

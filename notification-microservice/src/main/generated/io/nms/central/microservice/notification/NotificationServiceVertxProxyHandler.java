@@ -41,7 +41,7 @@ import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
 import io.vertx.serviceproxy.HelperUtils;
 
-import io.vertx.core.json.JsonObject;
+import io.nms.central.microservice.common.Status;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 /*
@@ -114,9 +114,38 @@ public class NotificationServiceVertxProxyHandler extends ProxyHandler {
       if (action == null) throw new IllegalStateException("action not specified");
       accessed();
       switch (action) {
-        case "processReport": {
-          service.processReport((io.vertx.core.json.JsonObject)json.getValue("report"),
+        case "processStatus": {
+          service.processStatus(json.getJsonObject("status") == null ? null : new io.nms.central.microservice.common.Status(json.getJsonObject("status")),
                         HelperUtils.createHandler(msg));
+          break;
+        }
+        case "saveStatus": {
+          service.saveStatus(json.getJsonObject("status") == null ? null : new io.nms.central.microservice.common.Status(json.getJsonObject("status")),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "retrieveStatus": {
+          service.retrieveStatus((java.lang.String)json.getValue("id"),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(res.result() == null ? null : res.result().toJson());
+                        }
+                     });
+          break;
+        }
+        case "removeStatus": {
+          service.removeStatus((java.lang.String)json.getValue("id"),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "removeAllStatus": {
+          service.removeAllStatus(HelperUtils.createHandler(msg));
           break;
         }
         default: throw new IllegalStateException("Invalid action: " + action);

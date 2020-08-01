@@ -849,7 +849,6 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
         }
         case "updateNodeStatus": {
           service.updateNodeStatus(json.getValue("id") == null ? null : (json.getLong("id").intValue()),
-                        (java.lang.String)json.getValue("name"),
                         (java.lang.String)json.getValue("status"),
                         HelperUtils.createHandler(msg));
           break;

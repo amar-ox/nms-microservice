@@ -1,5 +1,6 @@
 package io.nms.central.microservice.notification;
 
+import io.nms.central.microservice.common.Status;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
@@ -29,10 +30,13 @@ public interface NotificationService {
 	String SERVICE_ADDRESS = "service.notification";
 	
 	
-	String REPORTS_ADDRESS = "notification.reports";
-	String UPDATE_ADDRESS = "notification.update";
+	String STATUS_ADDRESS = "notification.status";
 	
 	
-	public void processReport(JsonObject report, Handler<AsyncResult<JsonObject>> resultHandler);
+	public void processStatus(Status status, Handler<AsyncResult<Void>> resultHandler);
+	public void saveStatus(Status status, Handler<AsyncResult<Void>> resultHandler);
+	public void retrieveStatus(String id, Handler<AsyncResult<Status>> resultHandler);
+	public void removeStatus(String id, Handler<AsyncResult<Void>> resultHandler);
+	public void removeAllStatus(Handler<AsyncResult<Void>> resultHandler);
 
 }

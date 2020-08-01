@@ -1773,19 +1773,18 @@ var TopologyService = function(j_val) {
 
    @public
    @param id {number} 
-   @param name {string} 
    @param status {string} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.updateNodeStatus =  function(id, name, status, resultHandler) {
+  this.updateNodeStatus =  function(id, status, resultHandler) {
     var __args = arguments;
-    if (__args.length === 4 && typeof __args[0] ==='number' && typeof __args[1] === 'string' && typeof __args[2] === 'string' && typeof __args[3] === 'function') {
-      j_topologyService["updateNodeStatus(int,java.lang.String,java.lang.String,io.vertx.core.Handler)"](__args[0], __args[1], __args[2], function(ar) {
+    if (__args.length === 3 && typeof __args[0] ==='number' && typeof __args[1] === 'string' && typeof __args[2] === 'function') {
+      j_topologyService["updateNodeStatus(int,java.lang.String,io.vertx.core.Handler)"](__args[0], __args[1], function(ar) {
         if (ar.succeeded()) {
-          __args[3](null, null);
+          __args[2](null, null);
         } else {
-          __args[3](null, ar.cause());
+          __args[2](null, ar.cause());
         }
       }) ;
       return that;
@@ -1866,4 +1865,5 @@ TopologyService._create = function(jdel) {var obj = Object.create(TopologyServic
 }
 TopologyService.SERVICE_NAME = JTopologyService.SERVICE_NAME;
 TopologyService.SERVICE_ADDRESS = JTopologyService.SERVICE_ADDRESS;
+TopologyService.UPDATE_ADDRESS = JTopologyService.UPDATE_ADDRESS;
 module.exports = TopologyService;

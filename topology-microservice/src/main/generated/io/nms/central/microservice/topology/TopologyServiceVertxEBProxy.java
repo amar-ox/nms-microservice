@@ -1558,14 +1558,13 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
-  public  TopologyService updateNodeStatus(int id, String name, String status, Handler<AsyncResult<Void>> resultHandler){
+  public  TopologyService updateNodeStatus(int id, String status, Handler<AsyncResult<Void>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
     }
     JsonObject _json = new JsonObject();
     _json.put("id", id);
-    _json.put("name", name);
     _json.put("status", status);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();

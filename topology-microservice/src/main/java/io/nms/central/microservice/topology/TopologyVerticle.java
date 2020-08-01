@@ -49,7 +49,7 @@ public class TopologyVerticle extends BaseMicroserviceVerticle {
   
   private Future<Void> deployHandler(TopologyService service) {
 	    Promise<String> promise = Promise.promise();
-	    vertx.deployVerticle(new ReportHandler(service),
+	    vertx.deployVerticle(new StatusHandler(service),
 	      new DeploymentOptions().setConfig(config()), promise);
 	    return promise.future().map(r -> null);
 	 }

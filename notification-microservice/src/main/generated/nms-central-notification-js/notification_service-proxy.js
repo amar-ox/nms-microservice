@@ -53,16 +53,83 @@
     /**
 
      @public
-     @param report {Object} 
+     @param status {Object} 
      @param resultHandler {function} 
      */
-    this.processReport =  function(report, resultHandler) {
+    this.processStatus =  function(status, resultHandler) {
       var __args = arguments;
       if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"report":__args[0]}, {"action":"processReport"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"status":__args[0]}, {"action":"processStatus"}, function(err, result) { __args[1](err, result && result.body); });
+        return;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
+     @param status {Object} 
+     @param resultHandler {function} 
+     */
+    this.saveStatus =  function(status, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"status":__args[0]}, {"action":"saveStatus"}, function(err, result) { __args[1](err, result && result.body); });
+        return;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
+     @param id {string} 
+     @param resultHandler {function} 
+     */
+    this.retrieveStatus =  function(id, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"id":__args[0]}, {"action":"retrieveStatus"}, function(err, result) { __args[1](err, result && result.body); });
+        return;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
+     @param id {string} 
+     @param resultHandler {function} 
+     */
+    this.removeStatus =  function(id, resultHandler) {
+      var __args = arguments;
+      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {"id":__args[0]}, {"action":"removeStatus"}, function(err, result) { __args[1](err, result && result.body); });
+        return;
+      } else throw new TypeError('function invoked with invalid arguments');
+    };
+
+    /**
+
+     @public
+     @param resultHandler {function} 
+     */
+    this.removeAllStatus =  function(resultHandler) {
+      var __args = arguments;
+      if (__args.length === 1 && typeof __args[0] === 'function') {
+        if (closed) {
+          throw new Error('Proxy is closed');
+        }
+        j_eb.send(j_address, {}, {"action":"removeAllStatus"}, function(err, result) { __args[0](err, result && result.body); });
         return;
       } else throw new TypeError('function invoked with invalid arguments');
     };

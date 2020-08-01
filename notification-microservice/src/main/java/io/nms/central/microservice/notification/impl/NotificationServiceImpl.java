@@ -1,20 +1,16 @@
 package io.nms.central.microservice.notification.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
-import io.nms.central.microservice.common.service.JdbcRepositoryWrapper;
+import io.nms.central.microservice.common.Status;
 import io.nms.central.microservice.notification.NotificationService;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.servicediscovery.ServiceDiscovery;
 
@@ -25,98 +21,135 @@ public class NotificationServiceImpl implements NotificationService {
 
 	// private static final Logger logger = LoggerFactory.getLogger(FaultServiceImpl.class);
 
-	private static final String COLL_NOTIFICATION = "notification";
+	private static final String COLL_STATUS = "status";
+	// private static final String COLL_EVENTS = "event";
+	// private static final String COLL_FAULTS = "fault";
+	
+	private Map<Integer, Long> healthTimers;
 
-	  private final MongoClient client;
-	  private final Vertx vertx;
-	  private final ServiceDiscovery discovery;
+	private final MongoClient client;
+	private final Vertx vertx;
+	private final ServiceDiscovery discovery;
 
-	  public NotificationServiceImpl(Vertx vertx, ServiceDiscovery discovery, JsonObject config) {
-		  this.vertx = vertx;
-		 this.discovery = discovery;
-	    this.client = MongoClient.create(vertx, config);
-	  }
-	  
-	  public void processReport(JsonObject report, Handler<AsyncResult<JsonObject>> resultHandler) {		  
-		  String type = report.getString("type");
-			int id = report.getInteger("id", 0);
-			String name = report.getString("name", "");
-			String status = report.getString("status");
-		    if (id == 0 && name.isEmpty()) {
-		      resultHandler.handle(Future.failedFuture(new IllegalStateException("Id/name missing")));
-		    } else {
-		    	// TODO: store Report?
-		    	sendReportAwaitResult(report).onComplete(ar -> {
-		    		if (ar.succeeded()) {
-			    		publishUpdate();
-			    		resultHandler.handle(Future.succeededFuture(ar.result()));
-		    		} else {
-		    			resultHandler.handle(Future.failedFuture(ar.cause()));
-		    		}
-		    	});
+	public NotificationServiceImpl(Vertx vertx, ServiceDiscovery discovery, JsonObject config) {
+		this.vertx = vertx;
+		this.discovery = discovery;
+		this.client = MongoClient.create(vertx, config);
+		this.healthTimers = new HashMap<Integer, Long>();
+	}
+
+	@Override
+	public void processStatus(Status status, Handler<AsyncResult<Void>> resultHandler) { 
+		saveStatus(status, ar -> {
+			if (ar.succeeded()) {
+				sendStatusAwaitResult(status).onComplete(res -> {
+					if (res.succeeded()) {
+						resultHandler.handle(Future.succeededFuture(res.result()));
+					} else {
+						resultHandler.handle(Future.failedFuture(res.cause()));
+					}
+				});
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
+		
+		// update health timers
+		int resId = status.getResId();
+		if (healthTimers.containsKey(resId)) {
+			vertx.cancelTimer(healthTimers.get(resId));
+			healthTimers.remove(resId);
+		}
+		long timerId = vertx.setTimer(30000, new Handler<Long>() {
+		    @Override
+		    public void handle(Long aLong) {
+		    	setNodeDown(status.getResId());
+		    	healthTimers.remove(status.getResId());
 		    }
-	  }
-	  
-	  private Future<JsonObject> sendReportAwaitResult(JsonObject report) {
-		  Promise<JsonObject> promise = Promise.promise();
-		    vertx.eventBus().request(NotificationService.REPORTS_ADDRESS, report, reply -> {
-		      if (reply.succeeded()) {
-		        promise.complete((JsonObject) reply.result().body());
-		      } else {
-		        promise.fail(reply.cause());
-		      }
-		    });
-		    return promise.future();
-	  }
+		});
+		healthTimers.put(status.getResId(), timerId);
+	}
+	
+	private void setNodeDown(int resId) {
+		Status status = new Status();
+		status.setResId(resId);
+		status.setResType("node");
+		status.setStatus("DISCONN");
+		status.setTimestamp("123456");
+		status.setId("ffff");
+		sendStatusAwaitResult(status);
+	}
 
-	  private void publishUpdate() {
-		  // Promise<JsonObject> promise = Promise.promise();
-		    vertx.eventBus().publish(NotificationService.UPDATE_ADDRESS, new JsonObject());
-		  // return promise.future();
-	  }
+	@Override
+	public void saveStatus(Status status, Handler<AsyncResult<Void>> resultHandler) {
+		client.save(COLL_STATUS, new JsonObject().put("_id", status.getId())
+				.put("resType", status.getResType())
+				.put("resId", status.getResId())
+				.put("status", status.getStatus())
+				.put("timestamp", status.getTimestamp()),
+				ar -> {
+					if (ar.succeeded()) {
+						resultHandler.handle(Future.succeededFuture());
+					} else {
+						resultHandler.handle(Future.failedFuture(ar.cause()));
+					}
+				}
+				);
+	}
 
-	  /* @Override
-	  public void saveStore(Store store, Handler<AsyncResult<Void>> resultHandler) {
-	    client.save(COLLECTION, new JsonObject().put("_id", store.getSellerId())
-	        .put("name", store.getName())
-	        .put("description", store.getDescription())
-	        .put("openTime", store.getOpenTime()),
-	      ar -> {
-	        if (ar.succeeded()) {
-	          resultHandler.handle(Future.succeededFuture());
-	        } else {
-	          resultHandler.handle(Future.failedFuture(ar.cause()));
-	        }
-	      }
-	    );
-	  }
+	@Override
+	public void retrieveStatus(String statusId, Handler<AsyncResult<Status>> resultHandler) {
+		JsonObject query = new JsonObject().put("_id", statusId);
+		client.findOne(COLL_STATUS, query, null, ar -> {
+			if (ar.succeeded()) {
+				if (ar.result() == null) {
+					resultHandler.handle(Future.succeededFuture());
+				} else {
+					Status status = new Status(ar.result().put("id", ar.result().getString("_id")));
+					resultHandler.handle(Future.succeededFuture(status));
+				}
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
+	}
 
-	  @Override
-	  public void retrieveStore(String sellerId, Handler<AsyncResult<Store>> resultHandler) {
-	    JsonObject query = new JsonObject().put("_id", sellerId);
-	    client.findOne(COLLECTION, query, null, ar -> {
-	      if (ar.succeeded()) {
-	        if (ar.result() == null) {
-	          resultHandler.handle(Future.succeededFuture());
-	        } else {
-	          Store store = new Store(ar.result().put("sellerId", ar.result().getString("_id")));
-	          resultHandler.handle(Future.succeededFuture(store));
-	        }
-	      } else {
-	        resultHandler.handle(Future.failedFuture(ar.cause()));
-	      }
-	    });
-	  }
+	@Override
+	public void removeStatus(String statusId, Handler<AsyncResult<Void>> resultHandler) {
+		JsonObject query = new JsonObject().put("_id", statusId);
+		client.removeDocument(COLL_STATUS, query, ar -> {
+			if (ar.succeeded()) {
+				resultHandler.handle(Future.succeededFuture());
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
+	}
 
-	  @Override
-	  public void removeStore(String sellerId, Handler<AsyncResult<Void>> resultHandler) {
-	    JsonObject query = new JsonObject().put("_id", sellerId);
-	    client.removeDocument(COLLECTION, query, ar -> {
-	      if (ar.succeeded()) {
-	        resultHandler.handle(Future.succeededFuture());
-	      } else {
-	        resultHandler.handle(Future.failedFuture(ar.cause()));
-	      }
-	    });
-	  } */
+	@Override
+	public void removeAllStatus(Handler<AsyncResult<Void>> resultHandler) {
+		client.removeDocument(COLL_STATUS, new JsonObject(), ar -> {
+			if (ar.succeeded()) {
+				resultHandler.handle(Future.succeededFuture());
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
+	}
+
+
+
+
+	/* ----------------------------- */
+	private Future<Void> sendStatusAwaitResult(Status status) {
+		Promise<Void> promise = Promise.promise();
+		vertx.eventBus().request(NotificationService.STATUS_ADDRESS, status.toJson(), reply -> {
+			if (reply.succeeded()) {
+				promise.complete();
+			} else {
+				promise.fail(reply.cause());
+			}
+		});
+		return promise.future();
+	}
 }

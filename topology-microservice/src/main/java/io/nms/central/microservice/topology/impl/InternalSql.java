@@ -59,50 +59,51 @@ public class InternalSql {
 			+ "vlinkConnId = VALUES(vlinkConnId)";
 	
 	
-	public static final String UPDATE_NODE_STATUS = "UPDATE Vnode SET status=IFNULL(?, status) WHERE id = ? OR name = ?";
-	public static final String UPDATE_LTP_STATUS = "UPDATE Vltp SET status=IFNULL(?, status) WHERE id = ? OR name = ?";
-	public static final String UPDATE_LINK_STATUS = "UPDATE Vlink SET status=IFNULL(?, status) WHERE id = ? OR name = ?";
-	public static final String UPDATE_LC_STATUS = "UPDATE VlinkConn SET status=IFNULL(?, status) WHERE id = ? OR name = ?";
+	public static final String UPDATE_NODE_STATUS = "UPDATE Vnode SET status=IFNULL(?, status) WHERE id = ?";
+	public static final String UPDATE_LTP_STATUS = "UPDATE Vltp SET status=IFNULL(?, status) WHERE id = ?";
+	public static final String UPDATE_LINK_STATUS = "UPDATE Vlink SET status=IFNULL(?, status) WHERE id = ?";
+	public static final String UPDATE_LC_STATUS = "UPDATE VlinkConn SET status=IFNULL(?, status) WHERE id = ?";
 	public static final String UPDATE_FACE_STATUS = "UPDATE Face SET status=IFNULL(?, status) WHERE id = ?";
-	public static final String UPDATE_PA_STATUS_BY_NODE = "UPDATE PrefixAnn, "
+	public static final String UPDATE_PA_STATUS_BY_NODE = "UPDATE PrefixAnn SET available=IFNULL(?, available) WHERE originId = ?";
+	/* public static final String UPDATE_PA_STATUS_BY_NODE = "UPDATE PrefixAnn, "
 	+ "("  
 	+ "    SELECT id " 
 	+ "    FROM Vnode "
 	+ "    WHERE Vnode.id = ? OR Vnode.name = ? "
 	+ ") as n "
-	+ "SET available=IFNULL(?, available) WHERE PrefixAnn.originId = n.id";
+	+ "SET available=IFNULL(?, available) WHERE PrefixAnn.originId = n.id"; */
 	
 	// get LTPs of a node by id or name
 	public static final String FETCH_LTPS_BY_NODE = "SELECT "
 			+ "Vltp.id, Vltp.name "
 			+ "FROM Vnode "
 			+ "INNER JOIN Vltp ON Vnode.id=Vltp.vnodeId "
-			+ "WHERE Vnode.id = ? OR Vnode.name = ?";
+			+ "WHERE Vnode.id = ?";
 	
 	// get the Link of an LTP by id or name
 	public static final String FETCH_LINK_BY_LTP = "SELECT "
 			+ "Vlink.id, Vlink.name "
 			+ "FROM Vltp "
 			+ "INNER JOIN Vlink ON Vltp.id=Vlink.srcVltpId OR Vltp.id=Vlink.destVltpId "
-			+ "WHERE Vltp.id = ? OR Vltp.name = ?";
+			+ "WHERE Vltp.id = ?";
 	
 	public static final String FETCH_LINK_UP = "SELECT "
 			+ "Vltp.id "
 			+ "FROM Vlink "
 			+ "INNER JOIN Vltp ON Vltp.id=Vlink.srcVltpId OR Vltp.id=Vlink.destVltpId "
-			+ "WHERE (Vlink.id = ? OR Vlink.name = ?) AND Vltp.status = 'UP'";
+			+ "WHERE Vlink.id = ? AND Vltp.status = 'UP'";
 	
 	// get LinkConns of a Link by id or name
 	public static final String FETCH_LCS_BY_LINK = "SELECT "
 			+ "VlinkConn.id, VlinkConn.name "
 			+ "FROM Vlink "
 			+ "INNER JOIN VlinkConn ON Vlink.id=VlinkConn.vlinkId "
-			+ "WHERE Vlink.id = ? OR Vlink.name = ?";
+			+ "WHERE Vlink.id = ?";
 	
 	// get ...
 	public static final String FETCH_FACES_BY_LC = "SELECT "
 			+ "Face.id "
 			+ "FROM VlinkConn "
 			+ "LEFT JOIN Face ON VlinkConn.id=Face.vlinkConnId "
-			+ "WHERE VlinkConn.id = ? OR VlinkConn.name = ?";
+			+ "WHERE VlinkConn.id = ?";
 }

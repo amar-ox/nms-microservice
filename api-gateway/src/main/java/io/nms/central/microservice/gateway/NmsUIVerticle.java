@@ -46,7 +46,7 @@ public class NmsUIVerticle extends BaseMicroserviceVerticle {
     // event bus bridge
     SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
     BridgeOptions bridgeOptions = new BridgeOptions()
-			.addOutboundPermitted(new PermittedOptions().setAddressRegex("notification.*"));
+			.addOutboundPermitted(new PermittedOptions().setAddressRegex("nms.*"));
 	sockJSHandler.bridge(bridgeOptions);
 	
     router.route("/eventbus/*").handler(sockJSHandler);
