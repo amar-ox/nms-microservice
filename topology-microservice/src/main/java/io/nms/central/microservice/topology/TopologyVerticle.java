@@ -11,7 +11,6 @@ import io.nms.central.microservice.topology.impl.TopologyServiceImpl;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.serviceproxy.ProxyHelper;
 
 
@@ -32,7 +31,8 @@ public class TopologyVerticle extends BaseMicroserviceVerticle {
     
     initTopologyDatabase(topologyService)
     	.compose(databaseOkay -> publishEventBusService(SERVICE_NAME, SERVICE_ADDRESS, TopologyService.class))
-    	 .compose(servicePublished -> deployHandler(topologyService))
+    	.compose(servicePublished ->  publishMessageSource("config-message-source", TopologyService.CONFIG_ADDRESS))
+    	.compose(sourcePublished -> deployHandler(topologyService))
     	.compose(handlerPrepared -> deployRestVerticle(topologyService))
     	.onComplete(future);
   }

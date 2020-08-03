@@ -18,13 +18,13 @@ public class Face {
 	private String updated;
 	private String status = "DOWN";
 	
+	// face fields
 	private String local;
 	private String remote;
 	private String scheme;
-		
-		// face fields
 	private int vctpId;
 	private int vlinkConnId;
+	private int vnodeId;
 	
 	
 	/*-----------------------------------------------*/
@@ -140,6 +140,14 @@ public class Face {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public int getVnodeId() {
+		return vnodeId;
+	}
+
+	public void setVnodeId(int vnodeId) {
+		this.vnodeId = vnodeId;
 	}
 	
 }

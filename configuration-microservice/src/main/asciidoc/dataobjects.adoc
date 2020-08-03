@@ -1,0 +1,55 @@
+= Cheatsheets
+
+[[Config]]
+== Config
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[faces]]`@faces`|`Array of link:dataobjects.html#ConfigFace[ConfigFace]`|-
+|[[routes]]`@routes`|`Array of link:dataobjects.html#ConfigRoute[ConfigRoute]`|-
+|===
+
+[[ConfigFace]]
+== ConfigFace
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[id]]`@id`|`Number (int)`|-
+|[[local]]`@local`|`String`|-
+|[[remote]]`@remote`|`String`|-
+|[[scheme]]`@scheme`|`String`|-
+|===
+
+[[ConfigObj]]
+== ConfigObj
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[config]]`@config`|`link:dataobjects.html#Config[Config]`|-
+|[[nodeId]]`@nodeId`|`Number (int)`|-
+|[[version]]`@version`|`Number (int)`|-
+|===
+
+[[ConfigRoute]]
+== ConfigRoute
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[cost]]`@cost`|`Number (int)`|-
+|[[nextHop]]`@nextHop`|`Number (int)`|-
+|[[origin]]`@origin`|`String`|-
+|[[prefix]]`@prefix`|`String`|-
+|===
+

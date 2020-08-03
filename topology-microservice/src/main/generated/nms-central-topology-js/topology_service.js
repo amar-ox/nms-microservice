@@ -1865,5 +1865,6 @@ TopologyService._create = function(jdel) {var obj = Object.create(TopologyServic
 }
 TopologyService.SERVICE_NAME = JTopologyService.SERVICE_NAME;
 TopologyService.SERVICE_ADDRESS = JTopologyService.SERVICE_ADDRESS;
-TopologyService.UPDATE_ADDRESS = JTopologyService.UPDATE_ADDRESS;
+TopologyService.UI_ADDRESS = JTopologyService.UI_ADDRESS;
+TopologyService.CONFIG_ADDRESS = JTopologyService.CONFIG_ADDRESS;
 module.exports = TopologyService;

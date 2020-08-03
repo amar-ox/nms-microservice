@@ -19,7 +19,7 @@ services:
     depends_on:
       - mongo
     expose:
-      - "8082"  
+      - "8082"
   notification-microservice:
     image: nms/notification-microservice
     links:
@@ -38,6 +38,16 @@ services:
       - notification-microservice
     expose:
       - "8085"
+  configuration-microservice:
+    image: nms/configuration-microservice
+    links:
+      - mongo
+      - topology-microservice
+    depends_on:
+      - mongo
+      - topology-microservice
+    expose:
+      - "8088"
   api-gateway:
     image: nms/api-gateway
     ports:

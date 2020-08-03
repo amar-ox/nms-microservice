@@ -23,7 +23,7 @@ public class NotificationVerticle extends BaseMicroserviceVerticle {
   public void start(Future<Void> future) throws Exception {
     super.start();
     // create the service instance
-    NotificationService notificationService = new NotificationServiceImpl(vertx, discovery, config());
+    NotificationService notificationService = new NotificationServiceImpl(vertx, config());
     // register the service proxy on event bus
     ProxyHelper.registerService(NotificationService.class, vertx, notificationService, SERVICE_ADDRESS);
     

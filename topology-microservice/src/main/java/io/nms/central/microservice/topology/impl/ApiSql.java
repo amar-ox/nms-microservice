@@ -322,7 +322,11 @@ public class ApiSql {
 			+ "FROM Route INNER JOIN PrefixAnn on Route.paId=PrefixAnn.id";
 
 	public static final String FETCH_ALL_FACES = "SELECT "
-			+ "id, label, status, local, remote, scheme, created, updated, vctpId, vlinkConnId FROM Face"; 
+			+ "Face.id, Face.label, Face.status, Face.local, Face.remote, Face.scheme, Face.created, Face.updated, Face.vctpId, Face.vlinkConnId, "
+			+ "Vltp.vnodeId AS vnodeId "
+			+ "FROM Face "
+			+ "INNER JOIN Vctp ON Face.vctpId=Vctp.id "
+			+ "INNER JOIN Vltp ON Vctp.vltpId=Vltp.id "; 
 
 	/*-------------------- FETCH ITEMS BY ANOTHER --------------------*/
 	

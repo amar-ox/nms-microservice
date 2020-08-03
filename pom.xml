@@ -18,6 +18,7 @@
     <module>telemetry-microservice</module>    
     <module>topology-microservice</module>
     <module>notification-microservice</module>
+    <module>configuration-microservice</module>
   </modules>
 
   <properties>

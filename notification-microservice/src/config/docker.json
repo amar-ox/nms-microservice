@@ -1,6 +1,6 @@
 {
   "api.name": "notification",
   "notification.http.address": "notification-microservice",
-  "notification.http.port": 8086,  
+  "notification.http.port": 8088,  
   "host": "mongo"
 }

@@ -10,10 +10,14 @@ import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.servicediscovery.types.MessageSource;
 
 public class StatusHandler extends BaseMicroserviceVerticle {
 
+	private static final Logger logger = LoggerFactory.getLogger(StatusHandler.class);
+	
 	private final TopologyService topologyService;
 	private Map<Integer,Long> statusTimers;
 
@@ -86,7 +90,8 @@ public class StatusHandler extends BaseMicroserviceVerticle {
 				if (ar.succeeded()) {
 					topologyService.generateAllRoutes(res -> {
 						if (res.succeeded()) {
-							publishUpdate();
+							publishUpdateToUI();
+							notifyConfigService();
 						} else {
 							res.cause().printStackTrace();
 						}
@@ -98,7 +103,15 @@ public class StatusHandler extends BaseMicroserviceVerticle {
 		} 
 	}
 	
-	 private void publishUpdate() {
-		    vertx.eventBus().publish(TopologyService.UPDATE_ADDRESS, new JsonObject());
+	 private void publishUpdateToUI() {
+		    vertx.eventBus().publish(TopologyService.UI_ADDRESS, new JsonObject());
 	 }
+	 
+	 private void notifyConfigService() {
+			vertx.eventBus().request(TopologyService.CONFIG_ADDRESS, new JsonObject(), reply -> {
+				if (reply.failed()) {
+					logger.warn("configuration service replies: ", reply.cause().getMessage());
+				}
+			});
+	}
 }

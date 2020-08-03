@@ -1,0 +1,6 @@
+{
+  "api.name": "configuration",
+  "configuration.http.address": "configuration-microservice",
+  "configuration.http.port": 8088,  
+  "host": "mongo"
+}

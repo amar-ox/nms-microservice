@@ -64,6 +64,11 @@ public class FaceConverter {
             obj.setVlinkConnId(((Number)member.getValue()).intValue());
           }
           break;
+        case "vnodeId":
+          if (member.getValue() instanceof Number) {
+            obj.setVnodeId(((Number)member.getValue()).intValue());
+          }
+          break;
       }
     }
   }
@@ -97,5 +102,6 @@ public class FaceConverter {
     }
     json.put("vctpId", obj.getVctpId());
     json.put("vlinkConnId", obj.getVlinkConnId());
+    json.put("vnodeId", obj.getVnodeId());
   }
 }

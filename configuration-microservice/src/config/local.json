@@ -1,0 +1,4 @@
+{
+  "api.name": "configuration",
+  "configuration.http.port": 8088
+}

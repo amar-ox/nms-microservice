@@ -2,6 +2,7 @@ package io.nms.central.microservice.notification.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.nms.central.microservice.common.Status;
 import io.nms.central.microservice.notification.NotificationService;
@@ -29,11 +30,9 @@ public class NotificationServiceImpl implements NotificationService {
 
 	private final MongoClient client;
 	private final Vertx vertx;
-	private final ServiceDiscovery discovery;
 
-	public NotificationServiceImpl(Vertx vertx, ServiceDiscovery discovery, JsonObject config) {
+	public NotificationServiceImpl(Vertx vertx, JsonObject config) {
 		this.vertx = vertx;
-		this.discovery = discovery;
 		this.client = MongoClient.create(vertx, config);
 		this.healthTimers = new HashMap<Integer, Long>();
 	}
@@ -60,7 +59,7 @@ public class NotificationServiceImpl implements NotificationService {
 			vertx.cancelTimer(healthTimers.get(resId));
 			healthTimers.remove(resId);
 		}
-		long timerId = vertx.setTimer(30000, new Handler<Long>() {
+		long timerId = vertx.setTimer(TimeUnit.MINUTES.toMillis(10), new Handler<Long>() {
 		    @Override
 		    public void handle(Long aLong) {
 		    	setNodeDown(status.getResId());
@@ -128,7 +127,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public void removeAllStatus(Handler<AsyncResult<Void>> resultHandler) {
-		client.removeDocument(COLL_STATUS, new JsonObject(), ar -> {
+		client.removeDocuments(COLL_STATUS, null, ar -> {
 			if (ar.succeeded()) {
 				resultHandler.handle(Future.succeededFuture());
 			} else {

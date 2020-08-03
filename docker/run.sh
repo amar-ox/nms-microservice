@@ -26,5 +26,10 @@ docker-compose -f $DIR/docker-compose.yml up -d mysql mongo
 echo "Waiting for persistence init..."
 sleep 10
 
+docker-compose -f $DIR/docker-compose.yml up -d notification-microservice 
+sleep 5
+
+docker-compose -f $DIR/docker-compose.yml up -d topology-microservice 
+sleep 5
 # Start other containers
 docker-compose -f $DIR/docker-compose.yml up

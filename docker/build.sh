@@ -9,3 +9,4 @@ docker build -t "nms/api-gateway" $DIR/../api-gateway
 docker build -t "nms/telemetry-microservice" $DIR/../telemetry-microservice
 docker build -t "nms/topology-microservice" $DIR/../topology-microservice
 docker build -t "nms/notification-microservice" $DIR/../notification-microservice
+docker build -t "nms/configuration-microservice" $DIR/../configuration-microservice

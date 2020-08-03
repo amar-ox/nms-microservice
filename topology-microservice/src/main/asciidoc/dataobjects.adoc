@@ -33,6 +33,7 @@
 |[[updated]]`@updated`|`String`|-
 |[[vctpId]]`@vctpId`|`Number (int)`|-
 |[[vlinkConnId]]`@vlinkConnId`|`Number (int)`|-
+|[[vnodeId]]`@vnodeId`|`Number (int)`|-
 |===
 
 [[Node]]

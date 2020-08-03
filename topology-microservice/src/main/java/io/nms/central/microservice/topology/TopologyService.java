@@ -43,7 +43,11 @@ public interface TopologyService {
 	 */
 	String SERVICE_ADDRESS = "service.topology";
 	
-	String UPDATE_ADDRESS = "nms.update";
+	
+	String UI_ADDRESS = "nms.to.ui";
+	
+	String CONFIG_ADDRESS = "topology.to.config";
+	
 	
 	@Fluent	
 	TopologyService initializePersistence(Handler<AsyncResult<List<Integer>>> resultHandler);

@@ -95,7 +95,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 			vsubnet.setInfo(new JsonObject(json.getString("info")).getMap());
 			return vsubnet;
 		}).orElse(null))
-		.onComplete(resultHandler);
+			.onComplete(resultHandler);
 		return this;
 	}
 	@Override
