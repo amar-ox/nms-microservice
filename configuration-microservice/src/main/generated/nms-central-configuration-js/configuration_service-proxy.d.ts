@@ -29,13 +29,17 @@ export default class ConfigurationService {
 
   initializePersistence(resultHandler: (err: any, result: Array<number>) => any) : void;
 
-  saveCandidateConfig(config: any, resultHandler: (err: any, result: any) => any) : void;
-
   getCandidateConfig(nodeId: number, resultHandler: (err: any, result: any) => any) : void;
 
   removeAllCandidateConfigs(resultHandler: (err: any, result: any) => any) : void;
 
-  updateRunningConfig(nodeId: string, diff: Object, resultHandler: (err: any, result: any) => any) : void;
+  upsertRunningConfig(nodeId: number, config: any, resultHandler: (err: any, result: any) => any) : void;
+
+  updateRunningConfig(nodeId: number, patch: Array, resultHandler: (err: any, result: any) => any) : void;
+
+  getRunningConfig(nodeId: number, resultHandler: (err: any, result: any) => any) : void;
+
+  removeAllRunningConfigs(resultHandler: (err: any, result: any) => any) : void;
 
   computeConfigurations(routes: Array<any>, faces: Array<any>, nodes: Array<any>, resultHandler: (err: any, result: Array<any>) => any) : void;
 

@@ -196,7 +196,7 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
     };
   }
   
-  protected <T> Handler<AsyncResult<T>> resultHandlerNonEmpty(RoutingContext context, String key) {
+  /* protected <T> Handler<AsyncResult<T>> resultHandlerNonEmpty(RoutingContext context, String key) {
 	    return ar -> {
 	      if (ar.succeeded()) {
 	        T res = ar.result();
@@ -212,7 +212,7 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
 	        ar.cause().printStackTrace();
 	      }
 	    };
-	  }
+	  } */
 
   /**
    * This method generates handler for async methods in REST APIs.
@@ -316,6 +316,9 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
   }
 
   // helper method dealing with failure
+  protected void notChanged(RoutingContext context) {
+	  context.response().setStatusCode(304).end();
+  }
 
   protected void badRequest(RoutingContext context, Throwable ex) {
     context.response().setStatusCode(400)

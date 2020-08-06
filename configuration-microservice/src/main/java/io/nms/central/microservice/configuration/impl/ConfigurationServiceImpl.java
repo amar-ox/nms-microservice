@@ -1,15 +1,14 @@
 package io.nms.central.microservice.configuration.impl;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.nms.central.microservice.common.Status;
-import io.nms.central.microservice.common.service.JdbcRepositoryWrapper;
 import io.nms.central.microservice.configuration.ConfigurationService;
-import io.nms.central.microservice.configuration.model.ConfigObj;
 import io.nms.central.microservice.configuration.model.ConfigFace;
+import io.nms.central.microservice.configuration.model.ConfigObj;
 import io.nms.central.microservice.configuration.model.ConfigRoute;
 import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.Route;
@@ -20,13 +19,19 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
 import io.vertx.ext.mongo.UpdateOptions;
-import io.vertx.servicediscovery.ServiceDiscovery;
+
+
+/* import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonPatch;
+import javax.json.JsonReader; */
 
 /**
  *
@@ -47,17 +52,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		// this.discovery = discovery;
 		this.client = MongoClient.create(vertx, config);
 	}
-
+	
 	@Override
 	public void initializePersistence(Handler<AsyncResult<List<Integer>>> resultHandler) {
 		resultHandler.handle(Future.succeededFuture());
 	}
 	
 	/* Rest API */
-	@Override
+	/* @Override
 	public void saveCandidateConfig(ConfigObj config, Handler<AsyncResult<Void>> resultHandler) {
 		resultHandler.handle(Future.succeededFuture());
-	}
+	} */
 	@Override
 	public void getCandidateConfig(int nodeId, Handler<AsyncResult<ConfigObj>> resultHandler) {
 		JsonObject query = new JsonObject().put("nodeId", nodeId);
@@ -84,12 +89,78 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			}
 		});
 	}
+	
 
 	@Override
-	public void updateRunningConfig(String nodeId, JsonObject diff, Handler<AsyncResult<Void>> resultHandler) {
-		resultHandler.handle(Future.succeededFuture());
+	public void upsertRunningConfig(int nodeId, ConfigObj config, Handler<AsyncResult<Void>> resultHandler) {
+		config.setNodeId(nodeId);
+		JsonObject query = new JsonObject().put("nodeId", nodeId);
+		UpdateOptions opts = new UpdateOptions().setUpsert(true);
+		JsonObject upd = new JsonObject().put("$set", config.toJson());
+		client.updateCollectionWithOptions(COLL_RUNNING_CONFIG, query, upd, opts, ar -> {
+			if (ar.succeeded()) {
+				resultHandler.handle(Future.succeededFuture());
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
 	}
-	
+	@Override
+	public void updateRunningConfig(int nodeId, JsonArray patch, Handler<AsyncResult<Void>> resultHandler) {
+		JsonObject query = new JsonObject().put("nodeId", nodeId);
+		JsonObject fields = new JsonObject().put("_id", 0);
+		client.findOne(COLL_RUNNING_CONFIG, query, fields, ar -> {
+			if (ar.succeeded()) {
+				if (ar.result() != null) {
+					try {
+						// TODO: check ConfigObj
+						JsonObject uDoc = computePatched(ar.result(), patch);
+						uDoc.put("nodeId", nodeId);
+						// uDoc.put("timestamp", new Timestamp(new Date().getTime()).toString());
+						client.replaceDocuments(COLL_RUNNING_CONFIG, query, uDoc, done -> {
+							if (done.succeeded()) {
+								resultHandler.handle(Future.succeededFuture());
+							} else {
+								resultHandler.handle(Future.failedFuture(ar.cause()));
+							}
+						});
+					} catch (IllegalArgumentException e) {
+						resultHandler.handle(Future.failedFuture(e.getMessage()));
+					}
+				} else {
+					resultHandler.handle(Future.failedFuture("not found"));
+				}
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
+	}
+	@Override
+	public void getRunningConfig(int nodeId, Handler<AsyncResult<ConfigObj>> resultHandler) {
+		JsonObject query = new JsonObject().put("nodeId", nodeId);
+		client.findOne(COLL_RUNNING_CONFIG, query, null, ar -> {
+			if (ar.succeeded()) {
+				if (ar.result() == null) {
+					resultHandler.handle(Future.succeededFuture());
+				} else {
+					ConfigObj result = new ConfigObj(ar.result());
+					resultHandler.handle(Future.succeededFuture(result));
+				}
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
+	}
+	@Override
+	public void removeAllRunningConfigs(Handler<AsyncResult<Void>> resultHandler) {
+		client.removeDocuments(COLL_RUNNING_CONFIG, new JsonObject(), ar -> {
+			if (ar.succeeded()) {
+				resultHandler.handle(Future.succeededFuture());
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
+	}
 	
 	
 	/* processing */
@@ -97,10 +168,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public void computeConfigurations(List<Route> routes, List<Face> faces, List<Vnode> nodes, 
 			Handler<AsyncResult<List<ConfigObj>>> resultHandler) {
 		
+		// Timestamp ts = new Timestamp(new Date().getTime());
 		Map<Integer,ConfigObj> configsMap = new HashMap<Integer,ConfigObj>();
 		for (Vnode node : nodes) {
-			if (!node.getStatus().equals("DISCONN")) {
+			if (node.getStatus().equals("UP")) {
 				ConfigObj c = new ConfigObj();
+				// c.setTimestamp(ts.toString());
 				c.setNodeId(node.getId());
 				configsMap.put(node.getId(), c);
 			}
@@ -108,7 +181,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		
 		for (Face face : faces) {
 			int nodeId = face.getVnodeId();
-			
 			if (face.getStatus().equals("UP")) {
 				ConfigFace cFace = new ConfigFace();
 				cFace.setId(face.getId());
@@ -118,7 +190,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 				configsMap.get(nodeId).getConfig().addFace(cFace);
 			}
 		}
-		
+		// TODO: in routing => cond: not DOWN
 		for (Route route : routes) {
 			int nodeId = route.getNodeId();
 			ConfigRoute cRoute = new ConfigRoute();
@@ -135,7 +207,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public void upsertCandidateConfigs(List<ConfigObj> configs, Handler<AsyncResult<Void>> resultHandler) {
 		List<Future> fts = new ArrayList<Future>();
 		for (ConfigObj cg : configs) {
-			logger.info("******CONFIG******: " + cg.toString());
 			JsonObject query = new JsonObject().put("nodeId", cg.getNodeId());
 			JsonObject fields = new JsonObject().put("_id", 0);
 			client.findOne(COLL_CANDIDATE_CONFIG, query, fields, ar -> {
@@ -143,13 +214,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 					if (ar.result() != null) {
 						ConfigObj currConfig = new ConfigObj(ar.result());
 						if (!currConfig.equals(cg)) {
-							cg.setVersion(currConfig.getVersion() + 1);
 							Promise<MongoClientUpdateResult> p = Promise.promise();
 							fts.add(p.future());
 							client.replaceDocuments(COLL_CANDIDATE_CONFIG, query, cg.toJson(), p);
 						}
 					} else {
-						cg.setVersion(1);
 						Promise<String> p = Promise.promise();
 						fts.add(p.future());
 						client.save(COLL_CANDIDATE_CONFIG, cg.toJson(), p);
@@ -161,16 +230,32 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		}
 		CompositeFuture.all(fts).map((Void) null).onComplete(resultHandler);
 	}
+
+	
+	
+	private JsonObject computePatched(JsonObject origin, JsonArray patch) throws IllegalArgumentException {
+		// TODO: filter for add, remove, replace
+		String sPatched = rawPatch(origin.encode(), patch.encode());
+		return new JsonObject(sPatched);
+	}
+	
+	private String rawPatch(String sOrigin, String sPatch) throws IllegalArgumentException {
+		try {
+			javax.json.JsonReader origReader = javax.json.Json.createReader(new ByteArrayInputStream(sOrigin.getBytes()));
+			javax.json.JsonObject origin = origReader.readObject();
+			
+			javax.json.JsonReader patchReader = javax.json.Json.createReader(new ByteArrayInputStream(sPatch.getBytes()));
+			javax.json.JsonPatch patch = javax.json.Json.createPatch(patchReader.readArray());
+		
+			patchReader.close();
+			origReader.close();
+		
+			javax.json.JsonObject patched = patch.apply(origin);
+			
+			return patched.toString();
+		} catch (javax.json.JsonException e) {
+			throw new IllegalArgumentException("Error in json patch");
+		}
+	}
 }
-
-
-
-
-/* JsonObject doc = new JsonObject().put("$set", cg.toJson());
-UpdateOptions opts = new UpdateOptions().setUpsert(true);
-client.updateCollectionWithOptions(COLL_CANDIDATE_CONFIG, query, doc, opts, pSave); */
-
-
-
-
 

@@ -42,10 +42,10 @@ import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
 import io.vertx.serviceproxy.HelperUtils;
 
 import io.nms.central.microservice.topology.model.Face;
+import io.vertx.core.json.JsonArray;
 import java.util.List;
 import io.nms.central.microservice.topology.model.Route;
 import io.nms.central.microservice.configuration.model.ConfigObj;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.nms.central.microservice.topology.model.Vnode;
@@ -123,11 +123,6 @@ public class ConfigurationServiceVertxProxyHandler extends ProxyHandler {
           service.initializePersistence(HelperUtils.createListHandler(msg));
           break;
         }
-        case "saveCandidateConfig": {
-          service.saveCandidateConfig(json.getJsonObject("config") == null ? null : new io.nms.central.microservice.configuration.model.ConfigObj(json.getJsonObject("config")),
-                        HelperUtils.createHandler(msg));
-          break;
-        }
         case "getCandidateConfig": {
           service.getCandidateConfig(json.getValue("nodeId") == null ? null : (json.getLong("nodeId").intValue()),
                         res -> {
@@ -147,10 +142,35 @@ public class ConfigurationServiceVertxProxyHandler extends ProxyHandler {
           service.removeAllCandidateConfigs(HelperUtils.createHandler(msg));
           break;
         }
-        case "updateRunningConfig": {
-          service.updateRunningConfig((java.lang.String)json.getValue("nodeId"),
-                        (io.vertx.core.json.JsonObject)json.getValue("diff"),
+        case "upsertRunningConfig": {
+          service.upsertRunningConfig(json.getValue("nodeId") == null ? null : (json.getLong("nodeId").intValue()),
+                        json.getJsonObject("config") == null ? null : new io.nms.central.microservice.configuration.model.ConfigObj(json.getJsonObject("config")),
                         HelperUtils.createHandler(msg));
+          break;
+        }
+        case "updateRunningConfig": {
+          service.updateRunningConfig(json.getValue("nodeId") == null ? null : (json.getLong("nodeId").intValue()),
+                        (io.vertx.core.json.JsonArray)json.getValue("patch"),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "getRunningConfig": {
+          service.getRunningConfig(json.getValue("nodeId") == null ? null : (json.getLong("nodeId").intValue()),
+                        res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(res.result() == null ? null : res.result().toJson());
+                        }
+                     });
+          break;
+        }
+        case "removeAllRunningConfigs": {
+          service.removeAllRunningConfigs(HelperUtils.createHandler(msg));
           break;
         }
         case "computeConfigurations": {

@@ -24,11 +24,6 @@ public class ConfigObjConverter {
             obj.setNodeId(((Number)member.getValue()).intValue());
           }
           break;
-        case "version":
-          if (member.getValue() instanceof Number) {
-            obj.setVersion(((Number)member.getValue()).intValue());
-          }
-          break;
       }
     }
   }
@@ -42,6 +37,5 @@ public class ConfigObjConverter {
       json.put("config", obj.getConfig().toJson());
     }
     json.put("nodeId", obj.getNodeId());
-    json.put("version", obj.getVersion());
   }
 }

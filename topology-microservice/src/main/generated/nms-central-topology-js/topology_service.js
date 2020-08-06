@@ -248,7 +248,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVsubnet(java.lang.String,io.nms.central.microservice.topology.model.Vsubnet,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vsubnet(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](ar.result(), null);
+          __args[2](null, null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -392,7 +392,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVnode(java.lang.String,io.nms.central.microservice.topology.model.Vnode,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vnode(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](ar.result(), null);
+          __args[2](null, null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -536,7 +536,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVltp(java.lang.String,io.nms.central.microservice.topology.model.Vltp,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vltp(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](ar.result(), null);
+          __args[2](null, null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -704,7 +704,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVctp(java.lang.String,io.nms.central.microservice.topology.model.Vctp,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vctp(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](ar.result(), null);
+          __args[2](null, null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -848,7 +848,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVlink(java.lang.String,io.nms.central.microservice.topology.model.Vlink,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vlink(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](ar.result(), null);
+          __args[2](null, null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -1016,7 +1016,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVlinkConn(java.lang.String,io.nms.central.microservice.topology.model.VlinkConn,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new VlinkConn(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](ar.result(), null);
+          __args[2](null, null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -1160,7 +1160,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVtrail(java.lang.String,io.nms.central.microservice.topology.model.Vtrail,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vtrail(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](ar.result(), null);
+          __args[2](null, null);
         } else {
           __args[2](null, ar.cause());
         }
@@ -1328,7 +1328,7 @@ var TopologyService = function(j_val) {
     if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_topologyService["updateVxc(java.lang.String,io.nms.central.microservice.topology.model.Vxc,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new Vxc(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
         if (ar.succeeded()) {
-          __args[2](ar.result(), null);
+          __args[2](null, null);
         } else {
           __args[2](null, ar.cause());
         }

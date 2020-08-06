@@ -11,12 +11,10 @@ import io.vertx.core.json.JsonObject;
 public class ConfigObj {
 	
 	private int nodeId;
-	private int version;
+	// private String timestamp;
 	private Config config = new Config();
 	
-	public ConfigObj() {
-		version = 0;
-	}
+	public ConfigObj() {}
 	
 	public ConfigObj(JsonObject json) {
 		ConfigObjConverter.fromJson(json, this);
@@ -30,7 +28,7 @@ public class ConfigObj {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(nodeId + version);
+		return Objects.hash(nodeId + getConfig().hashCode());
 	}
 
 	@Override
@@ -52,13 +50,13 @@ public class ConfigObj {
 		this.nodeId = nodeId;
 	}
 
-	public int getVersion() {
-		return version;
+	/* public String getTimestamp() {
+		return timestamp;
 	}
 
-	public void setVersion(int version) {
-		this.version = version;
-	}
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	} */
 
 	public Config getConfig() {
 		return config;

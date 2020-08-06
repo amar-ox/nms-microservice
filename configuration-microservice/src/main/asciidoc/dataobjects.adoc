@@ -36,7 +36,6 @@
 ^|Name | Type ^| Description
 |[[config]]`@config`|`link:dataobjects.html#Config[Config]`|-
 |[[nodeId]]`@nodeId`|`Number (int)`|-
-|[[version]]`@version`|`Number (int)`|-
 |===
 
 [[ConfigRoute]]

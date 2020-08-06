@@ -59,7 +59,7 @@ public class NotificationServiceImpl implements NotificationService {
 			vertx.cancelTimer(healthTimers.get(resId));
 			healthTimers.remove(resId);
 		}
-		long timerId = vertx.setTimer(TimeUnit.MINUTES.toMillis(10), new Handler<Long>() {
+		long timerId = vertx.setTimer(TimeUnit.SECONDS.toMillis(60), new Handler<Long>() {
 		    @Override
 		    public void handle(Long aLong) {
 		    	setNodeDown(status.getResId());

@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import io.nms.central.microservice.common.functional.Functional;
@@ -118,14 +120,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
-	public TopologyService updateVsubnet(String id, Vsubnet vsubnet, Handler<AsyncResult<Integer>> resultHandler) {
+	public TopologyService updateVsubnet(String id, Vsubnet vsubnet, Handler<AsyncResult<Void>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vsubnet.getLabel())
 				.add(vsubnet.getDescription())
 				.add(new JsonObject(vsubnet.getInfo()).encode())
 				.add(vsubnet.getStatus())
 				.add(id);
-		update(params, ApiSql.UPDATE_VSUBNET, resultHandler);
+		executeNoResult(params, ApiSql.UPDATE_VSUBNET, resultHandler);
 		return this;
 	}
 
@@ -185,7 +187,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	public TopologyService deleteVnode(String vnodeId, Handler<AsyncResult<Void>> resultHandler) {
 		Promise<Void> vltpsDeleted = Promise.promise();
 		
-		JsonArray params = new JsonArray().add(vnodeId).add("");
+		JsonArray params = new JsonArray().add(vnodeId);
 		retrieveMany(params, InternalSql.FETCH_LTPS_BY_NODE).onComplete(ar -> {
 			if (ar.succeeded()) {
 				List<JsonObject> ltps = ar.result();
@@ -211,7 +213,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
-	public TopologyService updateVnode(String id, Vnode vnode, Handler<AsyncResult<Integer>> resultHandler) {
+	public TopologyService updateVnode(String id, Vnode vnode, Handler<AsyncResult<Void>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vnode.getLabel())
 				.add(vnode.getDescription())
@@ -222,7 +224,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vnode.getLocation())
 				.add(vnode.getType())
 				.add(id);
-		update(params, ApiSql.UPDATE_VNODE, resultHandler);
+		executeNoResult(params, ApiSql.UPDATE_VNODE, resultHandler);
 		return this;
 	}
 
@@ -230,6 +232,10 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** Vltp **********/
 	@Override 
 	public TopologyService addVltp(Vltp vltp, Handler<AsyncResult<Integer>> resultHandler) {
+		if (! isValidMACAddress((String)vltp.getInfo().get("port"))) {
+			resultHandler.handle(Future.failedFuture("Port must be a MAC address"));
+			return this;
+		}
 		getVnode(String.valueOf(vltp.getVnodeId()), ar -> {
 			if (ar.succeeded()) {
 				Vnode vnode = ar.result();
@@ -294,7 +300,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	public TopologyService deleteVltp(String vltpId, Handler<AsyncResult<Void>> resultHandler) {
 		Promise<Void> linkDeleted = Promise.promise();
 		
-		JsonArray params = new JsonArray().add(vltpId).add("");
+		JsonArray params = new JsonArray().add(vltpId);
 		retrieveOne(params, InternalSql.FETCH_LINK_BY_LTP)
 			.map(option -> option.orElse(null))
 			.onComplete(ar -> {
@@ -303,10 +309,11 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 						JsonObject link = ar.result();
 						deleteVlink(String.valueOf(link.getInteger("id")), linkDeleted);
 					} else {
-						resultHandler.handle(Future.succeededFuture());
+						linkDeleted.complete();
+						// resultHandler.handle(Future.succeededFuture());
 					}
 				} else {
-					resultHandler.handle(Future.failedFuture("Failed to fetch Link"));
+					resultHandler.handle(Future.failedFuture(ar.cause()));
 				}
 			});
 		
@@ -320,7 +327,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
-	public TopologyService updateVltp(String id, Vltp vltp, Handler<AsyncResult<Integer>> resultHandler) {
+	public TopologyService updateVltp(String id, Vltp vltp, Handler<AsyncResult<Void>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vltp.getLabel())
 				.add(vltp.getDescription())
@@ -328,7 +335,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vltp.getStatus())
 				.add(vltp.isBusy())				
 				.add(id);
-		update(params, ApiSql.UPDATE_VLTP, resultHandler);
+		executeNoResult(params, ApiSql.UPDATE_VLTP, resultHandler);
 		return this;
 	}
 
@@ -406,13 +413,13 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
-	public TopologyService updateVctp(String id, Vctp vctp, Handler<AsyncResult<Integer>> resultHandler) {
+	public TopologyService updateVctp(String id, Vctp vctp, Handler<AsyncResult<Void>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vctp.getLabel())
 				.add(vctp.getDescription())
 				.add(new JsonObject(vctp.getInfo()).encode())
 				.add(id);
-		update(params, ApiSql.UPDATE_VCTP, resultHandler);
+		executeNoResult(params, ApiSql.UPDATE_VCTP, resultHandler);
 		return this;
 	}
 
@@ -483,7 +490,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	public TopologyService deleteVlink(String vlinkId, Handler<AsyncResult<Void>> resultHandler) {
 		Promise<Void> vlcsDeleted = Promise.promise();
 		
-		JsonArray params = new JsonArray().add(vlinkId).add("");
+		JsonArray params = new JsonArray().add(vlinkId);
 		retrieveMany(params, InternalSql.FETCH_LCS_BY_LINK).onComplete(ar -> {
 			if (ar.succeeded()) {
 				List<JsonObject> lcs = ar.result();
@@ -526,7 +533,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
-	public TopologyService updateVlink(String id, Vlink vlink, Handler<AsyncResult<Integer>> resultHandler) {
+	public TopologyService updateVlink(String id, Vlink vlink, Handler<AsyncResult<Void>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vlink.getLabel())
 				.add(vlink.getDescription())
@@ -534,7 +541,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vlink.getStatus())
 				.add(vlink.getType())
 				.add(id);
-		update(params, ApiSql.UPDATE_VLINK, resultHandler);
+		executeNoResult(params, ApiSql.UPDATE_VLINK, resultHandler);
 		return this;
 	}
 
@@ -649,14 +656,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
-	public TopologyService updateVlinkConn(String id, VlinkConn vlinkConn, Handler<AsyncResult<Integer>> resultHandler) {
+	public TopologyService updateVlinkConn(String id, VlinkConn vlinkConn, Handler<AsyncResult<Void>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vlinkConn.getLabel())
 				.add(vlinkConn.getDescription())
 				.add(new JsonObject(vlinkConn.getInfo()).encode())
 				.add(vlinkConn.getStatus())
 				.add(id);
-		update(params, ApiSql.UPDATE_VLINKCONN, resultHandler);
+		executeNoResult(params, ApiSql.UPDATE_VLINKCONN, resultHandler);
 		return this;
 	}
 
@@ -719,14 +726,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
-	public TopologyService updateVtrail(String id, Vtrail vtrail, Handler<AsyncResult<Integer>> resultHandler) {
+	public TopologyService updateVtrail(String id, Vtrail vtrail, Handler<AsyncResult<Void>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vtrail.getLabel())
 				.add(vtrail.getDescription())
 				.add(new JsonObject(vtrail.getInfo()).encode())
 				.add(vtrail.getStatus())
 				.add(id);
-		update(params, ApiSql.UPDATE_VTRAIL, resultHandler);
+		executeNoResult(params, ApiSql.UPDATE_VTRAIL, resultHandler);
 		return this;
 	}
 
@@ -814,7 +821,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
-	public TopologyService updateVxc(String id, Vxc vxc, Handler<AsyncResult<Integer>> resultHandler) {
+	public TopologyService updateVxc(String id, Vxc vxc, Handler<AsyncResult<Void>> resultHandler) {
 		JsonArray params = new JsonArray()
 				.add(vxc.getLabel())
 				.add(vxc.getDescription())
@@ -822,7 +829,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vxc.getStatus())
 				.add(vxc.getType())
 				.add(id);
-		update(params, ApiSql.UPDATE_VXC, resultHandler);
+		executeNoResult(params, ApiSql.UPDATE_VXC, resultHandler);
 		return this;
 	}
 
@@ -1309,7 +1316,17 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 			}
 		});
 		return promise.future();
-	}	
+	}
+	
+	private boolean isValidMACAddress(String str) {
+		if (str == null) {
+			return false;
+		}
+		String regex = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$";
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(str);
+		return m.matches();
+	}
 }
 
 

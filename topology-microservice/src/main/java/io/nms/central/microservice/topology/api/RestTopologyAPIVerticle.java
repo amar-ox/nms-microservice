@@ -206,7 +206,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// Node API
 	private void apiAddSubnet(RoutingContext context) {
 		final Vsubnet vsubnet = Json.decodeValue(context.getBodyAsString(), Vsubnet.class);
-		service.addVsubnet(vsubnet, createResultHandler(context, API_ONE_SUBNET));
+		service.addVsubnet(vsubnet, createResultHandler(context, "/subnet"));
 	}
 	private void apiGetSubnet(RoutingContext context) {
 		String subnetId = context.request().getParam("subnetId");		
@@ -222,14 +222,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateSubnet(RoutingContext context) {
 		String id = context.request().getParam("subnetId");
 		final Vsubnet vsubnet = Json.decodeValue(context.getBodyAsString(), Vsubnet.class);		
-		service.updateVsubnet(id, vsubnet, resultHandlerNonEmpty(context, "n_updated"));
+		service.updateVsubnet(id, vsubnet, resultVoidHandler(context, 200));
 	}
 
 
 	// Node API 
 	private void apiAddNode(RoutingContext context) {
 		final Vnode vnode = Json.decodeValue(context.getBodyAsString(), Vnode.class);
-		service.addVnode(vnode, createResultHandler(context, API_ONE_NODE));
+		service.addVnode(vnode, createResultHandler(context, "/node"));
 	}
 	private void apiGetNode(RoutingContext context) {
 		String nodeId = context.request().getParam("nodeId");
@@ -249,14 +249,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateNode(RoutingContext context) {
 		String id = context.request().getParam("nodeId");
 		final Vnode vnode = Json.decodeValue(context.getBodyAsString(), Vnode.class);		
-		service.updateVnode(id, vnode, resultHandlerNonEmpty(context, "n_updated"));
+		service.updateVnode(id, vnode, resultVoidHandler(context, 200));
 	}
 
 
 	// Ltp API
 	private void apiAddLtp(RoutingContext context) {
 		final Vltp ltp = Json.decodeValue(context.getBodyAsString(), Vltp.class);		
-		service.addVltp(ltp, createResultHandler(context, API_ONE_LTP));
+		service.addVltp(ltp, createResultHandler(context, "/ltp"));
 	}
 	private void apiGetLtp(RoutingContext context) {
 		String ltpId = context.request().getParam("ltpId");
@@ -276,14 +276,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateLtp(RoutingContext context) {
 		String id = context.request().getParam("ltpId");
 		final Vltp vltp = Json.decodeValue(context.getBodyAsString(), Vltp.class);		
-		service.updateVltp(id, vltp, resultHandlerNonEmpty(context, "n_updated"));
+		service.updateVltp(id, vltp, resultVoidHandler(context, 200));
 	}
 
 
 	// Ctp API
 	private void apiAddCtp(RoutingContext context) {
 		final Vctp ctp = Json.decodeValue(context.getBodyAsString(), Vctp.class);		
-		service.addVctp(ctp, createResultHandler(context, API_ONE_CTP));
+		service.addVctp(ctp, createResultHandler(context, "/ctp"));
 	}
 	private void apiGetCtp(RoutingContext context) {
 		String ctpId = context.request().getParam("ctpId");
@@ -307,14 +307,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateCtp(RoutingContext context) {
 		String id = context.request().getParam("ctpId");
 		final Vctp vctp = Json.decodeValue(context.getBodyAsString(), Vctp.class);		
-		service.updateVctp(id, vctp, resultHandlerNonEmpty(context, "n_updated"));
+		service.updateVctp(id, vctp, resultVoidHandler(context, 200));
 	}
 
 
 	// Link API
 	private void apiAddLink(RoutingContext context) {
 		final Vlink link = Json.decodeValue(context.getBodyAsString(), Vlink.class);
-		service.addVlink(link, createResultHandler(context, API_ONE_LINK));				
+		service.addVlink(link, createResultHandler(context, "/link"));				
 	}
 	private void apiGetLink(RoutingContext context) {
 		String linkId = context.request().getParam("linkId");
@@ -334,13 +334,13 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateLink(RoutingContext context) {
 		String id = context.request().getParam("linkId");
 		final Vlink vlink = Json.decodeValue(context.getBodyAsString(), Vlink.class);		
-		service.updateVlink(id, vlink, resultHandlerNonEmpty(context, "n_updated"));
+		service.updateVlink(id, vlink, resultVoidHandler(context, 200));
 	}
 
 	// LinkConn API
 	private void apiAddLinkConn(RoutingContext context) {
 		final VlinkConn vlinkConn = Json.decodeValue(context.getBodyAsString(), VlinkConn.class);
-		service.addVlinkConn(vlinkConn, createResultHandler(context, API_ONE_LINKCONN));				
+		service.addVlinkConn(vlinkConn, createResultHandler(context, "/linkConn"));				
 	}
 	private void apiGetLinkConn(RoutingContext context) {
 		String linkConnId = context.request().getParam("linkConnId");		
@@ -364,14 +364,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateLinkConn(RoutingContext context) {
 		String id = context.request().getParam("linkConnId");
 		final VlinkConn vlinkConn = Json.decodeValue(context.getBodyAsString(), VlinkConn.class);		
-		service.updateVlinkConn(id, vlinkConn, resultHandlerNonEmpty(context, "n_updated"));
+		service.updateVlinkConn(id, vlinkConn, resultVoidHandler(context, 200));
 	}
 
 
 	// Trail API
 	private void apiAddTrail(RoutingContext context) {
 		final Vtrail vtrail = Json.decodeValue(context.getBodyAsString(), Vtrail.class);			
-		service.addVtrail(vtrail, createResultHandler(context, API_ONE_TRAIL));
+		service.addVtrail(vtrail, createResultHandler(context, "/trail"));
 	}
 	private void apiGetTrail(RoutingContext context) {
 		String trailId = context.request().getParam("trailId");			
@@ -391,14 +391,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateTrail(RoutingContext context) {
 		String id = context.request().getParam("trailId");
 		final Vtrail vtrail = Json.decodeValue(context.getBodyAsString(), Vtrail.class);		
-		service.updateVtrail(id, vtrail, resultHandlerNonEmpty(context, "n_updated"));
+		service.updateVtrail(id, vtrail, resultVoidHandler(context, 200));
 	}
 
 
 	// Xc API
 	private void apiAddXc(RoutingContext context) {
 		final Vxc vxc = Json.decodeValue(context.getBodyAsString(), Vxc.class);
-		service.addVxc(vxc, createResultHandler(context, API_ONE_XC));
+		service.addVxc(vxc, createResultHandler(context, "/xc"));
 	}
 	private void apiGetXc(RoutingContext context) {
 		String xcId = context.request().getParam("xcId");
@@ -422,14 +422,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiUpdateXc(RoutingContext context) {
 		String id = context.request().getParam("xcId");
 		final Vxc vxc = Json.decodeValue(context.getBodyAsString(), Vxc.class);		
-		service.updateVxc(id, vxc, resultHandlerNonEmpty(context, "n_updated"));
+		service.updateVxc(id, vxc, resultVoidHandler(context, 200));
 	}
 
 
 	// Face API
 	private void apiAddFace(RoutingContext context) {
 		final Face face = Json.decodeValue(context.getBodyAsString(), Face.class);			
-		service.addFace(face, createResultHandler(context, API_ONE_FACE));
+		service.addFace(face, createResultHandler(context, "/face"));
 	}	
 	private void apiGetFace(RoutingContext context) {
 		String faceId = context.request().getParam("faceId");
@@ -456,7 +456,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiAddPrefixAnn(RoutingContext context) {
 		final PrefixAnn prefixAnn = Json.decodeValue(context.getBodyAsString(), PrefixAnn.class);
 		// use voidresult with PUT
-		service.addPrefixAnn(prefixAnn, createResultHandler(context, API_ONE_PA));
+		service.addPrefixAnn(prefixAnn, createResultHandler(context, "/prefixAnn"));
 	}
 	private void apiGetPrefixAnn(RoutingContext context) {
 		String prefixAnnId = context.request().getParam("prefixAnnId");			
@@ -482,7 +482,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	// Routing Table Entry API
 	private void apiAddRoute(RoutingContext context) {
 		final Route route = Json.decodeValue(context.getBodyAsString(), Route.class);
-		service.addRoute(route, createResultHandler(context, API_ONE_ROUTE));
+		service.addRoute(route, createResultHandler(context, "/route"));
 	}
 	private void apiGetRoute(RoutingContext context) {
 		String routeId = context.request().getParam("routeId");

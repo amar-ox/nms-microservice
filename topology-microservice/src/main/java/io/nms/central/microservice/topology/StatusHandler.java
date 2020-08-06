@@ -61,7 +61,7 @@ public class StatusHandler extends BaseMicroserviceVerticle {
 			if (status.getStatus().equals("UP") || status.getStatus().equals("DISCONN")) {
 				dispatchStatus(status);
 			} else {
-				long timerId = vertx.setTimer(10000, new Handler<Long>() {
+				long timerId = vertx.setTimer(5000, new Handler<Long>() {
 				    @Override
 				    public void handle(Long aLong) {
 				    	dispatchStatus(status);

@@ -39,10 +39,12 @@ var ConfigurationService = function(j_val) {
   var that = this;
 
   var __super_initializePersistence = this.initializePersistence;
-  var __super_saveCandidateConfig = this.saveCandidateConfig;
   var __super_getCandidateConfig = this.getCandidateConfig;
   var __super_removeAllCandidateConfigs = this.removeAllCandidateConfigs;
+  var __super_upsertRunningConfig = this.upsertRunningConfig;
   var __super_updateRunningConfig = this.updateRunningConfig;
+  var __super_getRunningConfig = this.getRunningConfig;
+  var __super_removeAllRunningConfigs = this.removeAllRunningConfigs;
   var __super_computeConfigurations = this.computeConfigurations;
   var __super_upsertCandidateConfigs = this.upsertCandidateConfigs;
   /**
@@ -62,28 +64,6 @@ var ConfigurationService = function(j_val) {
       });
     } else if (typeof __super_initializePersistence != 'undefined') {
       return __super_initializePersistence.apply(this, __args);
-    }
-    else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
-   @param config {Object} 
-   @param resultHandler {function} 
-   */
-  this.saveCandidateConfig =  function(config, resultHandler) {
-    var __args = arguments;
-    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
-      j_configurationService["saveCandidateConfig(io.nms.central.microservice.configuration.model.ConfigObj,io.vertx.core.Handler)"](__args[0]  != null ? new ConfigObj(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
-        if (ar.succeeded()) {
-          __args[1](null, null);
-        } else {
-          __args[1](null, ar.cause());
-        }
-      });
-    } else if (typeof __super_saveCandidateConfig != 'undefined') {
-      return __super_saveCandidateConfig.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -134,14 +114,37 @@ var ConfigurationService = function(j_val) {
   /**
 
    @public
-   @param nodeId {string} 
-   @param diff {Object} 
+   @param nodeId {number} 
+   @param config {Object} 
    @param resultHandler {function} 
    */
-  this.updateRunningConfig =  function(nodeId, diff, resultHandler) {
+  this.upsertRunningConfig =  function(nodeId, config, resultHandler) {
     var __args = arguments;
-    if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
-      j_configurationService["updateRunningConfig(java.lang.String,io.vertx.core.json.JsonObject,io.vertx.core.Handler)"](__args[0], utils.convParamJsonObject(__args[1]), function(ar) {
+    if (__args.length === 3 && typeof __args[0] ==='number' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
+      j_configurationService["upsertRunningConfig(int,io.nms.central.microservice.configuration.model.ConfigObj,io.vertx.core.Handler)"](__args[0], __args[1]  != null ? new ConfigObj(new JsonObject(Java.asJSONCompatible(__args[1]))) : null, function(ar) {
+        if (ar.succeeded()) {
+          __args[2](null, null);
+        } else {
+          __args[2](null, ar.cause());
+        }
+      });
+    } else if (typeof __super_upsertRunningConfig != 'undefined') {
+      return __super_upsertRunningConfig.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param nodeId {number} 
+   @param patch {Array} 
+   @param resultHandler {function} 
+   */
+  this.updateRunningConfig =  function(nodeId, patch, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 3 && typeof __args[0] ==='number' && typeof __args[1] === 'object' && __args[1] instanceof Array && typeof __args[2] === 'function') {
+      j_configurationService["updateRunningConfig(int,io.vertx.core.json.JsonArray,io.vertx.core.Handler)"](__args[0], utils.convParamJsonArray(__args[1]), function(ar) {
         if (ar.succeeded()) {
           __args[2](null, null);
         } else {
@@ -150,6 +153,49 @@ var ConfigurationService = function(j_val) {
       });
     } else if (typeof __super_updateRunningConfig != 'undefined') {
       return __super_updateRunningConfig.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param nodeId {number} 
+   @param resultHandler {function} 
+   */
+  this.getRunningConfig =  function(nodeId, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] ==='number' && typeof __args[1] === 'function') {
+      j_configurationService["getRunningConfig(int,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](utils.convReturnDataObject(ar.result()), null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      });
+    } else if (typeof __super_getRunningConfig != 'undefined') {
+      return __super_getRunningConfig.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param resultHandler {function} 
+   */
+  this.removeAllRunningConfigs =  function(resultHandler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_configurationService["removeAllRunningConfigs(io.vertx.core.Handler)"](function(ar) {
+        if (ar.succeeded()) {
+          __args[0](null, null);
+        } else {
+          __args[0](null, ar.cause());
+        }
+      });
+    } else if (typeof __super_removeAllRunningConfigs != 'undefined') {
+      return __super_removeAllRunningConfigs.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
