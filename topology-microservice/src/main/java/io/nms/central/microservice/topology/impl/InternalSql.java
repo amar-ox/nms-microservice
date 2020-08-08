@@ -2,6 +2,29 @@ package io.nms.central.microservice.topology.impl;
 
 public class InternalSql {
 	
+	public static final String LOCK_ALL_TABLES_FOR_NODE = "LOCK TABLES "
+			+ "Vnode WRITE, Vltp WRITE, Vctp WRITE, Vlink WRITE, VlinkConn WRITE, PrefixAnn WRITE, Face WRITE, Route WRITE";
+	
+	public static final String LOCK_TABLES_FOR_NODE = "LOCK TABLES "
+			+ "Vnode WRITE, Vltp WRITE, Vltp AS sLtp WRITE, Vltp AS dLtp WRITE, "
+			+ "Vlink WRITE, VlinkConn WRITE, "
+			+ "Vctp WRITE, Vctp AS sCtp WRITE, Vctp AS dCtp WRITE";
+	
+	public static final String LOCK_TABLES_FOR_LTP = "LOCK TABLES "
+			+ "Vltp WRITE, Vltp AS sLtp WRITE, Vltp AS dLtp WRITE, "
+			+ "Vlink WRITE, VlinkConn WRITE, "
+			+ "Vctp WRITE, Vctp AS sCtp WRITE, Vctp AS dCtp WRITE";
+	
+	public static final String LOCK_TABLES_FOR_LINK = "LOCK TABLES "
+			+ "Vltp WRITE, Vltp AS sLtp WRITE, Vltp AS dLtp WRITE, "
+			+ "Vlink WRITE, VlinkConn WRITE, "
+			+ "Vctp WRITE, Vctp AS sCtp WRITE, Vctp AS dCtp WRITE";
+	
+	public static final String LOCK_TABLES_FOR_LC = "LOCK TABLES "
+			+ "Vctp WRITE, Vctp AS sCtp WRITE, Vctp AS dCtp WRITE, "
+			+ "Vltp WRITE, Vltp AS sLtp WRITE, Vltp AS dLtp WRITE, "
+			+ "VlinkConn WRITE";
+	
 	// get info needed to generate CTPs for a LinkConn
 	public static final String FETCH_CTPGEN_INFO = "SELECT "
 			+ "sLtp.id AS sLtpId, dLtp.id AS dLtpId, sLtp.name AS sLtpName, dLtp.name AS dLtpName "
@@ -31,10 +54,10 @@ public class InternalSql {
 			+ "Vctp AS sCtp ON sCtp.id=VlinkConn.srcVctpId INNER JOIN Vltp AS sLtp ON sLtp.id=sCtp.vltpId INNER JOIN Face AS sF ON sCtp.id=sF.vctpId) "
 			+ "INNER JOIN "
 			+ "Vctp AS dCtp ON dCtp.id=VlinkConn.destVctpId INNER JOIN Vltp AS dLtp ON dLtp.id=dCtp.vltpId INNER JOIN Face AS dF ON dCtp.id=dF.vctpId) "
-			+ "WHERE VlinkConn.status = 'UP'";
+			+ "WHERE VlinkConn.status != 'DOWN'";
 	
 	// get info needed to compute routes :nodes
-	public static final String FETCH_ROUTEGEN_NODES = "SELECT id FROM Vnode WHERE status = 'UP'";
+	public static final String FETCH_ROUTEGEN_NODES = "SELECT id FROM Vnode WHERE status != 'DOWN'";
 	
 	// get info needed to compute routes: all prefix announcements
 	public static final String FETCH_ROUTEGEN_ALL_PAS = "SELECT id, name, originId FROM PrefixAnn WHERE available IS true";
@@ -87,11 +110,11 @@ public class InternalSql {
 			+ "INNER JOIN Vlink ON Vltp.id=Vlink.srcVltpId OR Vltp.id=Vlink.destVltpId "
 			+ "WHERE Vltp.id = ?";
 	
-	public static final String FETCH_LINK_UP = "SELECT "
-			+ "Vltp.id "
+	public static final String FETCH_LINK_LTP_STATUS = "SELECT "
+			+ "Vltp.id , Vltp.status "
 			+ "FROM Vlink "
 			+ "INNER JOIN Vltp ON Vltp.id=Vlink.srcVltpId OR Vltp.id=Vlink.destVltpId "
-			+ "WHERE Vlink.id = ? AND Vltp.status = 'UP'";
+			+ "WHERE Vlink.id = ?";
 	
 	// get LinkConns of a Link by id or name
 	public static final String FETCH_LCS_BY_LINK = "SELECT "

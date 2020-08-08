@@ -495,14 +495,14 @@ public class ApiSql {
 			+ "Vlink.type, Vlink.srcVltpId, Vlink.destVltpId, "
 			+ "sLtp.vnodeId AS srcVnodeId, dLtp.vnodeId AS destVnodeId, "
 			+ "sLtp.id AS srcVltpId, dLtp.id AS destVltpId, "
-			+ "vlc.id AS vlcId, vlc.name AS vlcName, vlc.label AS vlcLabel, vlc.description AS vlcDescription, vlc.info AS vlcInfo, "
-			+ "vlc.status AS vlcStatus, vlc.created AS vlcCreated, vlc.updated AS vlcUpdated, "
-			+ "vlc.srcVctpId AS vlcSrcVctpId, vlc.destVctpId AS vlcDestVctpId, vlc.vlinkId AS vlcVlinkId, "
+			+ "VlinkConn.id AS vlcId, VlinkConn.name AS vlcName, VlinkConn.label AS vlcLabel, VlinkConn.description AS vlcDescription, VlinkConn.info AS vlcInfo, "
+			+ "VlinkConn.status AS vlcStatus, VlinkConn.created AS vlcCreated, VlinkConn.updated AS vlcUpdated, "
+			+ "VlinkConn.srcVctpId AS vlcSrcVctpId, VlinkConn.destVctpId AS vlcDestVctpId, VlinkConn.vlinkId AS vlcVlinkId, "
 			+ "sLtp.id AS vlcSrcVltpId, dLtp.id AS vlcDestVltpId "
 			+ "FROM (((Vlink "
 			+ "INNER JOIN Vltp AS sLtp ON Vlink.srcVltpId=sLtp.id) "
 			+ "INNER JOIN Vltp AS dLtp ON Vlink.destVltpId=dLtp.id) "
-			+ "LEFT JOIN VlinkConn as vlc ON Vlink.id=vlc.vlinkId) "
+			+ "LEFT JOIN VlinkConn ON Vlink.id=VlinkConn.vlinkId) "
 			+ "WHERE Vlink.id = ? GROUP BY vlcId";
 
 	// get a VlinkConn

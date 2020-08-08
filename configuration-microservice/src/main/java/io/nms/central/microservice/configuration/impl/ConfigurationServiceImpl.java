@@ -111,24 +111,26 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		JsonObject fields = new JsonObject().put("_id", 0);
 		client.findOne(COLL_RUNNING_CONFIG, query, fields, ar -> {
 			if (ar.succeeded()) {
-				if (ar.result() != null) {
-					try {
-						// TODO: check ConfigObj
-						JsonObject uDoc = computePatched(ar.result(), patch);
-						uDoc.put("nodeId", nodeId);
-						// uDoc.put("timestamp", new Timestamp(new Date().getTime()).toString());
-						client.replaceDocuments(COLL_RUNNING_CONFIG, query, uDoc, done -> {
-							if (done.succeeded()) {
-								resultHandler.handle(Future.succeededFuture());
-							} else {
-								resultHandler.handle(Future.failedFuture(ar.cause()));
-							}
-						});
-					} catch (IllegalArgumentException e) {
-						resultHandler.handle(Future.failedFuture(e.getMessage()));
-					}
+				JsonObject jConfig;
+				if (ar.result() == null) {
+					ConfigObj cg = new ConfigObj();
+					cg.setNodeId(nodeId);
+					jConfig = cg.toJson();
 				} else {
-					resultHandler.handle(Future.failedFuture("not found"));
+					jConfig = ar.result();
+				}
+				try {
+					JsonObject uDoc = computePatched(jConfig, patch);
+					uDoc.put("nodeId", nodeId);
+					client.replaceDocuments(COLL_RUNNING_CONFIG, query, uDoc, done -> {
+						if (done.succeeded()) {
+							resultHandler.handle(Future.succeededFuture());
+						} else {
+							resultHandler.handle(Future.failedFuture(ar.cause()));
+						}
+					});
+				} catch (IllegalArgumentException e) {
+					resultHandler.handle(Future.failedFuture(e.getMessage()));
 				}
 			} else {
 				resultHandler.handle(Future.failedFuture(ar.cause()));
@@ -171,17 +173,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		// Timestamp ts = new Timestamp(new Date().getTime());
 		Map<Integer,ConfigObj> configsMap = new HashMap<Integer,ConfigObj>();
 		for (Vnode node : nodes) {
-			if (node.getStatus().equals("UP")) {
 				ConfigObj c = new ConfigObj();
 				// c.setTimestamp(ts.toString());
 				c.setNodeId(node.getId());
 				configsMap.put(node.getId(), c);
-			}
 		}
 		
 		for (Face face : faces) {
 			int nodeId = face.getVnodeId();
-			if (face.getStatus().equals("UP")) {
+			if (!face.getStatus().equals("DOWN")) {
 				ConfigFace cFace = new ConfigFace();
 				cFace.setId(face.getId());
 				cFace.setLocal(face.getLocal());

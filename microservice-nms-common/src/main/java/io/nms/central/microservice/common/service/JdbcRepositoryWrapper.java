@@ -23,8 +23,18 @@ import io.vertx.ext.sql.UpdateResult;
  */
 public class JdbcRepositoryWrapper {
 
-	// private static final Logger logger = LoggerFactory.getLogger(JdbcRepositoryWrapper.class);
+	private static final Logger logger = LoggerFactory.getLogger(JdbcRepositoryWrapper.class);
 	protected final JDBCClient client;
+	private SQLConnection globalConn = null;
+	protected enum Entity {
+		NONE,
+	    NODE,
+	    LTP,
+	    LINK,
+	    LC
+	}
+	private Entity currentEntity = Entity.NONE;
+	
 
 	public JdbcRepositoryWrapper(Vertx vertx, JsonObject config) {
 		this.client = JDBCClient.create(vertx, config);
@@ -81,6 +91,7 @@ public class JdbcRepositoryWrapper {
 		}));
 	}
 	
+	// update or insert ONE row and return Id
 	protected void upsert(JsonArray params, String sql, Handler<AsyncResult<Integer>> resultHandler) {
 		client.getConnection(connHandler(resultHandler, connection -> {
 			connection.updateWithParams(sql, params, r -> {
@@ -257,7 +268,7 @@ public class JdbcRepositoryWrapper {
 		return promise.future();
 	}
 	
-	protected Future<SQLConnection> txnBegin() {
+	/* protected Future<SQLConnection> txnBegin() {
 		Promise<SQLConnection> promise = Promise.promise();
 		client.getConnection(ar -> {
 			if (ar.succeeded()) {
@@ -316,30 +327,131 @@ public class JdbcRepositoryWrapper {
 			}
 		});
 		return promise.future();
-	}
-	
-	
-	/*
-	 protected int calcPage(int page, int limit) {
-		if (page <= 0)
-			return 0;
-		return limit * (page - 1);
-	}
-
-	protected Future<List<JsonObject>> retrieveByPage(int page, int limit, String sql) {
-		JsonArray params = new JsonArray().add(calcPage(page, limit)).add(limit);
-		return getConnection().compose(connection -> {
-			Future<List<JsonObject>> future = Future.future();
-			connection.queryWithParams(sql, params, r -> {
-				if (r.succeeded()) {
-					future.complete(r.result().getRows());
-				} else {
-					future.fail(r.cause());
-				}
-				connection.close();
-			});
-			return future;
-		});
 	} */
+	
+	
+	/* --------------------------------- */
+	protected Future<Void> beginTxnAndLock(Entity entity, String sql) {
+		Promise<Void> promise = Promise.promise();
+		if (!currentEntity.equals(Entity.NONE)) {
+			logger.info("TXN already started");
+			promise.complete();
+		} else {
+			logger.info("begin TXN: " + entity);
+			client.getConnection(ar -> {
+				if (ar.succeeded()) {
+					globalConn = ar.result();
+					currentEntity = entity;
+					globalConn.setAutoCommit(false, res -> {
+						if (res.succeeded()) {
+							logger.info("lock tables: " + entity);
+							globalConn.execute(sql, promise);
+						} else {
+							promise.fail(res.cause());
+						}
+					});
+				} else {
+					promise.fail(ar.cause());
+				}
+			});
+		}
+		return promise.future();
+	}
+	
+	protected Future<Integer> globalInsert(JsonArray params, String sql) {
+		Promise<Integer> promise = Promise.promise();
+		globalConn.updateWithParams(sql, params, ar -> {
+			if (ar.succeeded()) {
+				UpdateResult updateResult = ar.result();
+				if (updateResult.getUpdated() == 1) {
+					promise.complete(updateResult.getKeys().getInteger(0));
+				} else {
+					promise.fail("Not inserted");
+				}					 
+			} else {
+				promise.fail(ar.cause());
+			}
+		});
+		return promise.future();
+	}
+	
+	protected Future<Void> globalExecute(JsonArray params, String sql) {
+		Promise<Void> promise = Promise.promise();
+		globalConn.updateWithParams(sql, params, ar -> {
+			if (ar.succeeded()) {
+				logger.info("sql ok");
+				promise.complete();					 
+			} else {
+				logger.error("sql failed");
+				promise.fail(ar.cause());
+			}
+		});
+		return promise.future();
+	}
+	
+	protected Future<List<JsonObject>> globalRetrieveMany(JsonArray params, String sql) { 
+		Promise<List<JsonObject>> promise = Promise.promise();
+		globalConn.queryWithParams(sql, params, r -> {
+				if (r.succeeded()) {
+					logger.info("sql ok");
+					promise.complete(r.result().getRows());
+				} else {
+					logger.error("sql failed");
+					promise.fail(r.cause());
+				}
+			});
+		return promise.future();
+	}
+	
+	protected Future<Optional<JsonObject>> globalRetrieveOne(JsonArray params, String sql) {
+		Promise<Optional<JsonObject>> promise = Promise.promise();
+		globalConn.queryWithParams(sql, params, r -> {
+			if (r.succeeded()) {
+				logger.info("sql ok");
+				List<JsonObject> resList = r.result().getRows();
+				if (resList == null || resList.isEmpty()) {
+					promise.complete(Optional.empty());
+				} else {
+					promise.complete(Optional.of(resList.get(0)));
+				}
+			} else {
+				logger.error("sql failed");
+				promise.fail(r.cause());
+			}
+		});
+		return promise.future();
+	}
+	
+	protected Future<Void> commitTxnAndUnlock(Entity entity) {
+		Promise<Void> promise = Promise.promise();
+		if (!currentEntity.equals(entity)) {
+			logger.info("TXN not ended yet");
+			promise.complete();
+		} else {
+			globalConn.commit(ar -> {
+				currentEntity = Entity.NONE;
+				if (ar.succeeded()) {
+					logger.info("commit TXN ok");
+					globalConn.execute("UNLOCK TABLES", done -> {
+						globalConn.close();
+						globalConn = null;
+						if (done.succeeded()) {
+							logger.info("tables unlocked");
+							promise.complete();
+						} else {
+							logger.error("tables unlock failed");
+							promise.fail(done.cause());
+						}
+					});
+				} else {
+					logger.error("commit TXN failed");
+					globalConn.close();
+					globalConn = null;
+					promise.fail(ar.cause());
+				}
+			});
+		}
+		return promise.future();
+	}
 
 }

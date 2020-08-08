@@ -59,24 +59,40 @@ public class NotificationServiceImpl implements NotificationService {
 			vertx.cancelTimer(healthTimers.get(resId));
 			healthTimers.remove(resId);
 		}
+		
 		long timerId = vertx.setTimer(TimeUnit.SECONDS.toMillis(60), new Handler<Long>() {
 		    @Override
 		    public void handle(Long aLong) {
-		    	setNodeDown(status.getResId());
-		    	healthTimers.remove(status.getResId());
+		    	healthTimers.remove(resId);
+		    	if (status.getStatus().equals("UP")) {
+		    		setNodeStatus(resId, "DISCONN");
+		    	} else {
+		    		setNodeStatus(resId, "DOWN");
+		    	}
 		    }
 		});
-		healthTimers.put(status.getResId(), timerId);
+		healthTimers.put(resId, timerId);
 	}
 	
-	private void setNodeDown(int resId) {
+	private void setNodeStatus(int resId, String s) {
 		Status status = new Status();
 		status.setResId(resId);
 		status.setResType("node");
-		status.setStatus("DISCONN");
+		status.setStatus(s);
 		status.setTimestamp("123456");
 		status.setId("ffff");
 		sendStatusAwaitResult(status);
+		
+		if (s.equals("DISCONN")) {
+			long timerId = vertx.setTimer(TimeUnit.SECONDS.toMillis(120), new Handler<Long>() {
+			    @Override
+			    public void handle(Long aLong) {
+			    	healthTimers.remove(resId);
+			    	setNodeStatus(resId, "DOWN");
+			    }
+			});
+			healthTimers.put(resId, timerId);
+		}
 	}
 
 	@Override
