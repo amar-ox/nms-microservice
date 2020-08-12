@@ -1296,6 +1296,27 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
+  public  TopologyService deletePrefixAnnByName(int originId, String prefixAnnId, Handler<AsyncResult<Void>> resultHandler){
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return this;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("originId", originId);
+    _json.put("prefixAnnId", prefixAnnId);
+
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "deletePrefixAnnByName");
+    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
+      }
+    });
+    return this;
+  }
+  @Override
   public  TopologyService addRoute(Route route, Handler<AsyncResult<Integer>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));

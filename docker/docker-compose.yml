@@ -12,6 +12,14 @@ services:
     image: mongo:latest
     expose:
       - "27017"
+  account-microservice:
+    image: nms/account-microservice
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    expose:
+      - "8083"
   telemetry-microservice:
     image: nms/telemetry-microservice
     links:

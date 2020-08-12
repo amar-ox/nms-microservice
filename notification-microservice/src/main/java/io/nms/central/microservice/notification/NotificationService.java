@@ -1,11 +1,10 @@
 package io.nms.central.microservice.notification;
 
-import io.nms.central.microservice.common.Status;
+import io.nms.central.microservice.notification.model.Status;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonObject;
 
 /**
  * A service interface managing products.

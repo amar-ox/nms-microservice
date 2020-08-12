@@ -238,6 +238,9 @@ public interface TopologyService {
 	@Fluent	
 	TopologyService deletePrefixAnn(String prefixAnnId, Handler<AsyncResult<Void>> resultHandler);
 	
+	@Fluent	
+	TopologyService deletePrefixAnnByName(int originId, String prefixAnnId, Handler<AsyncResult<Void>> resultHandler);
+	
 	
 	/* Route */
 	@Fluent	

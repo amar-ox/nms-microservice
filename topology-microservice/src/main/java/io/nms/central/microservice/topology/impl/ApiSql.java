@@ -557,7 +557,8 @@ public class ApiSql {
 	public static final String DELETE_VTRAIL = "DELETE FROM Vtrail WHERE id=?";
 	public static final String DELETE_VXC = "DELETE FROM Vxc WHERE id=?";
 	
-	public static final String DELETE_PREFIX_ANN = "DELETE FROM PrefixAnn WHERE id=?";
+	public static final String DELETE_PA = "DELETE FROM PrefixAnn WHERE id=?";
+	public static final String DELETE_PA_BY_NAME = "DELETE FROM PrefixAnn WHERE originId = ? AND name = ?";
 	public static final String DELETE_ROUTE = "DELETE FROM Route WHERE id=?";
 	
 	public static final String DELETE_FACE = "DELETE FROM Face WHERE id=?";

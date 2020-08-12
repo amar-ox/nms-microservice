@@ -1,4 +1,4 @@
-package io.nms.central.microservice.common;
+package io.nms.central.microservice.notification.model;
 
 import java.util.Objects;
 

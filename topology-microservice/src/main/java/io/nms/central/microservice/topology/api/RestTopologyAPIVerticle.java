@@ -33,6 +33,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final Logger logger = LoggerFactory.getLogger(RestTopologyAPIVerticle.class);
 
 	public static final String SERVICE_NAME = "topology-rest-api";
+	
 
 	private static final String API_VERSION = "/v";
 	
@@ -79,14 +80,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_ALL_ROUTES = "/routes";
 	private static final String API_ROUTES_BY_SUBNET = "/subnet/:subnetId/routes";
 	private static final String API_ROUTES_BY_NODE = "/node/:nodeId/routes";
-	// private static final String API_GEN_ROUTES = "/genroutes";
 
 	private static final String API_ONE_FACE = "/face/:faceId";	
 	private static final String API_ALL_FACES = "/faces";
 	private static final String API_FACES_BY_SUBNET = "/subnet/:subnetId/faces";
 	private static final String API_FACES_BY_NODE = "/node/:nodeId/faces";
-	// private static final String API_GEN_FACES = "/genfaces";
-
+	
+	
+	private static final String API_AGENT_PA = "/ag/prefixAnn/:name";
 
 	private final TopologyService service;
 
@@ -168,8 +169,6 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.get(API_ONE_FACE).handler(this::apiGetFace);
 		router.delete(API_ONE_FACE).handler(this::apiDeleteFace);
 
-		// router.post(API_GEN_FACES).handler(this::apiGenFaces);
-
 		router.post(API_ALL_PAS).handler(this::apiAddPrefixAnn);
 		router.get(API_ALL_PAS).handler(this::apiGetAllPrefixAnns);
 		router.get(API_PAS_BY_SUBNET).handler(this::apiGetPrefixAnnsBySubnet);
@@ -183,8 +182,9 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.get(API_ROUTES_BY_NODE).handler(this::apiGetRoutesByNode);
 		router.get(API_ONE_ROUTE).handler(this::apiGetRoute);
 		router.delete(API_ONE_ROUTE).handler(this::apiDeleteRoute);
-
-		// router.post(API_GEN_ROUTES).handler(this::apiGenRoutes);
+		
+		router.put(API_AGENT_PA).handler(this::apiAddAgentPA);
+		router.delete(API_AGENT_PA).handler(this::apiDeleteAgentPA);
 
 		// get HTTP host and port from configuration, or use default value
 		String host = config().getString("topology.http.address", "0.0.0.0");
@@ -502,5 +502,23 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiDeleteRoute(RoutingContext context) {
 		String routeId = context.request().getParam("routeId");
 		service.deleteRoute(routeId, deleteResultHandler(context));
+	}
+	
+	// Agent PA
+	private void apiAddAgentPA(RoutingContext context) {
+		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+		int originId = principal.getInteger("nodeId", 0);
+		String name = context.request().getParam("name");
+		PrefixAnn pa = new PrefixAnn();
+		pa.setName(name);
+		pa.setOriginId(originId);
+		pa.setAvailable(true);
+		service.addPrefixAnn(pa, resultHandlerNonEmpty(context));
+	}
+	private void apiDeleteAgentPA(RoutingContext context) {
+		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+		int originId = principal.getInteger("nodeId", 0);
+		String name = context.request().getParam("name");
+		service.deletePrefixAnnByName(originId, name, deleteResultHandler(context));
 	}
 }

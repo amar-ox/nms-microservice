@@ -1,8 +1,8 @@
 package io.nms.central.microservice.notification.api;
 
 import io.nms.central.microservice.common.RestAPIVerticle;
-import io.nms.central.microservice.common.Status;
 import io.nms.central.microservice.notification.NotificationService;
+import io.nms.central.microservice.notification.model.Status;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
@@ -17,14 +17,18 @@ import io.vertx.ext.web.handler.BodyHandler;
  */
 public class RestNotificationAPIVerticle extends RestAPIVerticle {
 
-	// private static final Logger logger = LoggerFactory.getLogger(RestRoutingAPIVerticle.class);
+	// private static final Logger logger = LoggerFactory.getLogger(RestNotificationAPIVerticle.class);
 
 	public static final String SERVICE_NAME = "notification-rest-api";
+	
 
 	private static final String API_VERSION = "/v";
-	
+
 	private static final String API_ONE_STATUS = "/status/:statusId";
 	private static final String API_STATUS = "/status";
+	
+	
+	private static final String API_AGENT_STATUS = "/ag/status/:statusId";
 
 
 	private final NotificationService service;
@@ -41,10 +45,11 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 		router.route().handler(BodyHandler.create());
 		// API route handler
 		router.get(API_VERSION).handler(this::apiVersion);
-		
-		router.put(API_ONE_STATUS).handler(this::apiProcessStatus);
+
+		router.put(API_AGENT_STATUS).handler(this::apiProcessStatus);
+
 		router.get(API_ONE_STATUS).handler(this::apiGetStatus);
-		
+		// TODO: get all status
 		router.delete(API_ONE_STATUS).handler(this::apiDeleteStatus);
 		router.delete(API_STATUS).handler(this::apiDeleteAllStatus);
 
@@ -65,35 +70,33 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 				.put("version", "v1").encodePrettily());
 	}
 
-		private void apiProcessStatus(RoutingContext context) {
-			Status status = new Status(new JsonObject(context.getBodyAsString()));
-		    if (status.getResId() == null) {
-		      badRequest(context, new IllegalStateException("Resource Id is missing"));
-		    } else {
-		      String statusId = context.request().getParam("statusId");
-		      status.setId(statusId);
-		      JsonObject result = new JsonObject().put("message", "report processed");
-		      service.processStatus(status, resultVoidHandler(context, result));
-		    }
+	private void apiProcessStatus(RoutingContext context) {
+		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+		int resId = principal.getInteger("nodeId", 0);
+		if (resId == 0) {
+			badRequest(context, new IllegalStateException("Wrong nodeId"));
+		} else {
+			String statusId = context.request().getParam("statusId");
+			Status status = new Status(context.getBodyAsJson());
+			status.setId(statusId);
+			status.setResId(resId);
+			status.setResType("node");
+			JsonObject result = new JsonObject().put("message", "report processed");
+			service.processStatus(status, resultVoidHandler(context, result));
 		}
-		
-		private void apiGetStatus(RoutingContext context) {
-			String statusId = context.request().getParam("statusId");		
-			service.retrieveStatus(statusId, resultHandlerNonEmpty(context));
-		}
-		
-		private void apiDeleteStatus(RoutingContext context) {
-			String statusId = context.request().getParam("statusId");		
-			service.removeStatus(statusId, deleteResultHandler(context));
-		}
-		
-		private void apiDeleteAllStatus(RoutingContext context) {		
-			service.removeAllStatus(deleteResultHandler(context));
-		}
-		
-		
-		
-		
-		
-		
+	}
+
+	private void apiGetStatus(RoutingContext context) {
+		String statusId = context.request().getParam("statusId");		
+		service.retrieveStatus(statusId, resultHandlerNonEmpty(context));
+	}
+
+	private void apiDeleteStatus(RoutingContext context) {
+		String statusId = context.request().getParam("statusId");		
+		service.removeStatus(statusId, deleteResultHandler(context));
+	}
+
+	private void apiDeleteAllStatus(RoutingContext context) {		
+		service.removeAllStatus(deleteResultHandler(context));
+	}
 }

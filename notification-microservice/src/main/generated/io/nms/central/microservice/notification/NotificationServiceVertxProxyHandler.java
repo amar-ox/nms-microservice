@@ -41,7 +41,7 @@ import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
 import io.vertx.serviceproxy.HelperUtils;
 
-import io.nms.central.microservice.common.Status;
+import io.nms.central.microservice.notification.model.Status;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 /*
@@ -115,12 +115,12 @@ public class NotificationServiceVertxProxyHandler extends ProxyHandler {
       accessed();
       switch (action) {
         case "processStatus": {
-          service.processStatus(json.getJsonObject("status") == null ? null : new io.nms.central.microservice.common.Status(json.getJsonObject("status")),
+          service.processStatus(json.getJsonObject("status") == null ? null : new io.nms.central.microservice.notification.model.Status(json.getJsonObject("status")),
                         HelperUtils.createHandler(msg));
           break;
         }
         case "saveStatus": {
-          service.saveStatus(json.getJsonObject("status") == null ? null : new io.nms.central.microservice.common.Status(json.getJsonObject("status")),
+          service.saveStatus(json.getJsonObject("status") == null ? null : new io.nms.central.microservice.notification.model.Status(json.getJsonObject("status")),
                         HelperUtils.createHandler(msg));
           break;
         }

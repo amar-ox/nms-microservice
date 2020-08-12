@@ -1,4 +1,4 @@
-package io.nms.central.microservice.common;
+package io.nms.central.microservice.notification.model;
 
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
@@ -6,8 +6,8 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Converter for {@link io.nms.central.microservice.common.Status}.
- * NOTE: This class has been automatically generated from the {@link io.nms.central.microservice.common.Status} original class using Vert.x codegen.
+ * Converter for {@link io.nms.central.microservice.notification.model.Status}.
+ * NOTE: This class has been automatically generated from the {@link io.nms.central.microservice.notification.model.Status} original class using Vert.x codegen.
  */
 public class StatusConverter {
 

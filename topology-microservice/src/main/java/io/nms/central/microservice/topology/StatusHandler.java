@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.nms.central.microservice.common.BaseMicroserviceVerticle;
-import io.nms.central.microservice.common.Status;
+import io.nms.central.microservice.notification.model.Status;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;

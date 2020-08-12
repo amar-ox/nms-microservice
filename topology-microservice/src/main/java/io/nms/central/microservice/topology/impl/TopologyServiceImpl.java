@@ -928,7 +928,13 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	@Override
 	public TopologyService deletePrefixAnn(String prefixAnnId, Handler<AsyncResult<Void>> resultHandler) {
-		this.removeOne(prefixAnnId, ApiSql.DELETE_PREFIX_ANN, resultHandler);
+		this.removeOne(prefixAnnId, ApiSql.DELETE_PA, resultHandler);
+		return this;
+	}
+	@Override
+	public TopologyService deletePrefixAnnByName(int originId, String name, Handler<AsyncResult<Void>> resultHandler) {
+		JsonArray params = new JsonArray().add(originId).add(name);
+		this.executeNoResult(params, ApiSql.DELETE_PA_BY_NAME, resultHandler);
 		return this;
 	}
 

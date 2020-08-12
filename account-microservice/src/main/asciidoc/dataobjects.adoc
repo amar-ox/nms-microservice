@@ -1,0 +1,42 @@
+= Cheatsheets
+
+[[Account]]
+== Account
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[nodeId]]`@nodeId`|`Number (int)`|-
+|[[role]]`@role`|`String`|-
+|[[username]]`@username`|`String`|-
+|===
+
+[[Agent]]
+== Agent
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[nodeId]]`@nodeId`|`Number (int)`|-
+|[[password]]`@password`|`String`|-
+|[[role]]`@role`|`String`|-
+|[[username]]`@username`|`String`|-
+|===
+
+[[User]]
+== User
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[password]]`@password`|`String`|-
+|[[role]]`@role`|`String`|-
+|[[username]]`@username`|`String`|-
+|===
+

@@ -141,6 +141,8 @@ export default class TopologyService {
 
   deletePrefixAnn(prefixAnnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
+  deletePrefixAnnByName(originId: number, prefixAnnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+
   addRoute(route: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   getRoute(routeId: string, resultHandler: (err: any, result: any) => any) : TopologyService;

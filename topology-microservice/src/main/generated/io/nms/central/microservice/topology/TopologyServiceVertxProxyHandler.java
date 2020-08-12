@@ -709,6 +709,12 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
                         HelperUtils.createHandler(msg));
           break;
         }
+        case "deletePrefixAnnByName": {
+          service.deletePrefixAnnByName(json.getValue("originId") == null ? null : (json.getLong("originId").intValue()),
+                        (java.lang.String)json.getValue("prefixAnnId"),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
         case "addRoute": {
           service.addRoute(json.getJsonObject("route") == null ? null : new io.nms.central.microservice.topology.model.Route(json.getJsonObject("route")),
                         HelperUtils.createHandler(msg));

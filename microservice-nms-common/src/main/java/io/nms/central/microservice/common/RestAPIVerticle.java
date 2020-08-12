@@ -76,7 +76,7 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
   protected void enableLocalSession(Router router) {
     router.route().handler(CookieHandler.create());
     router.route().handler(SessionHandler.create(
-      LocalSessionStore.create(vertx, "shopping.user.session")));
+      LocalSessionStore.create(vertx, "nms.user.session")));
   }
 
   /**
@@ -87,7 +87,7 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
   protected void enableClusteredSession(Router router) {
     router.route().handler(CookieHandler.create());
     router.route().handler(SessionHandler.create(
-      ClusteredSessionStore.create(vertx, "shopping.user.session")));
+      ClusteredSessionStore.create(vertx, "nms.user.session")));
   }
 
   // Auth helper method
@@ -319,11 +319,19 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
   protected void notChanged(RoutingContext context) {
 	  context.response().setStatusCode(304).end();
   }
-
+  
   protected void badRequest(RoutingContext context, Throwable ex) {
     context.response().setStatusCode(400)
       .putHeader("content-type", "application/json")
       .end(new JsonObject().put("error", ex.getMessage()).encodePrettily());
+  }
+  
+  protected void unauthorized(RoutingContext context) {
+	  context.response().setStatusCode(401).end();
+  }
+  
+  protected void forbidden(RoutingContext context) {
+	  context.response().setStatusCode(403).end();
   }
 
   protected void notFound(RoutingContext context) {

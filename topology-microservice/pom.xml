@@ -22,12 +22,19 @@
       <artifactId>microservice-nms-common</artifactId>
       <version>1.0.0</version>
     </dependency>
+    
+    <dependency>
+      <groupId>io.nms.central</groupId>
+      <artifactId>notification-microservice</artifactId>
+      <version>1.0.0</version>
+    </dependency>
 
      <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-jdbc-client</artifactId>
       <optional>true</optional>
     </dependency>
+    
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>

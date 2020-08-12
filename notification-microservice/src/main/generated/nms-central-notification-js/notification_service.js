@@ -20,7 +20,7 @@ var utils = require('vertx-js/util/utils');
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
 var JNotificationService = Java.type('io.nms.central.microservice.notification.NotificationService');
-var Status = Java.type('io.nms.central.microservice.common.Status');
+var Status = Java.type('io.nms.central.microservice.notification.model.Status');
 
 /**
  A service interface managing products.
@@ -49,7 +49,7 @@ var NotificationService = function(j_val) {
   this.processStatus =  function(status, resultHandler) {
     var __args = arguments;
     if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
-      j_notificationService["processStatus(io.nms.central.microservice.common.Status,io.vertx.core.Handler)"](__args[0]  != null ? new Status(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+      j_notificationService["processStatus(io.nms.central.microservice.notification.model.Status,io.vertx.core.Handler)"](__args[0]  != null ? new Status(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
         if (ar.succeeded()) {
           __args[1](null, null);
         } else {
@@ -71,7 +71,7 @@ var NotificationService = function(j_val) {
   this.saveStatus =  function(status, resultHandler) {
     var __args = arguments;
     if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
-      j_notificationService["saveStatus(io.nms.central.microservice.common.Status,io.vertx.core.Handler)"](__args[0]  != null ? new Status(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+      j_notificationService["saveStatus(io.nms.central.microservice.notification.model.Status,io.vertx.core.Handler)"](__args[0]  != null ? new Status(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
         if (ar.succeeded()) {
           __args[1](null, null);
         } else {
