@@ -52,6 +52,7 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
     Set<String> allowHeaders = new HashSet<>();
     allowHeaders.add("x-requested-with");
     allowHeaders.add("Access-Control-Allow-Origin");
+    allowHeaders.add("Authorization");
     allowHeaders.add("origin");
     allowHeaders.add("Content-Type");
     allowHeaders.add("accept");

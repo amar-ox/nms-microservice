@@ -16,6 +16,7 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.ext.auth.PubSecKeyOptions;
 import io.vertx.ext.auth.jwt.JWTAuth;
@@ -78,6 +79,7 @@ public class APIGatewayVerticle extends RestAPIVerticle {
     // this route is excluded from the auth handler
     router.post("/login/agent").handler(this::agentLoginHandler);
     router.post("/login/user").handler(this::userLoginHandler);
+    router.post("/logout").handler(this::logoutHandler);
 
     // version handler
     router.get("/api/v").handler(this::apiVersion);
@@ -91,10 +93,11 @@ public class APIGatewayVerticle extends RestAPIVerticle {
     // enable HTTPS
     HttpServerOptions httpServerOptions = new HttpServerOptions()
       .setSsl(true)
-      .setPemKeyCertOptions(
+      .setKeyStoreOptions(new JksOptions().setPath("server.jks").setPassword("123456"));
+      /* .setPemKeyCertOptions(
     		  new PemKeyCertOptions()
     		  		.setKeyPath("certs/nms.controller.key.pem")
-    		  		.setCertPath("certs/nms.controller.cert.pem"));
+    		  		.setCertPath("certs/nms.controller.cert.pem")); */
 
     // create http server
     vertx.createHttpServer(httpServerOptions)
@@ -304,11 +307,11 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 	  });
   }
 
-  /* private void logoutHandler(RoutingContext context) {
+  private void logoutHandler(RoutingContext context) {
     context.clearUser();
     context.session().destroy();
     context.response().setStatusCode(204).end();
-  } */
+  }
 
   /* private String buildHostURI() {
     int port = config().getInteger("api.gateway.http.port", DEFAULT_PORT);
