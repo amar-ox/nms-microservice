@@ -65,3 +65,9 @@ services:
       - JAVA_OPTS="-Xms128m -Xmx256m"
     extra_hosts:
       - "dockernet:${EXTERNAL_IP}"
+  nms-gui:
+    image: nms/gui
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "dockernet:${EXTERNAL_IP}"

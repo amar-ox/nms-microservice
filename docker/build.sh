@@ -11,3 +11,4 @@ docker build -t "nms/topology-microservice" $DIR/../topology-microservice
 docker build -t "nms/notification-microservice" $DIR/../notification-microservice
 docker build -t "nms/configuration-microservice" $DIR/../configuration-microservice
 docker build -t "nms/account-microservice" $DIR/../account-microservice
+docker build -t "nms/gui" $DIR/../nms-gui
