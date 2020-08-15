@@ -25,10 +25,10 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 	private static final String API_VERSION = "/v";
 
 	private static final String API_ONE_STATUS = "/status/:statusId";
-	private static final String API_STATUS = "/status";
+	private static final String API_ALL_STATUS = "/status";
 	
 	
-	private static final String API_AGENT_STATUS = "/ag/status/:statusId";
+	// private static final String API_AGENT_STATUS = "/ag/status/:statusId";
 
 
 	private final NotificationService service;
@@ -46,12 +46,11 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 		// API route handler
 		router.get(API_VERSION).handler(this::apiVersion);
 
-		router.put(API_AGENT_STATUS).handler(this::apiProcessStatus);
-
+		router.put(API_ONE_STATUS).handler(this::apiPutStatus);
 		router.get(API_ONE_STATUS).handler(this::apiGetStatus);
 		// TODO: get all status
 		router.delete(API_ONE_STATUS).handler(this::apiDeleteStatus);
-		router.delete(API_STATUS).handler(this::apiDeleteAllStatus);
+		router.delete(API_ALL_STATUS).handler(this::apiDeleteAllStatus);
 
 		// get HTTP host and port from configuration, or use default value
 		String host = config().getString("notification.http.address", "0.0.0.0");
@@ -70,12 +69,10 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 				.put("version", "v1").encodePrettily());
 	}
 
-	private void apiProcessStatus(RoutingContext context) {
+	private void apiPutStatus(RoutingContext context) {
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		int resId = principal.getInteger("nodeId", 0);
-		if (resId == 0) {
-			badRequest(context, new IllegalStateException("Wrong nodeId"));
-		} else {
+		if (principal.getString("role").equals("agent")) {
+			int resId = principal.getInteger("nodeId", 0);
 			String statusId = context.request().getParam("statusId");
 			Status status = new Status(context.getBodyAsJson());
 			status.setId(statusId);
@@ -83,20 +80,37 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 			status.setResType("node");
 			JsonObject result = new JsonObject().put("message", "report processed");
 			service.processStatus(status, resultVoidHandler(context, result));
+		} else {
+			forbidden(context);
 		}
 	}
 
 	private void apiGetStatus(RoutingContext context) {
-		String statusId = context.request().getParam("statusId");		
-		service.retrieveStatus(statusId, resultHandlerNonEmpty(context));
+		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+		if (principal.getString("role").equals("admin")) {
+			String statusId = context.request().getParam("statusId");		
+			service.retrieveStatus(statusId, resultHandlerNonEmpty(context));
+		} else {
+			forbidden(context);
+		}
 	}
 
 	private void apiDeleteStatus(RoutingContext context) {
-		String statusId = context.request().getParam("statusId");		
+		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+		if (principal.getString("role").equals("admin")) {
+			String statusId = context.request().getParam("statusId");		
 		service.removeStatus(statusId, deleteResultHandler(context));
+		} else {
+			forbidden(context);
+		}
 	}
 
-	private void apiDeleteAllStatus(RoutingContext context) {		
-		service.removeAllStatus(deleteResultHandler(context));
+	private void apiDeleteAllStatus(RoutingContext context) {
+		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+		if (principal.getString("role").equals("admin")) {
+			service.removeAllStatus(deleteResultHandler(context));
+		} else {
+			forbidden(context);
+		}
 	}
 }

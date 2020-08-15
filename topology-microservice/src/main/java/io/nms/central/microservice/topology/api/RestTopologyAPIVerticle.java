@@ -21,6 +21,8 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import java.util.Base64;
+
 
 
 /**
@@ -33,10 +35,10 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final Logger logger = LoggerFactory.getLogger(RestTopologyAPIVerticle.class);
 
 	public static final String SERVICE_NAME = "topology-rest-api";
-	
+
 
 	private static final String API_VERSION = "/v";
-	
+
 	private static final String API_ONE_SUBNET = "/subnet/:subnetId";
 	private static final String API_ALL_SUBNETS = "/subnets";
 
@@ -71,7 +73,8 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_XCS_BY_TRAIL = "/trail/:trailId/xcs";
 	private static final String API_XCS_BY_NODE = "/node/:nodeId/xcs";
 
-	private static final String API_ONE_PA = "/prefixAnn/:prefixAnnId";	
+	private static final String API_ONE_PA = "/prefixAnn/:prefixAnnId";
+	private static final String API_ONE_PA_BY_NAME = "/prefixAnn/name/:paName";
 	private static final String API_ALL_PAS = "/prefixAnns";
 	private static final String API_PAS_BY_SUBNET = "/subnet/:subnetId/prefixAnns";
 	private static final String API_PAS_BY_NODE = "/node/:nodeId/prefixAnns";
@@ -85,9 +88,6 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_ALL_FACES = "/faces";
 	private static final String API_FACES_BY_SUBNET = "/subnet/:subnetId/faces";
 	private static final String API_FACES_BY_NODE = "/node/:nodeId/faces";
-	
-	
-	private static final String API_AGENT_PA = "/ag/prefixAnn/:name";
 
 	private final TopologyService service;
 
@@ -101,90 +101,91 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		final Router router = Router.router(vertx);
 		// body handler
 		router.route().handler(BodyHandler.create());
+
 		// API route handler
 		router.get(API_VERSION).handler(this::apiVersion);
 
-		router.post(API_ALL_SUBNETS).handler(this::apiAddSubnet);
-		router.get(API_ALL_SUBNETS).handler(this::apiGetAllSubnets);
-		router.get(API_ONE_SUBNET).handler(this::apiGetSubnet);
-		router.delete(API_ONE_SUBNET).handler(this::apiDeleteSubnet);
-		router.put(API_ONE_SUBNET).handler(this::apiUpdateSubnet);
+		router.post(API_ALL_SUBNETS).handler(this::checkAdminRole).handler(this::apiAddSubnet);
+		router.get(API_ALL_SUBNETS).handler(this::checkAdminRole).handler(this::apiGetAllSubnets);
+		router.get(API_ONE_SUBNET).handler(this::checkAdminRole).handler(this::apiGetSubnet);
+		router.delete(API_ONE_SUBNET).handler(this::checkAdminRole).handler(this::apiDeleteSubnet);
+		router.put(API_ONE_SUBNET).handler(this::checkAdminRole).handler(this::apiUpdateSubnet);
 
-		router.post(API_ALL_NODES).handler(this::apiAddNode);
-		router.get(API_ALL_NODES).handler(this::apiGetAllNodes);
-		router.get(API_NODES_BY_SUBNET).handler(this::apiGetNodesBySubnet);
-		router.get(API_ONE_NODE).handler(this::apiGetNode);
-		router.delete(API_ONE_NODE).handler(this::apiDeleteNode);
-		router.put(API_ONE_NODE).handler(this::apiUpdateNode);
+		router.post(API_ALL_NODES).handler(this::checkAdminRole).handler(this::apiAddNode);
+		router.get(API_ALL_NODES).handler(this::checkAdminRole).handler(this::apiGetAllNodes);
+		router.get(API_NODES_BY_SUBNET).handler(this::checkAdminRole).handler(this::apiGetNodesBySubnet);
+		router.get(API_ONE_NODE).handler(this::checkAdminRole).handler(this::apiGetNode);
+		router.delete(API_ONE_NODE).handler(this::checkAdminRole).handler(this::apiDeleteNode);
+		router.put(API_ONE_NODE).handler(this::checkAdminRole).handler(this::apiUpdateNode);
 
-		router.post(API_ALL_LTPS).handler(this::apiAddLtp);
-		router.get(API_ALL_LTPS).handler(this::apiGetAllLtps);
-		router.get(API_LTPS_BY_NODE).handler(this::apiGetLtpsByNode);
-		router.get(API_ONE_LTP).handler(this::apiGetLtp);
-		router.delete(API_ONE_LTP).handler(this::apiDeleteLtp);
-		router.put(API_ONE_LTP).handler(this::apiUpdateLtp);
+		router.post(API_ALL_LTPS).handler(this::checkAdminRole).handler(this::apiAddLtp);
+		router.get(API_ALL_LTPS).handler(this::checkAdminRole).handler(this::apiGetAllLtps);
+		router.get(API_LTPS_BY_NODE).handler(this::checkAdminRole).handler(this::apiGetLtpsByNode);
+		router.get(API_ONE_LTP).handler(this::checkAdminRole).handler(this::apiGetLtp);
+		router.delete(API_ONE_LTP).handler(this::checkAdminRole).handler(this::apiDeleteLtp);
+		router.put(API_ONE_LTP).handler(this::checkAdminRole).handler(this::apiUpdateLtp);
 
-		router.post(API_ALL_CTPS).handler(this::apiAddCtp);
-		router.get(API_ALL_CTPS).handler(this::apiGetAllCtps);
-		router.get(API_CTPS_BY_LTP).handler(this::apiGetCtpsByLtp);
-		router.get(API_CTPS_BY_NODE).handler(this::apiGetCtpsByNode);
-		router.get(API_ONE_CTP).handler(this::apiGetCtp);
-		router.delete(API_ONE_CTP).handler(this::apiDeleteCtp);
-		router.put(API_ONE_CTP).handler(this::apiUpdateCtp);
+		router.post(API_ALL_CTPS).handler(this::checkAdminRole).handler(this::apiAddCtp);
+		router.get(API_ALL_CTPS).handler(this::checkAdminRole).handler(this::apiGetAllCtps);
+		router.get(API_CTPS_BY_LTP).handler(this::checkAdminRole).handler(this::apiGetCtpsByLtp);
+		router.get(API_CTPS_BY_NODE).handler(this::checkAdminRole).handler(this::apiGetCtpsByNode);
+		router.get(API_ONE_CTP).handler(this::checkAdminRole).handler(this::apiGetCtp);
+		router.delete(API_ONE_CTP).handler(this::checkAdminRole).handler(this::apiDeleteCtp);
+		router.put(API_ONE_CTP).handler(this::checkAdminRole).handler(this::apiUpdateCtp);
 
-		router.post(API_ALL_LINKS).handler(this::apiAddLink);
-		router.get(API_ALL_LINKS).handler(this::apiGetAllLinks);
-		router.get(API_LINKS_BY_SUBNET).handler(this::apiGetLinksBySubnet);
-		router.get(API_ONE_LINK).handler(this::apiGetLink);
-		router.delete(API_ONE_LINK).handler(this::apiDeleteLink);
-		router.put(API_ONE_LINK).handler(this::apiUpdateLink);
+		router.post(API_ALL_LINKS).handler(this::checkAdminRole).handler(this::apiAddLink);
+		router.get(API_ALL_LINKS).handler(this::checkAdminRole).handler(this::apiGetAllLinks);
+		router.get(API_LINKS_BY_SUBNET).handler(this::checkAdminRole).handler(this::apiGetLinksBySubnet);
+		router.get(API_ONE_LINK).handler(this::checkAdminRole).handler(this::apiGetLink);
+		router.delete(API_ONE_LINK).handler(this::checkAdminRole).handler(this::apiDeleteLink);
+		router.put(API_ONE_LINK).handler(this::checkAdminRole).handler(this::apiUpdateLink);
 
-		router.post(API_ALL_LINKCONNS).handler(this::apiAddLinkConn);
-		router.get(API_ALL_LINKCONNS).handler(this::apiGetAllLinkConns);
-		router.get(API_LINKCONNS_BY_LINK).handler(this::apiGetLinkConnsByLink);
-		router.get(API_LINKCONNS_BY_SUBNET).handler(this::apiGetLinkConnsBySubnet);
-		router.get(API_ONE_LINKCONN).handler(this::apiGetLinkConn);
-		router.delete(API_ONE_LINKCONN).handler(this::apiDeleteLinkConn);
-		router.put(API_ONE_LINKCONN).handler(this::apiUpdateLinkConn);
+		router.post(API_ALL_LINKCONNS).handler(this::checkAdminRole).handler(this::apiAddLinkConn);
+		router.get(API_ALL_LINKCONNS).handler(this::checkAdminRole).handler(this::apiGetAllLinkConns);
+		router.get(API_LINKCONNS_BY_LINK).handler(this::checkAdminRole).handler(this::apiGetLinkConnsByLink);
+		router.get(API_LINKCONNS_BY_SUBNET).handler(this::checkAdminRole).handler(this::apiGetLinkConnsBySubnet);
+		router.get(API_ONE_LINKCONN).handler(this::checkAdminRole).handler(this::apiGetLinkConn);
+		router.delete(API_ONE_LINKCONN).handler(this::checkAdminRole).handler(this::apiDeleteLinkConn);
+		router.put(API_ONE_LINKCONN).handler(this::checkAdminRole).handler(this::apiUpdateLinkConn);
 
-		router.post(API_ALL_TRAILS).handler(this::apiAddTrail);
-		router.get(API_ALL_TRAILS).handler(this::apiGetAllTrails);
-		router.get(API_TRAILS_BY_SUBNET).handler(this::apiGetTrailsBySubnet);
-		router.get(API_ONE_TRAIL).handler(this::apiGetTrail);
-		router.delete(API_ONE_TRAIL).handler(this::apiDeleteTrail);
-		router.put(API_ONE_TRAIL).handler(this::apiUpdateTrail);
+		router.post(API_ALL_TRAILS).handler(this::checkAdminRole).handler(this::apiAddTrail);
+		router.get(API_ALL_TRAILS).handler(this::checkAdminRole).handler(this::apiGetAllTrails);
+		router.get(API_TRAILS_BY_SUBNET).handler(this::checkAdminRole).handler(this::apiGetTrailsBySubnet);
+		router.get(API_ONE_TRAIL).handler(this::checkAdminRole).handler(this::apiGetTrail);
+		router.delete(API_ONE_TRAIL).handler(this::checkAdminRole).handler(this::apiDeleteTrail);
+		router.put(API_ONE_TRAIL).handler(this::checkAdminRole).handler(this::apiUpdateTrail);
 
-		router.post(API_ALL_XCS).handler(this::apiAddXc);
-		router.get(API_ALL_XCS).handler(this::apiGetAllXcs);
-		router.get(API_XCS_BY_TRAIL).handler(this::apiGetXcsByTrail);
-		router.get(API_XCS_BY_NODE).handler(this::apiGetXcsByNode);
-		router.get(API_ONE_XC).handler(this::apiGetXc);
-		router.delete(API_ONE_XC).handler(this::apiDeleteXc);
-		router.put(API_ONE_XC).handler(this::apiUpdateXc);
+		router.post(API_ALL_XCS).handler(this::checkAdminRole).handler(this::apiAddXc);
+		router.get(API_ALL_XCS).handler(this::checkAdminRole).handler(this::apiGetAllXcs);
+		router.get(API_XCS_BY_TRAIL).handler(this::checkAdminRole).handler(this::apiGetXcsByTrail);
+		router.get(API_XCS_BY_NODE).handler(this::checkAdminRole).handler(this::apiGetXcsByNode);
+		router.get(API_ONE_XC).handler(this::checkAdminRole).handler(this::apiGetXc);
+		router.delete(API_ONE_XC).handler(this::checkAdminRole).handler(this::apiDeleteXc);
+		router.put(API_ONE_XC).handler(this::checkAdminRole).handler(this::apiUpdateXc);
 
-		router.post(API_ALL_FACES).handler(this::apiAddFace);
-		router.get(API_ALL_FACES).handler(this::apiGetAllFaces);
-		router.get(API_FACES_BY_SUBNET).handler(this::apiGetFacesBySubnet);
-		router.get(API_FACES_BY_NODE).handler(this::apiGetFacesByNode);
-		router.get(API_ONE_FACE).handler(this::apiGetFace);
-		router.delete(API_ONE_FACE).handler(this::apiDeleteFace);
+		router.post(API_ALL_FACES).handler(this::checkAdminRole).handler(this::apiAddFace);
+		router.get(API_ALL_FACES).handler(this::checkAdminRole).handler(this::apiGetAllFaces);
+		router.get(API_FACES_BY_SUBNET).handler(this::checkAdminRole).handler(this::apiGetFacesBySubnet);
+		router.get(API_FACES_BY_NODE).handler(this::checkAdminRole).handler(this::apiGetFacesByNode);
+		router.get(API_ONE_FACE).handler(this::checkAdminRole).handler(this::apiGetFace);
+		router.delete(API_ONE_FACE).handler(this::checkAdminRole).handler(this::apiDeleteFace);
 
 		router.post(API_ALL_PAS).handler(this::apiAddPrefixAnn);
-		router.get(API_ALL_PAS).handler(this::apiGetAllPrefixAnns);
-		router.get(API_PAS_BY_SUBNET).handler(this::apiGetPrefixAnnsBySubnet);
-		router.get(API_PAS_BY_NODE).handler(this::apiGetPrefixAnnsByNode);
-		router.get(API_ONE_PA).handler(this::apiGetPrefixAnn);
-		router.delete(API_ONE_PA).handler(this::apiDeletePrefixAnn);
-
-		router.post(API_ALL_ROUTES).handler(this::apiAddRoute);		
-		router.get(API_ALL_ROUTES).handler(this::apiGetAllRoutes);
-		router.get(API_ROUTES_BY_SUBNET).handler(this::apiGetRoutesBySubnet);
-		router.get(API_ROUTES_BY_NODE).handler(this::apiGetRoutesByNode);
-		router.get(API_ONE_ROUTE).handler(this::apiGetRoute);
-		router.delete(API_ONE_ROUTE).handler(this::apiDeleteRoute);
+		router.get(API_ALL_PAS).handler(this::checkAdminRole).handler(this::apiGetAllPrefixAnns);
+		router.get(API_PAS_BY_SUBNET).handler(this::checkAdminRole).handler(this::apiGetPrefixAnnsBySubnet);
+		router.get(API_PAS_BY_NODE).handler(this::checkAdminRole).handler(this::apiGetPrefixAnnsByNode);
+		router.get(API_ONE_PA).handler(this::checkAdminRole).handler(this::apiGetPrefixAnn);
+		router.delete(API_ONE_PA).handler(this::checkAdminRole).handler(this::apiDeletePrefixAnn);
 		
-		router.put(API_AGENT_PA).handler(this::apiAddAgentPA);
-		router.delete(API_AGENT_PA).handler(this::apiDeleteAgentPA);
+		// agent only
+		router.delete(API_ONE_PA_BY_NAME).handler(this::checkAgentRole).handler(this::apiDeleteOnePaByName);
+
+		router.post(API_ALL_ROUTES).handler(this::checkAdminRole).handler(this::apiAddRoute);		
+		router.get(API_ALL_ROUTES).handler(this::checkAdminRole).handler(this::apiGetAllRoutes);
+		router.get(API_ROUTES_BY_SUBNET).handler(this::checkAdminRole).handler(this::apiGetRoutesBySubnet);
+		router.get(API_ROUTES_BY_NODE).handler(this::checkAdminRole).handler(this::apiGetRoutesByNode);
+		router.get(API_ONE_ROUTE).handler(this::checkAdminRole).handler(this::apiGetRoute);
+		router.delete(API_ONE_ROUTE).handler(this::checkAdminRole).handler(this::apiDeleteRoute);
 
 		// get HTTP host and port from configuration, or use default value
 		String host = config().getString("topology.http.address", "0.0.0.0");
@@ -195,6 +196,24 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		.compose(serverCreated -> publishHttpEndpoint(SERVICE_NAME, host, port))
 		.onComplete(future);
 	}
+	
+	 private void checkAdminRole(RoutingContext context) {
+		 JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+			if (principal.getString("role", "").equals("admin")) {
+				context.next();
+			} else {
+				forbidden(context);
+			}
+	}
+	 
+	 private void checkAgentRole(RoutingContext context) {
+		 JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+			if (principal.getString("role", "").equals("agent")) {
+				context.next();
+			} else {
+				forbidden(context);
+			}
+	}
 
 	private void apiVersion(RoutingContext context) { 
 		context.response()
@@ -202,7 +221,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 				.put("name", SERVICE_NAME)
 				.put("version", "v1").encodePrettily());
 	}
-	
+
 	// Node API
 	private void apiAddSubnet(RoutingContext context) {
 		final Vsubnet vsubnet = Json.decodeValue(context.getBodyAsString(), Vsubnet.class);
@@ -454,9 +473,24 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 
 	// Prefix Announcement API
 	private void apiAddPrefixAnn(RoutingContext context) {
-		final PrefixAnn prefixAnn = Json.decodeValue(context.getBodyAsString(), PrefixAnn.class);
-		// use voidresult with PUT
-		service.addPrefixAnn(prefixAnn, createResultHandler(context, "/prefixAnn"));
+		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+		String role = principal.getString("role");
+		PrefixAnn pa;
+		if (role.equals("agent")) {
+			int originId = principal.getInteger("nodeId", 0);
+			String name = context.getBodyAsJson().getString("name");
+			// TODO: is valid base64 string
+			pa = new PrefixAnn();
+			pa.setName(name);
+			pa.setOriginId(originId);
+			pa.setAvailable(true);
+		} else if (role.equals("admin")) {
+			 pa = Json.decodeValue(context.getBodyAsString(), PrefixAnn.class);
+		} else {
+			forbidden(context);
+			return;
+		}
+		service.addPrefixAnn(pa, createResultHandler(context, "/prefixAnn"));
 	}
 	private void apiGetPrefixAnn(RoutingContext context) {
 		String prefixAnnId = context.request().getParam("prefixAnnId");			
@@ -476,6 +510,17 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiDeletePrefixAnn(RoutingContext context) {
 		String prefixAnnId = context.request().getParam("prefixAnnId");			
 		service.deletePrefixAnn(prefixAnnId, deleteResultHandler(context));
+	}
+	
+	private void apiDeleteOnePaByName(RoutingContext context) {
+		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+		if (principal.getString("role").equals("agent")) {
+			int originId = principal.getInteger("nodeId", 0);
+			String name = context.request().getParam("name");
+			service.deletePrefixAnnByName(originId, name, deleteResultHandler(context));
+		} else {
+			forbidden(context);
+		}
 	}
 
 
@@ -503,22 +548,14 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		String routeId = context.request().getParam("routeId");
 		service.deleteRoute(routeId, deleteResultHandler(context));
 	}
-	
-	// Agent PA
-	private void apiAddAgentPA(RoutingContext context) {
-		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		int originId = principal.getInteger("nodeId", 0);
-		String name = context.request().getParam("name");
-		PrefixAnn pa = new PrefixAnn();
-		pa.setName(name);
-		pa.setOriginId(originId);
-		pa.setAvailable(true);
-		service.addPrefixAnn(pa, resultHandlerNonEmpty(context));
-	}
-	private void apiDeleteAgentPA(RoutingContext context) {
-		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		int originId = principal.getInteger("nodeId", 0);
-		String name = context.request().getParam("name");
-		service.deletePrefixAnnByName(originId, name, deleteResultHandler(context));
+
+	private boolean isValidBase64(String str) {
+		Base64.Decoder decoder = Base64.getDecoder();
+		try {
+			decoder.decode(str);
+			return true;
+		} catch(IllegalArgumentException iae) {
+			return false;
+		}
 	}
 }
