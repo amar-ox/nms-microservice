@@ -58,11 +58,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		resultHandler.handle(Future.succeededFuture());
 	}
 	
-	/* Rest API */
-	/* @Override
-	public void saveCandidateConfig(ConfigObj config, Handler<AsyncResult<Void>> resultHandler) {
-		resultHandler.handle(Future.succeededFuture());
-	} */
 	@Override
 	public void getCandidateConfig(int nodeId, Handler<AsyncResult<ConfigObj>> resultHandler) {
 		JsonObject query = new JsonObject().put("nodeId", nodeId);
@@ -80,8 +75,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		});
 	}
 	@Override
-	public void removeAllCandidateConfigs(Handler<AsyncResult<Void>> resultHandler) {
-		client.removeDocuments(COLL_CANDIDATE_CONFIG, new JsonObject(), ar -> {
+	public void removeCandidateConfig(int nodeId, Handler<AsyncResult<Void>> resultHandler) {
+		JsonObject query = new JsonObject().put("nodeId", nodeId);
+		client.removeDocuments(COLL_CANDIDATE_CONFIG, query, ar -> {
 			if (ar.succeeded()) {
 				resultHandler.handle(Future.succeededFuture());
 			} else {
@@ -154,8 +150,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		});
 	}
 	@Override
-	public void removeAllRunningConfigs(Handler<AsyncResult<Void>> resultHandler) {
-		client.removeDocuments(COLL_RUNNING_CONFIG, new JsonObject(), ar -> {
+	public void removeRunningConfig(int nodeId, Handler<AsyncResult<Void>> resultHandler) {
+		JsonObject query = new JsonObject().put("nodeId", nodeId);
+		client.removeDocuments(COLL_RUNNING_CONFIG, query, ar -> {
 			if (ar.succeeded()) {
 				resultHandler.handle(Future.succeededFuture());
 			} else {

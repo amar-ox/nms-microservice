@@ -1,13 +1,11 @@
 package io.nms.central.microservice.account.impl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import io.nms.central.microservice.account.AccountService;
 import io.nms.central.microservice.account.model.Account;
 import io.nms.central.microservice.account.model.Agent;
-import io.nms.central.microservice.account.model.User;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -55,26 +53,18 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public void saveUser(User user, Handler<AsyncResult<Void>> resultHandler) {
-		// TODO: PUT!!!!!!!!!
-		client.save(COLL_USER, user.toJson(), ar -> {
-			if (ar.succeeded()) {
-				resultHandler.handle(Future.succeededFuture());
-			} else {
-				resultHandler.handle(Future.failedFuture(ar.cause()));
-			}
-		});
-	}
-
-	@Override
-	public void retrieveUser(String username, Handler<AsyncResult<User>> resultHandler) {
-		JsonObject query = new JsonObject().put("username", username);
-		client.findOne(COLL_USER, query, null, ar -> {
+	public void authenticateAgent(String username, String password, Handler<AsyncResult<Account>> resultHandler) {
+		JsonObject query = new JsonObject()
+				.put("username", username)
+				.put("password", password);
+		JsonObject fields = new JsonObject().put("password", 0);
+		
+		client.findOne(COLL_AGENT, query, fields, ar -> {
 			if (ar.succeeded()) {
 				if (ar.result() == null) {
-					resultHandler.handle(Future.succeededFuture());
+					resultHandler.handle(Future.succeededFuture(null));
 				} else {
-					User result = new User(ar.result());
+					Account result = new Account(ar.result());
 					resultHandler.handle(Future.succeededFuture(result));
 				}
 			} else {
@@ -82,57 +72,6 @@ public class AccountServiceImpl implements AccountService {
 			}
 		});
 	}
-
-	@Override
-	public void retrieveAllUsers(Handler<AsyncResult<List<User>>> resultHandler) {
-		JsonObject query = new JsonObject();
-		client.find(COLL_USER, query, ar -> {
-			if (ar.succeeded()) {
-				if (ar.result() == null) {
-					resultHandler.handle(Future.succeededFuture());
-				} else {
-					List<User> result = ar.result().stream()
-						.map(User::new)
-						.collect(Collectors.toList());
-					resultHandler.handle(Future.succeededFuture(result));
-				}
-			} else {
-				resultHandler.handle(Future.failedFuture(ar.cause()));
-			}
-		});
-	}
-
-	@Override
-	public void retrieveUsersByRole(String role, Handler<AsyncResult<List<User>>> resultHandler) {
-		JsonObject query = new JsonObject().put("role", role);
-		client.find(COLL_USER, query, ar -> {
-			if (ar.succeeded()) {
-				if (ar.result() == null) {
-					resultHandler.handle(Future.succeededFuture());
-				} else {
-					List<User> result = ar.result().stream()
-						.map(User::new)
-						.collect(Collectors.toList());
-					resultHandler.handle(Future.succeededFuture(result));
-				}
-			} else {
-				resultHandler.handle(Future.failedFuture(ar.cause()));
-			}
-		});
-	}
-
-	@Override
-	public void removeUser(String username, Handler<AsyncResult<Void>> resultHandler) {
-		JsonObject query = new JsonObject().put("username", username);
-		client.removeDocument(COLL_USER, query, ar -> {
-			if (ar.succeeded()) {
-				resultHandler.handle(Future.succeededFuture());
-			} else {
-				resultHandler.handle(Future.failedFuture(ar.cause()));
-			}
-		});
-	}
-
 	@Override
 	public void authenticateUser(String username, String password, Handler<AsyncResult<Account>> resultHandler) {
 		JsonObject query = new JsonObject()
@@ -158,7 +97,10 @@ public class AccountServiceImpl implements AccountService {
 	/* ---------------------------- */
 	@Override
 	public void saveAgent(Agent agent, Handler<AsyncResult<Void>> resultHandler) {
-		client.save(COLL_AGENT, agent.toJson(), ar -> {
+		JsonObject query = new JsonObject().put("username", agent.getUsername());
+		UpdateOptions opts = new UpdateOptions().setUpsert(true);
+		JsonObject upd = new JsonObject().put("$set", agent.toJson());
+		client.updateCollectionWithOptions(COLL_AGENT, query, upd, opts, ar -> {
 			if (ar.succeeded()) {
 				resultHandler.handle(Future.succeededFuture());
 			} else {
@@ -167,26 +109,8 @@ public class AccountServiceImpl implements AccountService {
 		});
 	}
 	@Override
-	public void retrieveAgent(String username, Handler<AsyncResult<Agent>> resultHandler) {
-		JsonObject query = new JsonObject().put("username", username);
-		client.findOne(COLL_AGENT, query, null, ar -> {
-			if (ar.succeeded()) {
-				if (ar.result() == null) {
-					resultHandler.handle(Future.succeededFuture());
-				} else {
-					Agent result = new Agent(ar.result());
-					resultHandler.handle(Future.succeededFuture(result));
-				}
-			} else {
-				resultHandler.handle(Future.failedFuture(ar.cause()));
-			}
-		});
-	}
-
-	@Override
 	public void retrieveAllAgents(Handler<AsyncResult<List<Agent>>> resultHandler) {
-		JsonObject query = new JsonObject();
-		client.find(COLL_AGENT, query, ar -> {
+		client.find(COLL_AGENT, new JsonObject(), ar -> {
 			if (ar.succeeded()) {
 				if (ar.result() == null) {
 					resultHandler.handle(Future.succeededFuture());
@@ -201,7 +125,6 @@ public class AccountServiceImpl implements AccountService {
 			}
 		});
 	}
-	
 	@Override
 	public void removeAgent(String username, Handler<AsyncResult<Void>> resultHandler) {
 		JsonObject query = new JsonObject().put("username", username);
@@ -214,7 +137,7 @@ public class AccountServiceImpl implements AccountService {
 		});
 	}
 	
-	@Override
+	/* @Override
 	public void authenticateAgent(String username, String password, Handler<AsyncResult<Account>> resultHandler) {
 		JsonObject query = new JsonObject()
 				.put("username", username)
@@ -233,7 +156,7 @@ public class AccountServiceImpl implements AccountService {
 				resultHandler.handle(Future.failedFuture(ar.cause()));
 			}
 		});
-	}
+	} */
 	
 }
 

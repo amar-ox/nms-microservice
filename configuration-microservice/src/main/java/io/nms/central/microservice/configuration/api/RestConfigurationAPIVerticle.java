@@ -29,11 +29,9 @@ public class RestConfigurationAPIVerticle extends RestAPIVerticle {
 	private static final String API_VERSION = "/v";
 
 	private static final String API_CANDIDATE_CONFIG = "/candidate-config";
-	private static final String API_ALL_CANDIDATE_CONFIG = "/candidate-config/all";
 	private static final String API_ONE_CANDIDATE_CONFIG = "/candidate-config/:nodeId";
 
 	private static final String API_RUNNING_CONFIG = "/running-config";
-	private static final String API_ALL_RUNNING_CONFIG = "/running-config/all";
 	private static final String API_ONE_RUNNING_CONFIG = "/running-config/:nodeId";
 
 
@@ -53,17 +51,16 @@ public class RestConfigurationAPIVerticle extends RestAPIVerticle {
 		// API route handler
 		router.get(API_VERSION).handler(this::apiVersion);
 		
-		// admin only
-		router.get(API_ONE_CANDIDATE_CONFIG).handler(this::apiGetUserCandidateConfig);
-		router.get(API_ONE_RUNNING_CONFIG).handler(this::apiGetRunningConfig);
-		router.delete(API_ALL_CANDIDATE_CONFIG).handler(this::apiDeleteAllCandidateConfigs);
-		router.delete(API_ALL_RUNNING_CONFIG).handler(this::apiDeleteAllRunningConfigs);
-
-		// agent only
-		router.get(API_CANDIDATE_CONFIG).handler(this::apiGetAgentCandidateConfig);
-		router.get(API_RUNNING_CONFIG).handler(this::apiGetUserRunningConfig);
-		router.put(API_ONE_RUNNING_CONFIG).handler(this::apiPutAgentRunningConfig);
-		router.patch(API_ONE_RUNNING_CONFIG).handler(this::apiPatchAgentRunningConfig);
+		router.get(API_ONE_CANDIDATE_CONFIG).handler(this::checkAdminRole).handler(this::apiGetUserCandidateConfig);
+		router.get(API_CANDIDATE_CONFIG).handler(this::checkAgentRole).handler(this::apiGetAgentCandidateConfig);		
+		router.delete(API_ONE_CANDIDATE_CONFIG).handler(this::checkAdminRole).handler(this::apiDeleteCandidateConfig);
+		
+		router.get(API_ONE_RUNNING_CONFIG).handler(this::checkAdminRole).handler(this::apiGetUserRunningConfig);
+		router.get(API_RUNNING_CONFIG).handler(this::checkAgentRole).handler(this::apiGetAgentRunningConfig);
+		router.delete(API_ONE_RUNNING_CONFIG).handler(this::checkAdminRole).handler(this::apiDeleteRunningConfig);
+		
+		router.put(API_RUNNING_CONFIG).handler(this::checkAgentRole).handler(this::apiPutAgentRunningConfig);
+		router.patch(API_RUNNING_CONFIG).handler(this::checkAgentRole).handler(this::apiPatchAgentRunningConfig);
 
 		// get HTTP host and port from configuration, or use default value
 		String host = config().getString("configuration.http.address", "0.0.0.0");
@@ -83,114 +80,77 @@ public class RestConfigurationAPIVerticle extends RestAPIVerticle {
 	}
 
 	private void apiGetUserCandidateConfig(RoutingContext context) {
-		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		if (principal.getString("role").equals("admin")) {
-			int nodeId = Integer.valueOf(context.request().getParam("nodeId"));
-			getCandidateConfig(nodeId, context);
-		} else {
-			forbidden(context);
-		}
+		int nodeId = Integer.valueOf(context.request().getParam("nodeId"));
+		getCandidateConfig(nodeId, context);
 	}
-	private void apiGetUserRunningConfig(RoutingContext context) {
-		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		if (principal.getString("role").equals("admin")) {
-			int nodeId = Integer.valueOf(context.request().getParam("nodeId"));
-			service.getRunningConfig(nodeId, resultHandlerNonEmpty(context));
-		} else {
-			forbidden(context);
-		}
-	}
-	
 	private void apiGetAgentCandidateConfig(RoutingContext context) {
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		if (principal.getString("role").equals("agent")) {
-			int nodeId = principal.getInteger("nodeId");
-			getCandidateConfig(nodeId, context);
-		} else {
-			forbidden(context);
-		}
+		int nodeId = principal.getInteger("nodeId");
+		getCandidateConfig(nodeId, context);
 	}
-	private void apiGetRunningConfig(RoutingContext context) {
-		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		if (principal.getString("role").equals("agent")) {
-			int nodeId = principal.getInteger("nodeId");
-			service.getRunningConfig(nodeId, resultHandlerNonEmpty(context));
-		} else {
-			forbidden(context);
-		}
-	}
-	
-	
 	private void getCandidateConfig(int nodeId, RoutingContext context) {
-			service.getCandidateConfig(nodeId, res -> {
-				if (res.succeeded()) {
-					ConfigObj cg = res.result();
-					if (cg == null) {
-						notFound(context);
-					} else {
-						String ifNoneMatch = context.request().headers().get(HttpHeaders.IF_NONE_MATCH);
-						String etag = String.valueOf(cg.hashCode());
-						if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
-							notChanged(context);
-						} else {
-							context.response()
-							.putHeader(HttpHeaders.ETAG, etag)
-							.putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-							.end(cg.getConfig().toString());
-						}
-					}
+		service.getCandidateConfig(nodeId, res -> {
+			if (res.succeeded()) {
+				ConfigObj cg = res.result();
+				if (cg == null) {
+					notFound(context);
 				} else {
-					internalError(context, res.cause());
+					String ifNoneMatch = context.request().headers().get(HttpHeaders.IF_NONE_MATCH);
+					String etag = String.valueOf(cg.hashCode());
+					if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
+						notChanged(context);
+					} else {
+						context.response()
+						.putHeader(HttpHeaders.ETAG, etag)
+						.putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+						.end(cg.getConfig().toString());
+					}
 				}
-			});
+			} else {
+				internalError(context, res.cause());
+			}
+		});
+	}
+	private void apiDeleteCandidateConfig(RoutingContext context) {
+		int nodeId = Integer.valueOf(context.request().getParam("nodeId"));
+		service.removeCandidateConfig(nodeId, deleteResultHandler(context));
 	}
 	
-	private void apiDeleteAllCandidateConfigs(RoutingContext context) {
-		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		if (principal.getString("role").equals("admin")) {
-			service.removeAllCandidateConfigs(deleteResultHandler(context));
-		} else {
-			forbidden(context);
-		}
+	
+	private void apiGetUserRunningConfig(RoutingContext context) {
+		int nodeId = Integer.valueOf(context.request().getParam("nodeId"));
+		service.getRunningConfig(nodeId, resultHandlerNonEmpty(context));
 	}
-	private void apiDeleteAllRunningConfigs(RoutingContext context) {
+	private void apiGetAgentRunningConfig(RoutingContext context) {
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		if (principal.getString("role").equals("admin")) {
-			service.removeAllRunningConfigs(deleteResultHandler(context));
-		} else {
-			forbidden(context);
-		}
+		int nodeId = principal.getInteger("nodeId");
+		service.getRunningConfig(nodeId, resultHandlerNonEmpty(context));
+	}
+	private void apiDeleteRunningConfig(RoutingContext context) {
+		int nodeId = Integer.valueOf(context.request().getParam("nodeId"));
+		service.removeRunningConfig(nodeId, deleteResultHandler(context));
 	}
 
-
-	// for agent only 
+ 
 	// support PUT and PATCH: json patch an be larger than the whole put object 
 	private void apiPutAgentRunningConfig(RoutingContext context) {
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		if (principal.getString("role").equals("agent")) {
-			int nodeId = principal.getInteger("nodeId");
-			ConfigObj config = new ConfigObj(context.getBodyAsJson());
-			service.upsertRunningConfig(nodeId, config, resultVoidHandler(context, 200));
-		} else {
-			forbidden(context);
-		}
+		int nodeId = principal.getInteger("nodeId");
+		ConfigObj config = new ConfigObj(context.getBodyAsJson());
+		service.upsertRunningConfig(nodeId, config, resultVoidHandler(context, 200));
 	}
 	private void apiPatchAgentRunningConfig(RoutingContext context) {
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		if (principal.getString("role").equals("agent")) {
-			int nodeId = principal.getInteger("nodeId", 0);
-			try {
-				Object patch = Json.decodeValue(context.getBodyAsString());
-				if (patch instanceof JsonArray) {
-					service.updateRunningConfig(nodeId, (JsonArray) patch, resultVoidHandler(context, 200));
-				} else {
-					badRequest(context, new IllegalStateException("patch must be an array"));
-				}
-			} catch (DecodeException e) {
-				badRequest(context, e);
+		int nodeId = principal.getInteger("nodeId", 0);
+		try {
+			Object patch = Json.decodeValue(context.getBodyAsString());
+			if (patch instanceof JsonArray) {
+				service.updateRunningConfig(nodeId, (JsonArray) patch, resultVoidHandler(context, 200));
+			} else {
+				badRequest(context, new IllegalStateException("patch must be an array"));
 			}
-		} else {
-			forbidden(context);
+		} catch (DecodeException e) {
+			badRequest(context, e);
 		}
 	}
 }

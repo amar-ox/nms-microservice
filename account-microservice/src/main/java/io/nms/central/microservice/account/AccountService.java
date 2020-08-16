@@ -1,11 +1,9 @@
 package io.nms.central.microservice.account;
 
 import java.util.List;
-import java.util.Optional;
 
 import io.nms.central.microservice.account.model.Account;
 import io.nms.central.microservice.account.model.Agent;
-import io.nms.central.microservice.account.model.User;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
@@ -41,16 +39,10 @@ public interface AccountService {
 
 	
 	/* API */
-	void saveUser(User user, Handler<AsyncResult<Void>> resultHandler);
-	void retrieveUser(String username, Handler<AsyncResult<User>> resultHandler);
-	void retrieveAllUsers(Handler<AsyncResult<List<User>>> resultHandler);
-	void retrieveUsersByRole(String role, Handler<AsyncResult<List<User>>> resultHandler);
-	void removeUser(String username, Handler<AsyncResult<Void>> resultHandler);
+	void authenticateAgent(String username, String password, Handler<AsyncResult<Account>> resultHandler);
 	void authenticateUser(String username, String password, Handler<AsyncResult<Account>> resultHandler);
 	
 	void saveAgent(Agent agent, Handler<AsyncResult<Void>> resultHandler);
-	void retrieveAgent(String username, Handler<AsyncResult<Agent>> resultHandler);
 	void retrieveAllAgents(Handler<AsyncResult<List<Agent>>> resultHandler);
 	void removeAgent(String username, Handler<AsyncResult<Void>> resultHandler);
-	void authenticateAgent(String username, String password, Handler<AsyncResult<Account>> resultHandler);
 }

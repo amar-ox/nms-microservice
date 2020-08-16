@@ -2,6 +2,8 @@ package io.nms.central.microservice.notification.api;
 
 import io.nms.central.microservice.common.RestAPIVerticle;
 import io.nms.central.microservice.notification.NotificationService;
+import io.nms.central.microservice.notification.model.Event;
+import io.nms.central.microservice.notification.model.Fault;
 import io.nms.central.microservice.notification.model.Status;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
@@ -25,10 +27,13 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 	private static final String API_VERSION = "/v";
 
 	private static final String API_ONE_STATUS = "/status/:statusId";
-	private static final String API_ALL_STATUS = "/status";
+	private static final String API_ALL_STATUS = "/status/all";
 	
+	private static final String API_ONE_EVENT = "/event/:eventId";
+	private static final String API_ALL_EVENT = "/event/all";
 	
-	// private static final String API_AGENT_STATUS = "/ag/status/:statusId";
+	private static final String API_ONE_FAULT = "/fault/:faultId";
+	private static final String API_ALL_FAULT = "/fault/all";
 
 
 	private final NotificationService service;
@@ -46,12 +51,19 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 		// API route handler
 		router.get(API_VERSION).handler(this::apiVersion);
 
-		router.put(API_ONE_STATUS).handler(this::apiPutStatus);
-		router.get(API_ONE_STATUS).handler(this::apiGetStatus);
-		// TODO: get all status
-		router.delete(API_ONE_STATUS).handler(this::apiDeleteStatus);
-		router.delete(API_ALL_STATUS).handler(this::apiDeleteAllStatus);
-
+		router.get(API_ALL_STATUS).handler(this::checkAdminRole).handler(this::apiGetAllStatus); 
+		router.put(API_ONE_STATUS).handler(this::checkAgentRole).handler(this::apiPutStatus);
+		router.delete(API_ONE_STATUS).handler(this::checkAdminRole).handler(this::apiDeleteStatus);
+		
+		router.get(API_ALL_EVENT).handler(this::checkAdminRole).handler(this::apiGetAllEvents); 
+		router.put(API_ONE_EVENT).handler(this::checkAgentRole).handler(this::apiPutEvent);
+		router.delete(API_ONE_EVENT).handler(this::checkAdminRole).handler(this::apiDeleteEvent);
+		
+		router.get(API_ALL_FAULT).handler(this::checkAdminRole).handler(this::apiGetAllFaults); 
+		router.put(API_ONE_FAULT).handler(this::checkAgentRole).handler(this::apiPutFault);
+		router.delete(API_ONE_FAULT).handler(this::checkAdminRole).handler(this::apiDeleteFault);
+		
+		
 		// get HTTP host and port from configuration, or use default value
 		String host = config().getString("notification.http.address", "0.0.0.0");
 		int port = config().getInteger("notification.http.port", 8086);
@@ -71,46 +83,65 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 
 	private void apiPutStatus(RoutingContext context) {
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		if (principal.getString("role").equals("agent")) {
-			int resId = principal.getInteger("nodeId", 0);
-			String statusId = context.request().getParam("statusId");
-			Status status = new Status(context.getBodyAsJson());
-			status.setId(statusId);
-			status.setResId(resId);
-			status.setResType("node");
-			JsonObject result = new JsonObject().put("message", "report processed");
-			service.processStatus(status, resultVoidHandler(context, result));
-		} else {
-			forbidden(context);
-		}
+		int resId = principal.getInteger("nodeId", 0);
+		String statusId = context.request().getParam("statusId");
+		Status status = new Status(context.getBodyAsJson());
+		status.setId(statusId);
+		status.setResId(resId);
+		status.setResType("node");
+		JsonObject result = new JsonObject().put("message", "report processed");
+		service.processStatus(status, resultVoidHandler(context, result));
 	}
 
-	private void apiGetStatus(RoutingContext context) {
-		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		if (principal.getString("role").equals("admin")) {
-			String statusId = context.request().getParam("statusId");		
-			service.retrieveStatus(statusId, resultHandlerNonEmpty(context));
-		} else {
-			forbidden(context);
-		}
+	private void apiGetAllStatus(RoutingContext context) {		
+		service.retrieveAllStatus(resultHandlerNonEmpty(context));
 	}
 
 	private void apiDeleteStatus(RoutingContext context) {
-		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		if (principal.getString("role").equals("admin")) {
-			String statusId = context.request().getParam("statusId");		
+		String statusId = context.request().getParam("statusId");		
 		service.removeStatus(statusId, deleteResultHandler(context));
-		} else {
-			forbidden(context);
-		}
+	}
+	
+	
+	private void apiPutEvent(RoutingContext context) {
+		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+		int origin = principal.getInteger("nodeId");
+		String eventId = context.request().getParam("eventId");
+		Event event = new Event(context.getBodyAsJson());
+		event.setId(eventId);
+		event.setOrigin(origin);
+		JsonObject result = new JsonObject().put("message", "event_saved");
+		service.saveEvent(event, resultVoidHandler(context, result));
 	}
 
-	private void apiDeleteAllStatus(RoutingContext context) {
-		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		if (principal.getString("role").equals("admin")) {
-			service.removeAllStatus(deleteResultHandler(context));
-		} else {
-			forbidden(context);
-		}
+	private void apiGetAllEvents(RoutingContext context) {		
+		service.retrieveAllEvents(resultHandlerNonEmpty(context));
 	}
+
+	private void apiDeleteEvent(RoutingContext context) {
+		String eventId = context.request().getParam("eventId");		
+		service.removeEvent(eventId, deleteResultHandler(context));
+	}
+	
+	
+	private void apiPutFault(RoutingContext context) {
+		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+		int origin = principal.getInteger("nodeId");
+		String faultId = context.request().getParam("faultId");
+		Fault fault = new Fault(context.getBodyAsJson());
+		fault.setId(faultId);
+		fault.setOrigin(origin);
+		JsonObject result = new JsonObject().put("message", "fault_saved");
+		service.saveFault(fault, resultVoidHandler(context, result));
+	}
+
+	private void apiGetAllFaults(RoutingContext context) {		
+		service.retrieveAllFaults(resultHandlerNonEmpty(context));
+	}
+
+	private void apiDeleteFault(RoutingContext context) {
+		String faultId = context.request().getParam("faultId");		
+		service.removeFault(faultId, deleteResultHandler(context));
+	}
+
 }

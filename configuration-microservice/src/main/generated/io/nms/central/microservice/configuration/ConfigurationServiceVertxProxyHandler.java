@@ -138,8 +138,9 @@ public class ConfigurationServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
-        case "removeAllCandidateConfigs": {
-          service.removeAllCandidateConfigs(HelperUtils.createHandler(msg));
+        case "removeCandidateConfig": {
+          service.removeCandidateConfig(json.getValue("nodeId") == null ? null : (json.getLong("nodeId").intValue()),
+                        HelperUtils.createHandler(msg));
           break;
         }
         case "upsertRunningConfig": {
@@ -169,8 +170,9 @@ public class ConfigurationServiceVertxProxyHandler extends ProxyHandler {
                      });
           break;
         }
-        case "removeAllRunningConfigs": {
-          service.removeAllRunningConfigs(HelperUtils.createHandler(msg));
+        case "removeRunningConfig": {
+          service.removeRunningConfig(json.getValue("nodeId") == null ? null : (json.getLong("nodeId").intValue()),
+                        HelperUtils.createHandler(msg));
           break;
         }
         case "computeConfigurations": {

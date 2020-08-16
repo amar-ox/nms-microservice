@@ -378,4 +378,22 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
       .putHeader("content-type", "application/json")
       .end(new JsonObject().put("error", cause).encodePrettily());
   }
+  
+  protected void checkAdminRole(RoutingContext context) {
+		 JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+			if (principal.getString("role", "").equals("admin")) {
+				context.next();
+			} else {
+				forbidden(context);
+			}
+	}
+	 
+  protected void checkAgentRole(RoutingContext context) {
+		 JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+			if (principal.getString("role", "").equals("agent")) {
+				context.next();
+			} else {
+				forbidden(context);
+			}
+	}
 }

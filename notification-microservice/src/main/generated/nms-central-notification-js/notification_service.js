@@ -21,6 +21,8 @@ var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
 var JNotificationService = Java.type('io.nms.central.microservice.notification.NotificationService');
 var Status = Java.type('io.nms.central.microservice.notification.model.Status');
+var Event = Java.type('io.nms.central.microservice.notification.model.Event');
+var Fault = Java.type('io.nms.central.microservice.notification.model.Fault');
 
 /**
  A service interface managing products.
@@ -37,9 +39,14 @@ var NotificationService = function(j_val) {
 
   var __super_processStatus = this.processStatus;
   var __super_saveStatus = this.saveStatus;
-  var __super_retrieveStatus = this.retrieveStatus;
+  var __super_retrieveAllStatus = this.retrieveAllStatus;
   var __super_removeStatus = this.removeStatus;
-  var __super_removeAllStatus = this.removeAllStatus;
+  var __super_saveEvent = this.saveEvent;
+  var __super_retrieveAllEvents = this.retrieveAllEvents;
+  var __super_removeEvent = this.removeEvent;
+  var __super_saveFault = this.saveFault;
+  var __super_retrieveAllFaults = this.retrieveAllFaults;
+  var __super_removeFault = this.removeFault;
   /**
 
    @public
@@ -87,21 +94,20 @@ var NotificationService = function(j_val) {
   /**
 
    @public
-   @param id {string} 
    @param resultHandler {function} 
    */
-  this.retrieveStatus =  function(id, resultHandler) {
+  this.retrieveAllStatus =  function(resultHandler) {
     var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_notificationService["retrieveStatus(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_notificationService["retrieveAllStatus(io.vertx.core.Handler)"](function(ar) {
         if (ar.succeeded()) {
-          __args[1](utils.convReturnDataObject(ar.result()), null);
+          __args[0](utils.convReturnListSetDataObject(ar.result()), null);
         } else {
-          __args[1](null, ar.cause());
+          __args[0](null, ar.cause());
         }
       });
-    } else if (typeof __super_retrieveStatus != 'undefined') {
-      return __super_retrieveStatus.apply(this, __args);
+    } else if (typeof __super_retrieveAllStatus != 'undefined') {
+      return __super_retrieveAllStatus.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -131,20 +137,129 @@ var NotificationService = function(j_val) {
   /**
 
    @public
+   @param event {Object} 
    @param resultHandler {function} 
    */
-  this.removeAllStatus =  function(resultHandler) {
+  this.saveEvent =  function(event, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_notificationService["saveEvent(io.nms.central.microservice.notification.model.Event,io.vertx.core.Handler)"](__args[0]  != null ? new Event(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+        if (ar.succeeded()) {
+          __args[1](null, null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      });
+    } else if (typeof __super_saveEvent != 'undefined') {
+      return __super_saveEvent.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param resultHandler {function} 
+   */
+  this.retrieveAllEvents =  function(resultHandler) {
     var __args = arguments;
     if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_notificationService["removeAllStatus(io.vertx.core.Handler)"](function(ar) {
+      j_notificationService["retrieveAllEvents(io.vertx.core.Handler)"](function(ar) {
         if (ar.succeeded()) {
-          __args[0](null, null);
+          __args[0](utils.convReturnListSetDataObject(ar.result()), null);
         } else {
           __args[0](null, ar.cause());
         }
       });
-    } else if (typeof __super_removeAllStatus != 'undefined') {
-      return __super_removeAllStatus.apply(this, __args);
+    } else if (typeof __super_retrieveAllEvents != 'undefined') {
+      return __super_retrieveAllEvents.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param id {string} 
+   @param resultHandler {function} 
+   */
+  this.removeEvent =  function(id, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_notificationService["removeEvent(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](null, null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      });
+    } else if (typeof __super_removeEvent != 'undefined') {
+      return __super_removeEvent.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param fault {Object} 
+   @param resultHandler {function} 
+   */
+  this.saveFault =  function(fault, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
+      j_notificationService["saveFault(io.nms.central.microservice.notification.model.Fault,io.vertx.core.Handler)"](__args[0]  != null ? new Fault(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
+        if (ar.succeeded()) {
+          __args[1](null, null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      });
+    } else if (typeof __super_saveFault != 'undefined') {
+      return __super_saveFault.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param resultHandler {function} 
+   */
+  this.retrieveAllFaults =  function(resultHandler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_notificationService["retrieveAllFaults(io.vertx.core.Handler)"](function(ar) {
+        if (ar.succeeded()) {
+          __args[0](utils.convReturnListSetDataObject(ar.result()), null);
+        } else {
+          __args[0](null, ar.cause());
+        }
+      });
+    } else if (typeof __super_retrieveAllFaults != 'undefined') {
+      return __super_retrieveAllFaults.apply(this, __args);
+    }
+    else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param id {string} 
+   @param resultHandler {function} 
+   */
+  this.removeFault =  function(id, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      j_notificationService["removeFault(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+        if (ar.succeeded()) {
+          __args[1](null, null);
+        } else {
+          __args[1](null, ar.cause());
+        }
+      });
+    } else if (typeof __super_removeFault != 'undefined') {
+      return __super_removeFault.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };

@@ -1,5 +1,9 @@
 package io.nms.central.microservice.notification;
 
+import java.util.List;
+
+import io.nms.central.microservice.notification.model.Event;
+import io.nms.central.microservice.notification.model.Fault;
 import io.nms.central.microservice.notification.model.Status;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;
@@ -33,9 +37,17 @@ public interface NotificationService {
 	
 	
 	public void processStatus(Status status, Handler<AsyncResult<Void>> resultHandler);
+	
 	public void saveStatus(Status status, Handler<AsyncResult<Void>> resultHandler);
-	public void retrieveStatus(String id, Handler<AsyncResult<Status>> resultHandler);
+	public void retrieveAllStatus(Handler<AsyncResult<List<Status>>> resultHandler);
 	public void removeStatus(String id, Handler<AsyncResult<Void>> resultHandler);
-	public void removeAllStatus(Handler<AsyncResult<Void>> resultHandler);
+	
+	public void saveEvent(Event event, Handler<AsyncResult<Void>> resultHandler);
+	public void retrieveAllEvents(Handler<AsyncResult<List<Event>>> resultHandler);
+	public void removeEvent(String id, Handler<AsyncResult<Void>> resultHandler);
+	
+	public void saveFault(Fault fault, Handler<AsyncResult<Void>> resultHandler);
+	public void retrieveAllFaults(Handler<AsyncResult<List<Fault>>> resultHandler);
+	public void removeFault(String id, Handler<AsyncResult<Void>> resultHandler);
 
 }

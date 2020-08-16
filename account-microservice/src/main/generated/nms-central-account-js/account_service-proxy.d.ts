@@ -29,25 +29,13 @@ export default class AccountService {
 
   initializePersistence(resultHandler: (err: any, result: any) => any) : void;
 
-  saveUser(user: any, resultHandler: (err: any, result: any) => any) : void;
-
-  retrieveUser(username: string, resultHandler: (err: any, result: any) => any) : void;
-
-  retrieveAllUsers(resultHandler: (err: any, result: Array<any>) => any) : void;
-
-  retrieveUsersByRole(role: string, resultHandler: (err: any, result: Array<any>) => any) : void;
-
-  removeUser(username: string, resultHandler: (err: any, result: any) => any) : void;
+  authenticateAgent(username: string, password: string, resultHandler: (err: any, result: any) => any) : void;
 
   authenticateUser(username: string, password: string, resultHandler: (err: any, result: any) => any) : void;
 
   saveAgent(agent: any, resultHandler: (err: any, result: any) => any) : void;
 
-  retrieveAgent(username: string, resultHandler: (err: any, result: any) => any) : void;
-
   retrieveAllAgents(resultHandler: (err: any, result: Array<any>) => any) : void;
 
   removeAgent(username: string, resultHandler: (err: any, result: any) => any) : void;
-
-  authenticateAgent(username: string, password: string, resultHandler: (err: any, result: any) => any) : void;
 }

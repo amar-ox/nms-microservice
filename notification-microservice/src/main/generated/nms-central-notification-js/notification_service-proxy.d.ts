@@ -31,9 +31,19 @@ export default class NotificationService {
 
   saveStatus(status: any, resultHandler: (err: any, result: any) => any) : void;
 
-  retrieveStatus(id: string, resultHandler: (err: any, result: any) => any) : void;
+  retrieveAllStatus(resultHandler: (err: any, result: Array<any>) => any) : void;
 
   removeStatus(id: string, resultHandler: (err: any, result: any) => any) : void;
 
-  removeAllStatus(resultHandler: (err: any, result: any) => any) : void;
+  saveEvent(event: any, resultHandler: (err: any, result: any) => any) : void;
+
+  retrieveAllEvents(resultHandler: (err: any, result: Array<any>) => any) : void;
+
+  removeEvent(id: string, resultHandler: (err: any, result: any) => any) : void;
+
+  saveFault(fault: any, resultHandler: (err: any, result: any) => any) : void;
+
+  retrieveAllFaults(resultHandler: (err: any, result: Array<any>) => any) : void;
+
+  removeFault(id: string, resultHandler: (err: any, result: any) => any) : void;
 }

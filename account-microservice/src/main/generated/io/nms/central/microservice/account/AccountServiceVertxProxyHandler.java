@@ -44,7 +44,6 @@ import io.vertx.serviceproxy.HelperUtils;
 import io.nms.central.microservice.account.model.Account;
 import io.nms.central.microservice.account.model.Agent;
 import java.util.List;
-import io.nms.central.microservice.account.model.User;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 /*
@@ -121,13 +120,9 @@ public class AccountServiceVertxProxyHandler extends ProxyHandler {
           service.initializePersistence(HelperUtils.createHandler(msg));
           break;
         }
-        case "saveUser": {
-          service.saveUser(json.getJsonObject("user") == null ? null : new io.nms.central.microservice.account.model.User(json.getJsonObject("user")),
-                        HelperUtils.createHandler(msg));
-          break;
-        }
-        case "retrieveUser": {
-          service.retrieveUser((java.lang.String)json.getValue("username"),
+        case "authenticateAgent": {
+          service.authenticateAgent((java.lang.String)json.getValue("username"),
+                        (java.lang.String)json.getValue("password"),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
@@ -139,40 +134,6 @@ public class AccountServiceVertxProxyHandler extends ProxyHandler {
                           msg.reply(res.result() == null ? null : res.result().toJson());
                         }
                      });
-          break;
-        }
-        case "retrieveAllUsers": {
-          service.retrieveAllUsers(res -> {
-                        if (res.failed()) {
-                          if (res.cause() instanceof ServiceException) {
-                            msg.reply(res.cause());
-                          } else {
-                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
-                          }
-                        } else {
-                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
-                        }
-                     });
-          break;
-        }
-        case "retrieveUsersByRole": {
-          service.retrieveUsersByRole((java.lang.String)json.getValue("role"),
-                        res -> {
-                        if (res.failed()) {
-                          if (res.cause() instanceof ServiceException) {
-                            msg.reply(res.cause());
-                          } else {
-                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
-                          }
-                        } else {
-                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
-                        }
-                     });
-          break;
-        }
-        case "removeUser": {
-          service.removeUser((java.lang.String)json.getValue("username"),
-                        HelperUtils.createHandler(msg));
           break;
         }
         case "authenticateUser": {
@@ -196,21 +157,6 @@ public class AccountServiceVertxProxyHandler extends ProxyHandler {
                         HelperUtils.createHandler(msg));
           break;
         }
-        case "retrieveAgent": {
-          service.retrieveAgent((java.lang.String)json.getValue("username"),
-                        res -> {
-                        if (res.failed()) {
-                          if (res.cause() instanceof ServiceException) {
-                            msg.reply(res.cause());
-                          } else {
-                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
-                          }
-                        } else {
-                          msg.reply(res.result() == null ? null : res.result().toJson());
-                        }
-                     });
-          break;
-        }
         case "retrieveAllAgents": {
           service.retrieveAllAgents(res -> {
                         if (res.failed()) {
@@ -228,22 +174,6 @@ public class AccountServiceVertxProxyHandler extends ProxyHandler {
         case "removeAgent": {
           service.removeAgent((java.lang.String)json.getValue("username"),
                         HelperUtils.createHandler(msg));
-          break;
-        }
-        case "authenticateAgent": {
-          service.authenticateAgent((java.lang.String)json.getValue("username"),
-                        (java.lang.String)json.getValue("password"),
-                        res -> {
-                        if (res.failed()) {
-                          if (res.cause() instanceof ServiceException) {
-                            msg.reply(res.cause());
-                          } else {
-                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
-                          }
-                        } else {
-                          msg.reply(res.result() == null ? null : res.result().toJson());
-                        }
-                     });
           break;
         }
         default: throw new IllegalStateException("Invalid action: " + action);

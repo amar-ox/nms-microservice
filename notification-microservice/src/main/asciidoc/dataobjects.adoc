@@ -1,5 +1,36 @@
 = Cheatsheets
 
+[[Event]]
+== Event
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[code]]`@code`|`Number (int)`|-
+|[[id]]`@id`|`String`|-
+|[[msg]]`@msg`|`String`|-
+|[[origin]]`@origin`|`Number (int)`|-
+|[[severity]]`@severity`|`String`|-
+|[[timestamp]]`@timestamp`|`String`|-
+|===
+
+[[Fault]]
+== Fault
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[code]]`@code`|`Number (int)`|-
+|[[id]]`@id`|`String`|-
+|[[msg]]`@msg`|`String`|-
+|[[origin]]`@origin`|`Number (int)`|-
+|[[timestamp]]`@timestamp`|`String`|-
+|===
+
 [[Status]]
 == Status
 
@@ -9,7 +40,7 @@
 |===
 ^|Name | Type ^| Description
 |[[id]]`@id`|`String`|-
-|[[resId]]`@resId`|`Number (Integer)`|-
+|[[resId]]`@resId`|`Number (int)`|-
 |[[resType]]`@resType`|`String`|-
 |[[status]]`@status`|`String`|-
 |[[timestamp]]`@timestamp`|`String`|-

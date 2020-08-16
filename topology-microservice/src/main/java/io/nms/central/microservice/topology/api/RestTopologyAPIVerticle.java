@@ -196,24 +196,6 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		.compose(serverCreated -> publishHttpEndpoint(SERVICE_NAME, host, port))
 		.onComplete(future);
 	}
-	
-	 private void checkAdminRole(RoutingContext context) {
-		 JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-			if (principal.getString("role", "").equals("admin")) {
-				context.next();
-			} else {
-				forbidden(context);
-			}
-	}
-	 
-	 private void checkAgentRole(RoutingContext context) {
-		 JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-			if (principal.getString("role", "").equals("agent")) {
-				context.next();
-			} else {
-				forbidden(context);
-			}
-	}
 
 	private void apiVersion(RoutingContext context) { 
 		context.response()

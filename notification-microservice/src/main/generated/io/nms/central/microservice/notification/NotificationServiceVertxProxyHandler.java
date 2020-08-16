@@ -41,9 +41,12 @@ import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
 import io.vertx.serviceproxy.HelperUtils;
 
+import java.util.List;
 import io.nms.central.microservice.notification.model.Status;
+import io.nms.central.microservice.notification.model.Event;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
+import io.nms.central.microservice.notification.model.Fault;
 /*
   Generated Proxy code - DO NOT EDIT
   @author Roger the Robot
@@ -124,9 +127,8 @@ public class NotificationServiceVertxProxyHandler extends ProxyHandler {
                         HelperUtils.createHandler(msg));
           break;
         }
-        case "retrieveStatus": {
-          service.retrieveStatus((java.lang.String)json.getValue("id"),
-                        res -> {
+        case "retrieveAllStatus": {
+          service.retrieveAllStatus(res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
                             msg.reply(res.cause());
@@ -134,7 +136,7 @@ public class NotificationServiceVertxProxyHandler extends ProxyHandler {
                             msg.reply(new ServiceException(-1, res.cause().getMessage()));
                           }
                         } else {
-                          msg.reply(res.result() == null ? null : res.result().toJson());
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
                         }
                      });
           break;
@@ -144,8 +146,52 @@ public class NotificationServiceVertxProxyHandler extends ProxyHandler {
                         HelperUtils.createHandler(msg));
           break;
         }
-        case "removeAllStatus": {
-          service.removeAllStatus(HelperUtils.createHandler(msg));
+        case "saveEvent": {
+          service.saveEvent(json.getJsonObject("event") == null ? null : new io.nms.central.microservice.notification.model.Event(json.getJsonObject("event")),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "retrieveAllEvents": {
+          service.retrieveAllEvents(res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "removeEvent": {
+          service.removeEvent((java.lang.String)json.getValue("id"),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "saveFault": {
+          service.saveFault(json.getJsonObject("fault") == null ? null : new io.nms.central.microservice.notification.model.Fault(json.getJsonObject("fault")),
+                        HelperUtils.createHandler(msg));
+          break;
+        }
+        case "retrieveAllFaults": {
+          service.retrieveAllFaults(res -> {
+                        if (res.failed()) {
+                          if (res.cause() instanceof ServiceException) {
+                            msg.reply(res.cause());
+                          } else {
+                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
+                          }
+                        } else {
+                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
+                        }
+                     });
+          break;
+        }
+        case "removeFault": {
+          service.removeFault((java.lang.String)json.getValue("id"),
+                        HelperUtils.createHandler(msg));
           break;
         }
         default: throw new IllegalStateException("Invalid action: " + action);

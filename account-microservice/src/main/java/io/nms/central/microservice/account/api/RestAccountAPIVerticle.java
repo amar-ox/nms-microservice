@@ -2,7 +2,6 @@ package io.nms.central.microservice.account.api;
 
 import io.nms.central.microservice.account.AccountService;
 import io.nms.central.microservice.account.model.Agent;
-import io.nms.central.microservice.account.model.User;
 import io.nms.central.microservice.common.RestAPIVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.json.Json;
@@ -23,12 +22,8 @@ public class RestAccountAPIVerticle extends RestAPIVerticle {
 	
 	private static final String API_VERSION = "/v";
 	
-	private static final String API_ALL_USERS = "/users";
-	private static final String API_ONE_USER = "/user/:username";
-	private static final String API_USERS_BY_ROLE = "/users/role/:role";
-	
-	private static final String API_ALL_AGENTS = "/agents";
-	private static final String API_ONE_AGENT = "/agent/:agentId";
+	private static final String API_ALL_AGENTS = "/agent/all";
+	private static final String API_ONE_AGENT = "/agent/:username";
 
 	
 	private final AccountService service;
@@ -46,16 +41,10 @@ public class RestAccountAPIVerticle extends RestAPIVerticle {
 		// API route handler
 		router.get(API_VERSION).handler(this::apiVersion);
 		
-		router.put(API_ONE_USER).handler(this::apiPutUser);
-		router.get(API_ONE_USER).handler(this::apiGetUser);
-		router.delete(API_ONE_USER).handler(this::apiDeleteUser);
-		router.get(API_ALL_USERS).handler(this::apiGetAllUsers);
-		router.get(API_USERS_BY_ROLE).handler(this::apiGetUsersByRole);
+		router.put(API_ONE_AGENT).handler(this::checkAdminRole).handler(this::apiPutAgent);
+		router.get(API_ALL_AGENTS).handler(this::checkAdminRole).handler(this::apiGetAllAgents);
+		router.delete(API_ONE_AGENT).handler(this::checkAdminRole).handler(this::apiDeleteAgent);
 		
-		router.put(API_ONE_AGENT).handler(this::apiPutAgent);
-		router.get(API_ONE_AGENT).handler(this::apiGetAgent);
-		router.delete(API_ONE_AGENT).handler(this::apiDeleteAgent);
-		router.get(API_ALL_AGENTS).handler(this::apiGetAllAgents);
 
 		// get HTTP host and port from configuration, or use default value
 		String host = config().getString("account.http.address", "0.0.0.0");
@@ -74,51 +63,18 @@ public class RestAccountAPIVerticle extends RestAPIVerticle {
 				.put("version", "v1").encodePrettily());
 	}
 	
-	
-	private void apiPutUser(RoutingContext context) {
-		final String username = context.request().getParam("username");
-		User user = Json.decodeValue(context.getBodyAsString(), User.class);
-		user.setUsername(username);
-		JsonObject result = new JsonObject()
-				.put("message", "user_added")
-				.put("username", username);
-		service.saveUser(user, resultVoidHandler(context, result));
-	}
-	private void apiGetUser(RoutingContext context) {
-		String username = context.request().getParam("username");		
-		service.retrieveUser(username, resultHandlerNonEmpty(context));
-	}
-	private void apiGetAllUsers(RoutingContext context) {
-		service.retrieveAllUsers(resultHandler(context, Json::encodePrettily));
-	}	
-	private void apiGetUsersByRole(RoutingContext context) {
-		String role = context.request().getParam("role");
-		service.retrieveUsersByRole(role, resultHandler(context, Json::encodePrettily));
-	}
-	private void apiDeleteUser(RoutingContext context) {
-		String username = context.request().getParam("username");		
-		service.removeUser(username, deleteResultHandler(context));
-	}
-	
-	
 	private void apiPutAgent(RoutingContext context) {
-		final String username = context.request().getParam("agentId");
+		String username = context.request().getParam("username");
 		Agent agent = Json.decodeValue(context.getBodyAsString(), Agent.class);
 		agent.setUsername(username);
-		JsonObject result = new JsonObject()
-				.put("message", "agent_added")
-				.put("username", username);
+		JsonObject result = new JsonObject().put("message", "agent_added");
 		service.saveAgent(agent, resultVoidHandler(context, result));
-	}
-	private void apiGetAgent(RoutingContext context) {
-		String username = context.request().getParam("agentId");		
-		service.retrieveAgent(username, resultHandlerNonEmpty(context));
 	}
 	private void apiGetAllAgents(RoutingContext context) {
 		service.retrieveAllAgents(resultHandler(context, Json::encodePrettily));
 	}
 	private void apiDeleteAgent(RoutingContext context) {
-		String username = context.request().getParam("agentId");
+		String username = context.request().getParam("username");
 		service.removeAgent(username, deleteResultHandler(context));
 	}
 }

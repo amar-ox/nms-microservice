@@ -86,15 +86,16 @@
     /**
 
      @public
+     @param nodeId {number} 
      @param resultHandler {function} 
      */
-    this.removeAllCandidateConfigs =  function(resultHandler) {
+    this.removeCandidateConfig =  function(nodeId, resultHandler) {
       var __args = arguments;
-      if (__args.length === 1 && typeof __args[0] === 'function') {
+      if (__args.length === 2 && typeof __args[0] ==='number' && typeof __args[1] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {}, {"action":"removeAllCandidateConfigs"}, function(err, result) { __args[0](err, result && result.body); });
+        j_eb.send(j_address, {"nodeId":__args[0]}, {"action":"removeCandidateConfig"}, function(err, result) { __args[1](err, result && result.body); });
         return;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -155,15 +156,16 @@
     /**
 
      @public
+     @param nodeId {number} 
      @param resultHandler {function} 
      */
-    this.removeAllRunningConfigs =  function(resultHandler) {
+    this.removeRunningConfig =  function(nodeId, resultHandler) {
       var __args = arguments;
-      if (__args.length === 1 && typeof __args[0] === 'function') {
+      if (__args.length === 2 && typeof __args[0] ==='number' && typeof __args[1] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {}, {"action":"removeAllRunningConfigs"}, function(err, result) { __args[0](err, result && result.body); });
+        j_eb.send(j_address, {"nodeId":__args[0]}, {"action":"removeRunningConfig"}, function(err, result) { __args[1](err, result && result.body); });
         return;
       } else throw new TypeError('function invoked with invalid arguments');
     };

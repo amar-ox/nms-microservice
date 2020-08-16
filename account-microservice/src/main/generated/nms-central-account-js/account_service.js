@@ -22,7 +22,6 @@ var JsonObject = io.vertx.core.json.JsonObject;
 var JAccountService = Java.type('io.nms.central.microservice.account.AccountService');
 var Account = Java.type('io.nms.central.microservice.account.model.Account');
 var Agent = Java.type('io.nms.central.microservice.account.model.Agent');
-var User = Java.type('io.nms.central.microservice.account.model.User');
 
 /**
  A service interface managing products.
@@ -38,17 +37,11 @@ var AccountService = function(j_val) {
   var that = this;
 
   var __super_initializePersistence = this.initializePersistence;
-  var __super_saveUser = this.saveUser;
-  var __super_retrieveUser = this.retrieveUser;
-  var __super_retrieveAllUsers = this.retrieveAllUsers;
-  var __super_retrieveUsersByRole = this.retrieveUsersByRole;
-  var __super_removeUser = this.removeUser;
+  var __super_authenticateAgent = this.authenticateAgent;
   var __super_authenticateUser = this.authenticateUser;
   var __super_saveAgent = this.saveAgent;
-  var __super_retrieveAgent = this.retrieveAgent;
   var __super_retrieveAllAgents = this.retrieveAllAgents;
   var __super_removeAgent = this.removeAgent;
-  var __super_authenticateAgent = this.authenticateAgent;
   /**
 
    @public
@@ -73,108 +66,22 @@ var AccountService = function(j_val) {
   /**
 
    @public
-   @param user {Object} 
-   @param resultHandler {function} 
-   */
-  this.saveUser =  function(user, resultHandler) {
-    var __args = arguments;
-    if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
-      j_accountService["saveUser(io.nms.central.microservice.account.model.User,io.vertx.core.Handler)"](__args[0]  != null ? new User(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
-        if (ar.succeeded()) {
-          __args[1](null, null);
-        } else {
-          __args[1](null, ar.cause());
-        }
-      });
-    } else if (typeof __super_saveUser != 'undefined') {
-      return __super_saveUser.apply(this, __args);
-    }
-    else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
    @param username {string} 
+   @param password {string} 
    @param resultHandler {function} 
    */
-  this.retrieveUser =  function(username, resultHandler) {
+  this.authenticateAgent =  function(username, password, resultHandler) {
     var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_accountService["retrieveUser(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
+    if (__args.length === 3 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'function') {
+      j_accountService["authenticateAgent(java.lang.String,java.lang.String,io.vertx.core.Handler)"](__args[0], __args[1], function(ar) {
         if (ar.succeeded()) {
-          __args[1](utils.convReturnDataObject(ar.result()), null);
+          __args[2](utils.convReturnDataObject(ar.result()), null);
         } else {
-          __args[1](null, ar.cause());
+          __args[2](null, ar.cause());
         }
       });
-    } else if (typeof __super_retrieveUser != 'undefined') {
-      return __super_retrieveUser.apply(this, __args);
-    }
-    else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
-   @param resultHandler {function} 
-   */
-  this.retrieveAllUsers =  function(resultHandler) {
-    var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_accountService["retrieveAllUsers(io.vertx.core.Handler)"](function(ar) {
-        if (ar.succeeded()) {
-          __args[0](utils.convReturnListSetDataObject(ar.result()), null);
-        } else {
-          __args[0](null, ar.cause());
-        }
-      });
-    } else if (typeof __super_retrieveAllUsers != 'undefined') {
-      return __super_retrieveAllUsers.apply(this, __args);
-    }
-    else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
-   @param role {string} 
-   @param resultHandler {function} 
-   */
-  this.retrieveUsersByRole =  function(role, resultHandler) {
-    var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_accountService["retrieveUsersByRole(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
-        if (ar.succeeded()) {
-          __args[1](utils.convReturnListSetDataObject(ar.result()), null);
-        } else {
-          __args[1](null, ar.cause());
-        }
-      });
-    } else if (typeof __super_retrieveUsersByRole != 'undefined') {
-      return __super_retrieveUsersByRole.apply(this, __args);
-    }
-    else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
-   @param username {string} 
-   @param resultHandler {function} 
-   */
-  this.removeUser =  function(username, resultHandler) {
-    var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_accountService["removeUser(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
-        if (ar.succeeded()) {
-          __args[1](null, null);
-        } else {
-          __args[1](null, ar.cause());
-        }
-      });
-    } else if (typeof __super_removeUser != 'undefined') {
-      return __super_removeUser.apply(this, __args);
+    } else if (typeof __super_authenticateAgent != 'undefined') {
+      return __super_authenticateAgent.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -227,28 +134,6 @@ var AccountService = function(j_val) {
   /**
 
    @public
-   @param username {string} 
-   @param resultHandler {function} 
-   */
-  this.retrieveAgent =  function(username, resultHandler) {
-    var __args = arguments;
-    if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-      j_accountService["retrieveAgent(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
-        if (ar.succeeded()) {
-          __args[1](utils.convReturnDataObject(ar.result()), null);
-        } else {
-          __args[1](null, ar.cause());
-        }
-      });
-    } else if (typeof __super_retrieveAgent != 'undefined') {
-      return __super_retrieveAgent.apply(this, __args);
-    }
-    else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
    @param resultHandler {function} 
    */
   this.retrieveAllAgents =  function(resultHandler) {
@@ -285,29 +170,6 @@ var AccountService = function(j_val) {
       });
     } else if (typeof __super_removeAgent != 'undefined') {
       return __super_removeAgent.apply(this, __args);
-    }
-    else throw new TypeError('function invoked with invalid arguments');
-  };
-
-  /**
-
-   @public
-   @param username {string} 
-   @param password {string} 
-   @param resultHandler {function} 
-   */
-  this.authenticateAgent =  function(username, password, resultHandler) {
-    var __args = arguments;
-    if (__args.length === 3 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'function') {
-      j_accountService["authenticateAgent(java.lang.String,java.lang.String,io.vertx.core.Handler)"](__args[0], __args[1], function(ar) {
-        if (ar.succeeded()) {
-          __args[2](utils.convReturnDataObject(ar.result()), null);
-        } else {
-          __args[2](null, ar.cause());
-        }
-      });
-    } else if (typeof __super_authenticateAgent != 'undefined') {
-      return __super_authenticateAgent.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };

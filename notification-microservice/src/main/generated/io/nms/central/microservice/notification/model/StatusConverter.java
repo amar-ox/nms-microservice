@@ -51,9 +51,7 @@ public class StatusConverter {
     if (obj.getId() != null) {
       json.put("id", obj.getId());
     }
-    if (obj.getResId() != null) {
-      json.put("resId", obj.getResId());
-    }
+    json.put("resId", obj.getResId());
     if (obj.getResType() != null) {
       json.put("resType", obj.getResType());
     }

@@ -2,17 +2,15 @@ package io.nms.central.microservice.configuration;
 
 import java.util.List;
 
+import io.nms.central.microservice.configuration.model.ConfigObj;
+import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.Route;
 import io.nms.central.microservice.topology.model.Vnode;
-import io.nms.central.microservice.topology.model.Face;
-import io.nms.central.microservice.configuration.model.ConfigObj;
-import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 
 /**
  * A service interface managing products.
@@ -44,15 +42,13 @@ public interface ConfigurationService {
 
 	
 	/* API */
-	// void saveCandidateConfig(ConfigObj config, Handler<AsyncResult<Void>> resultHandler);
 	void getCandidateConfig(int nodeId, Handler<AsyncResult<ConfigObj>> resultHandler);
-	void removeAllCandidateConfigs(Handler<AsyncResult<Void>> resultHandler);
-	
+	void removeCandidateConfig(int nodeId, Handler<AsyncResult<Void>> resultHandler);
 	
 	void upsertRunningConfig(int nodeId, ConfigObj config, Handler<AsyncResult<Void>> resultHandler);
 	void updateRunningConfig(int nodeId, JsonArray patch, Handler<AsyncResult<Void>> resultHandler);
 	void getRunningConfig(int nodeId, Handler<AsyncResult<ConfigObj>> resultHandler);
-	void removeAllRunningConfigs(Handler<AsyncResult<Void>> resultHandler);
+	void removeRunningConfig(int nodeId, Handler<AsyncResult<Void>> resultHandler);
 	
 		
 	/* Processing */

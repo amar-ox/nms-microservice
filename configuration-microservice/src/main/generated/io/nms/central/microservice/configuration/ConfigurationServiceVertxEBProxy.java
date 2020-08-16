@@ -104,15 +104,16 @@ public class ConfigurationServiceVertxEBProxy implements ConfigurationService {
     });
   }
   @Override
-  public  void removeAllCandidateConfigs(Handler<AsyncResult<Void>> resultHandler){
+  public  void removeCandidateConfig(int nodeId, Handler<AsyncResult<Void>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return;
     }
     JsonObject _json = new JsonObject();
+    _json.put("nodeId", nodeId);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "removeAllCandidateConfigs");
+    _deliveryOptions.addHeader("action", "removeCandidateConfig");
     _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
@@ -181,15 +182,16 @@ public class ConfigurationServiceVertxEBProxy implements ConfigurationService {
     });
   }
   @Override
-  public  void removeAllRunningConfigs(Handler<AsyncResult<Void>> resultHandler){
+  public  void removeRunningConfig(int nodeId, Handler<AsyncResult<Void>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return;
     }
     JsonObject _json = new JsonObject();
+    _json.put("nodeId", nodeId);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "removeAllRunningConfigs");
+    _deliveryOptions.addHeader("action", "removeRunningConfig");
     _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));

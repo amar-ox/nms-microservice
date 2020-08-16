@@ -40,11 +40,11 @@ var ConfigurationService = function(j_val) {
 
   var __super_initializePersistence = this.initializePersistence;
   var __super_getCandidateConfig = this.getCandidateConfig;
-  var __super_removeAllCandidateConfigs = this.removeAllCandidateConfigs;
+  var __super_removeCandidateConfig = this.removeCandidateConfig;
   var __super_upsertRunningConfig = this.upsertRunningConfig;
   var __super_updateRunningConfig = this.updateRunningConfig;
   var __super_getRunningConfig = this.getRunningConfig;
-  var __super_removeAllRunningConfigs = this.removeAllRunningConfigs;
+  var __super_removeRunningConfig = this.removeRunningConfig;
   var __super_computeConfigurations = this.computeConfigurations;
   var __super_upsertCandidateConfigs = this.upsertCandidateConfigs;
   /**
@@ -93,20 +93,21 @@ var ConfigurationService = function(j_val) {
   /**
 
    @public
+   @param nodeId {number} 
    @param resultHandler {function} 
    */
-  this.removeAllCandidateConfigs =  function(resultHandler) {
+  this.removeCandidateConfig =  function(nodeId, resultHandler) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_configurationService["removeAllCandidateConfigs(io.vertx.core.Handler)"](function(ar) {
+    if (__args.length === 2 && typeof __args[0] ==='number' && typeof __args[1] === 'function') {
+      j_configurationService["removeCandidateConfig(int,io.vertx.core.Handler)"](__args[0], function(ar) {
         if (ar.succeeded()) {
-          __args[0](null, null);
+          __args[1](null, null);
         } else {
-          __args[0](null, ar.cause());
+          __args[1](null, ar.cause());
         }
       });
-    } else if (typeof __super_removeAllCandidateConfigs != 'undefined') {
-      return __super_removeAllCandidateConfigs.apply(this, __args);
+    } else if (typeof __super_removeCandidateConfig != 'undefined') {
+      return __super_removeCandidateConfig.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };
@@ -182,20 +183,21 @@ var ConfigurationService = function(j_val) {
   /**
 
    @public
+   @param nodeId {number} 
    @param resultHandler {function} 
    */
-  this.removeAllRunningConfigs =  function(resultHandler) {
+  this.removeRunningConfig =  function(nodeId, resultHandler) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_configurationService["removeAllRunningConfigs(io.vertx.core.Handler)"](function(ar) {
+    if (__args.length === 2 && typeof __args[0] ==='number' && typeof __args[1] === 'function') {
+      j_configurationService["removeRunningConfig(int,io.vertx.core.Handler)"](__args[0], function(ar) {
         if (ar.succeeded()) {
-          __args[0](null, null);
+          __args[1](null, null);
         } else {
-          __args[0](null, ar.cause());
+          __args[1](null, ar.cause());
         }
       });
-    } else if (typeof __super_removeAllRunningConfigs != 'undefined') {
-      return __super_removeAllRunningConfigs.apply(this, __args);
+    } else if (typeof __super_removeRunningConfig != 'undefined') {
+      return __super_removeRunningConfig.apply(this, __args);
     }
     else throw new TypeError('function invoked with invalid arguments');
   };

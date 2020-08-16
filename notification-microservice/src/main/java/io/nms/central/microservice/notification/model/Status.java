@@ -10,7 +10,7 @@ public class Status {
 	
 	private String id;
 	
-	private Integer resId;
+	private int resId;
 	private String resType;
 	private String status;
 	private String timestamp; 
@@ -54,11 +54,11 @@ public class Status {
 		this.id = id;
 	}
 
-	public Integer getResId() {
+	public int getResId() {
 		return resId;
 	}
 
-	public void setResId(Integer resId) {
+	public void setResId(int resId) {
 		this.resId = resId;
 	}
 

@@ -69,83 +69,17 @@
     /**
 
      @public
-     @param user {Object} 
-     @param resultHandler {function} 
-     */
-    this.saveUser =  function(user, resultHandler) {
-      var __args = arguments;
-      if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
-        if (closed) {
-          throw new Error('Proxy is closed');
-        }
-        j_eb.send(j_address, {"user":__args[0]}, {"action":"saveUser"}, function(err, result) { __args[1](err, result && result.body); });
-        return;
-      } else throw new TypeError('function invoked with invalid arguments');
-    };
-
-    /**
-
-     @public
      @param username {string} 
+     @param password {string} 
      @param resultHandler {function} 
      */
-    this.retrieveUser =  function(username, resultHandler) {
+    this.authenticateAgent =  function(username, password, resultHandler) {
       var __args = arguments;
-      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
+      if (__args.length === 3 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"username":__args[0]}, {"action":"retrieveUser"}, function(err, result) { __args[1](err, result && result.body); });
-        return;
-      } else throw new TypeError('function invoked with invalid arguments');
-    };
-
-    /**
-
-     @public
-     @param resultHandler {function} 
-     */
-    this.retrieveAllUsers =  function(resultHandler) {
-      var __args = arguments;
-      if (__args.length === 1 && typeof __args[0] === 'function') {
-        if (closed) {
-          throw new Error('Proxy is closed');
-        }
-        j_eb.send(j_address, {}, {"action":"retrieveAllUsers"}, function(err, result) { __args[0](err, result && result.body); });
-        return;
-      } else throw new TypeError('function invoked with invalid arguments');
-    };
-
-    /**
-
-     @public
-     @param role {string} 
-     @param resultHandler {function} 
-     */
-    this.retrieveUsersByRole =  function(role, resultHandler) {
-      var __args = arguments;
-      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-        if (closed) {
-          throw new Error('Proxy is closed');
-        }
-        j_eb.send(j_address, {"role":__args[0]}, {"action":"retrieveUsersByRole"}, function(err, result) { __args[1](err, result && result.body); });
-        return;
-      } else throw new TypeError('function invoked with invalid arguments');
-    };
-
-    /**
-
-     @public
-     @param username {string} 
-     @param resultHandler {function} 
-     */
-    this.removeUser =  function(username, resultHandler) {
-      var __args = arguments;
-      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-        if (closed) {
-          throw new Error('Proxy is closed');
-        }
-        j_eb.send(j_address, {"username":__args[0]}, {"action":"removeUser"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"username":__args[0], "password":__args[1]}, {"action":"authenticateAgent"}, function(err, result) { __args[2](err, result && result.body); });
         return;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -188,23 +122,6 @@
     /**
 
      @public
-     @param username {string} 
-     @param resultHandler {function} 
-     */
-    this.retrieveAgent =  function(username, resultHandler) {
-      var __args = arguments;
-      if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
-        if (closed) {
-          throw new Error('Proxy is closed');
-        }
-        j_eb.send(j_address, {"username":__args[0]}, {"action":"retrieveAgent"}, function(err, result) { __args[1](err, result && result.body); });
-        return;
-      } else throw new TypeError('function invoked with invalid arguments');
-    };
-
-    /**
-
-     @public
      @param resultHandler {function} 
      */
     this.retrieveAllAgents =  function(resultHandler) {
@@ -231,24 +148,6 @@
           throw new Error('Proxy is closed');
         }
         j_eb.send(j_address, {"username":__args[0]}, {"action":"removeAgent"}, function(err, result) { __args[1](err, result && result.body); });
-        return;
-      } else throw new TypeError('function invoked with invalid arguments');
-    };
-
-    /**
-
-     @public
-     @param username {string} 
-     @param password {string} 
-     @param resultHandler {function} 
-     */
-    this.authenticateAgent =  function(username, password, resultHandler) {
-      var __args = arguments;
-      if (__args.length === 3 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'function') {
-        if (closed) {
-          throw new Error('Proxy is closed');
-        }
-        j_eb.send(j_address, {"username":__args[0], "password":__args[1]}, {"action":"authenticateAgent"}, function(err, result) { __args[2](err, result && result.body); });
         return;
       } else throw new TypeError('function invoked with invalid arguments');
     };
