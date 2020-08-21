@@ -866,14 +866,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 
 	/********** PrefixAnn **********/ 
 	@Override
-	public TopologyService addPrefixAnn(PrefixAnn prefixAnn, Handler<AsyncResult<Integer>> resultHandler) {
+	public TopologyService addPrefixAnn(PrefixAnn pa, Handler<AsyncResult<Integer>> resultHandler) {
 		JsonArray params = new JsonArray()
-				.add(prefixAnn.getName())
-				.add(prefixAnn.getOriginId())
-				.add(prefixAnn.getAvailable());
+				.add(pa.getName())
+				.add(pa.getOriginId())
+				.add(pa.getAvailable());
 		insertAndGetId(params, ApiSql.INSERT_PA, paId -> {
 			if (paId.succeeded()) {
-				generateRoutesToPrefix(prefixAnn.getName(), ar -> {
+				generateRoutesToPrefix(pa.getName(), ar -> {
 					if (ar.succeeded()) {
 						resultHandler.handle(Future.succeededFuture(paId.result()));
 					} else {
@@ -887,13 +887,10 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return this;
 	}
 	@Override
-	public TopologyService getPrefixAnn(String prefixAnnId, Handler<AsyncResult<PrefixAnn>> resultHandler) {
-		this.retrieveOne(prefixAnnId, ApiSql.FETCH_PA_BY_ID)
-		.map(option -> option.map(json -> {
-			PrefixAnn pa = new PrefixAnn(json);
-			return pa;
-		}).orElse(null))
-		.onComplete(resultHandler);
+	public TopologyService getPrefixAnn(String paId, Handler<AsyncResult<PrefixAnn>> resultHandler) {
+		this.retrieveOne(paId, ApiSql.FETCH_PA_BY_ID)
+			.map(option -> option.map(PrefixAnn::new).orElse(null))
+			.onComplete(resultHandler);
 		return this;
 	}
 	@Override

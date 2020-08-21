@@ -1,6 +1,8 @@
 package io.nms.central.microservice.topology.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -69,8 +71,8 @@ public class Routing {
 						if (!processedNodes.contains(thisNode)) {
 							int nh = path.peek();
 							Route r = new Route();
-							r.setNodeId(thisNode);
 							r.setPrefix(pa.getValue().getName());
+							r.setNodeId(thisNode);
 							r.setPaId(pa.getValue().getId());
 							r.setNextHopId(nh);
 							r.setFaceId(gb.getFace(thisNode, nh));

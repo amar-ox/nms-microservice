@@ -40,7 +40,8 @@ import io.vertx.servicediscovery.types.HttpEndpoint;
 public class APIGatewayVerticle extends RestAPIVerticle {
 
 	private static final int DEFAULT_PORT = 8787;
-
+	private static final int TOKEN_EXPIRES_MN = 60;
+	
 	private static final Logger logger = LoggerFactory.getLogger(APIGatewayVerticle.class);
 	private JWTAuth jwt;
 
@@ -67,7 +68,7 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 						.setSymmetric(true)));
 
 		// protect the API
-		router.route("/api/*").handler(JWTAuthHandler.create(jwt));
+		router.route("/api/*").handler(JWTAuthHandler. create(jwt));
 
 		// body handler
 		router.route().handler(BodyHandler.create());
@@ -245,7 +246,7 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 						JsonObject principal = new JsonObject()
 								.put("username", acc.getUsername())
 								.put("role", acc.getRole());
-						context.response().end(jwt.generateToken(principal, new JWTOptions().setExpiresInMinutes(60)));
+						context.response().end(jwt.generateToken(principal, new JWTOptions().setExpiresInMinutes(TOKEN_EXPIRES_MN)));
 					} else {
 						unauthorized(context);
 					}
@@ -272,7 +273,7 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 								.put("username", acc.getUsername())
 								.put("role", acc.getRole())
 								.put("nodeId", acc.getNodeId());
-						context.response().end(jwt.generateToken(principal, new JWTOptions().setExpiresInMinutes(60)));
+						context.response().end(jwt.generateToken(principal, new JWTOptions().setExpiresInMinutes(TOKEN_EXPIRES_MN)));
 					} else {
 						unauthorized(context);
 					}

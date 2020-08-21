@@ -1,6 +1,10 @@
 package io.nms.central.microservice.topology.api;
 
+import java.util.Base64;
+import java.util.List;
+
 import io.nms.central.microservice.common.RestAPIVerticle;
+import io.nms.central.microservice.common.functional.Functional;
 import io.nms.central.microservice.topology.TopologyService;
 import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.PrefixAnn;
@@ -21,7 +25,6 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-import java.util.Base64;
 
 
 
@@ -459,20 +462,28 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		String role = principal.getString("role");
 		PrefixAnn pa;
 		if (role.equals("agent")) {
-			int originId = principal.getInteger("nodeId", 0);
-			String name = context.getBodyAsJson().getString("name");
-			// TODO: is valid base64 string
 			pa = new PrefixAnn();
-			pa.setName(name);
+			int originId = principal.getInteger("nodeId");
+			String b64name = context.getBodyAsJson().getString("name");
 			pa.setOriginId(originId);
+			pa.setName(b64name);
 			pa.setAvailable(true);
 		} else if (role.equals("admin")) {
-			 pa = Json.decodeValue(context.getBodyAsString(), PrefixAnn.class);
+			pa = Json.decodeValue(context.getBodyAsString(), PrefixAnn.class);
 		} else {
 			forbidden(context);
 			return;
 		}
 		service.addPrefixAnn(pa, createResultHandler(context, "/prefixAnn"));
+		
+		/* Base64.Decoder decoder = Base64.getDecoder();
+		try {
+			byte[] decName = decoder.decode(b64name);
+			name = Functional.bytesToList(decName);
+		} catch(IllegalArgumentException iae) {
+			badRequest(context, new Throwable("Failed to decode name"));
+			return;
+		} */
 	}
 	private void apiGetPrefixAnn(RoutingContext context) {
 		String prefixAnnId = context.request().getParam("prefixAnnId");			
@@ -497,9 +508,9 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiDeleteOnePaByName(RoutingContext context) {
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
 		if (principal.getString("role").equals("agent")) {
-			int originId = principal.getInteger("nodeId", 0);
-			String name = context.request().getParam("name");
-			service.deletePrefixAnnByName(originId, name, deleteResultHandler(context));
+			String b64name = context.request().getParam("name");
+			int originId = principal.getInteger("nodeId"); 
+			service.deletePrefixAnnByName(originId, b64name, deleteResultHandler(context));
 		} else {
 			forbidden(context);
 		}
@@ -529,15 +540,5 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiDeleteRoute(RoutingContext context) {
 		String routeId = context.request().getParam("routeId");
 		service.deleteRoute(routeId, deleteResultHandler(context));
-	}
-
-	private boolean isValidBase64(String str) {
-		Base64.Decoder decoder = Base64.getDecoder();
-		try {
-			decoder.decode(str);
-			return true;
-		} catch(IllegalArgumentException iae) {
-			return false;
-		}
 	}
 }

@@ -1165,13 +1165,13 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
-  public  TopologyService addPrefixAnn(PrefixAnn prefixAnn, Handler<AsyncResult<Integer>> resultHandler){
+  public  TopologyService addPrefixAnn(PrefixAnn pa, Handler<AsyncResult<Integer>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
     }
     JsonObject _json = new JsonObject();
-    _json.put("prefixAnn", prefixAnn == null ? null : prefixAnn.toJson());
+    _json.put("pa", pa == null ? null : pa.toJson());
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
     _deliveryOptions.addHeader("action", "addPrefixAnn");
@@ -1185,13 +1185,13 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
-  public  TopologyService getPrefixAnn(String prefixAnnId, Handler<AsyncResult<PrefixAnn>> resultHandler){
+  public  TopologyService getPrefixAnn(String paId, Handler<AsyncResult<PrefixAnn>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
     }
     JsonObject _json = new JsonObject();
-    _json.put("prefixAnnId", prefixAnnId);
+    _json.put("paId", paId);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
     _deliveryOptions.addHeader("action", "getPrefixAnn");
@@ -1276,13 +1276,13 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
-  public  TopologyService deletePrefixAnn(String prefixAnnId, Handler<AsyncResult<Void>> resultHandler){
+  public  TopologyService deletePrefixAnn(String paId, Handler<AsyncResult<Void>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
     }
     JsonObject _json = new JsonObject();
-    _json.put("prefixAnnId", prefixAnnId);
+    _json.put("paId", paId);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
     _deliveryOptions.addHeader("action", "deletePrefixAnn");
@@ -1296,14 +1296,14 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
     return this;
   }
   @Override
-  public  TopologyService deletePrefixAnnByName(int originId, String prefixAnnId, Handler<AsyncResult<Void>> resultHandler){
+  public  TopologyService deletePrefixAnnByName(int originId, String name, Handler<AsyncResult<Void>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
     }
     JsonObject _json = new JsonObject();
     _json.put("originId", originId);
-    _json.put("prefixAnnId", prefixAnnId);
+    _json.put("name", name);
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
     _deliveryOptions.addHeader("action", "deletePrefixAnnByName");

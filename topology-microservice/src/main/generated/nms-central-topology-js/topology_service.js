@@ -1344,11 +1344,11 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param prefixAnn {Object} 
+   @param pa {Object} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.addPrefixAnn =  function(prefixAnn, resultHandler) {
+  this.addPrefixAnn =  function(pa, resultHandler) {
     var __args = arguments;
     if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
       j_topologyService["addPrefixAnn(io.nms.central.microservice.topology.model.PrefixAnn,io.vertx.core.Handler)"](__args[0]  != null ? new PrefixAnn(new JsonObject(Java.asJSONCompatible(__args[0]))) : null, function(ar) {
@@ -1368,11 +1368,11 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param prefixAnnId {string} 
+   @param paId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.getPrefixAnn =  function(prefixAnnId, resultHandler) {
+  this.getPrefixAnn =  function(paId, resultHandler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
       j_topologyService["getPrefixAnn(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
@@ -1463,11 +1463,11 @@ var TopologyService = function(j_val) {
   /**
 
    @public
-   @param prefixAnnId {string} 
+   @param paId {string} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.deletePrefixAnn =  function(prefixAnnId, resultHandler) {
+  this.deletePrefixAnn =  function(paId, resultHandler) {
     var __args = arguments;
     if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
       j_topologyService["deletePrefixAnn(java.lang.String,io.vertx.core.Handler)"](__args[0], function(ar) {
@@ -1488,11 +1488,11 @@ var TopologyService = function(j_val) {
 
    @public
    @param originId {number} 
-   @param prefixAnnId {string} 
+   @param name {string} 
    @param resultHandler {function} 
    @return {TopologyService}
    */
-  this.deletePrefixAnnByName =  function(originId, prefixAnnId, resultHandler) {
+  this.deletePrefixAnnByName =  function(originId, name, resultHandler) {
     var __args = arguments;
     if (__args.length === 3 && typeof __args[0] ==='number' && typeof __args[1] === 'string' && typeof __args[2] === 'function') {
       j_topologyService["deletePrefixAnnByName(int,java.lang.String,io.vertx.core.Handler)"](__args[0], __args[1], function(ar) {

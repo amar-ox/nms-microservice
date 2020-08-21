@@ -129,9 +129,9 @@ export default class TopologyService {
 
   updateVxc(id: string, vxc: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  addPrefixAnn(prefixAnn: any, resultHandler: (err: any, result: any) => any) : TopologyService;
+  addPrefixAnn(pa: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  getPrefixAnn(prefixAnnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+  getPrefixAnn(paId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   getAllPrefixAnns(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
@@ -139,9 +139,9 @@ export default class TopologyService {
 
   getPrefixAnnsByVnode(nodeId: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 
-  deletePrefixAnn(prefixAnnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+  deletePrefixAnn(paId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
-  deletePrefixAnnByName(originId: number, prefixAnnId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
+  deletePrefixAnnByName(originId: number, name: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addRoute(route: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 

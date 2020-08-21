@@ -641,12 +641,12 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
           break;
         }
         case "addPrefixAnn": {
-          service.addPrefixAnn(json.getJsonObject("prefixAnn") == null ? null : new io.nms.central.microservice.topology.model.PrefixAnn(json.getJsonObject("prefixAnn")),
+          service.addPrefixAnn(json.getJsonObject("pa") == null ? null : new io.nms.central.microservice.topology.model.PrefixAnn(json.getJsonObject("pa")),
                         HelperUtils.createHandler(msg));
           break;
         }
         case "getPrefixAnn": {
-          service.getPrefixAnn((java.lang.String)json.getValue("prefixAnnId"),
+          service.getPrefixAnn((java.lang.String)json.getValue("paId"),
                         res -> {
                         if (res.failed()) {
                           if (res.cause() instanceof ServiceException) {
@@ -705,13 +705,13 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
           break;
         }
         case "deletePrefixAnn": {
-          service.deletePrefixAnn((java.lang.String)json.getValue("prefixAnnId"),
+          service.deletePrefixAnn((java.lang.String)json.getValue("paId"),
                         HelperUtils.createHandler(msg));
           break;
         }
         case "deletePrefixAnnByName": {
           service.deletePrefixAnnByName(json.getValue("originId") == null ? null : (json.getLong("originId").intValue()),
-                        (java.lang.String)json.getValue("prefixAnnId"),
+                        (java.lang.String)json.getValue("name"),
                         HelperUtils.createHandler(msg));
           break;
         }

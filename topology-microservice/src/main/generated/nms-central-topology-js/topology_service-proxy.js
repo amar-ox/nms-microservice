@@ -970,17 +970,17 @@
     /**
 
      @public
-     @param prefixAnn {Object} 
+     @param pa {Object} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.addPrefixAnn =  function(prefixAnn, resultHandler) {
+    this.addPrefixAnn =  function(pa, resultHandler) {
       var __args = arguments;
       if (__args.length === 2 && (typeof __args[0] === 'object' && __args[0] != null) && typeof __args[1] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"prefixAnn":__args[0]}, {"action":"addPrefixAnn"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"pa":__args[0]}, {"action":"addPrefixAnn"}, function(err, result) { __args[1](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -988,17 +988,17 @@
     /**
 
      @public
-     @param prefixAnnId {string} 
+     @param paId {string} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.getPrefixAnn =  function(prefixAnnId, resultHandler) {
+    this.getPrefixAnn =  function(paId, resultHandler) {
       var __args = arguments;
       if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"prefixAnnId":__args[0]}, {"action":"getPrefixAnn"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"paId":__args[0]}, {"action":"getPrefixAnn"}, function(err, result) { __args[1](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -1059,17 +1059,17 @@
     /**
 
      @public
-     @param prefixAnnId {string} 
+     @param paId {string} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.deletePrefixAnn =  function(prefixAnnId, resultHandler) {
+    this.deletePrefixAnn =  function(paId, resultHandler) {
       var __args = arguments;
       if (__args.length === 2 && typeof __args[0] === 'string' && typeof __args[1] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"prefixAnnId":__args[0]}, {"action":"deletePrefixAnn"}, function(err, result) { __args[1](err, result && result.body); });
+        j_eb.send(j_address, {"paId":__args[0]}, {"action":"deletePrefixAnn"}, function(err, result) { __args[1](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };
@@ -1078,17 +1078,17 @@
 
      @public
      @param originId {number} 
-     @param prefixAnnId {string} 
+     @param name {string} 
      @param resultHandler {function} 
      @return {TopologyService}
      */
-    this.deletePrefixAnnByName =  function(originId, prefixAnnId, resultHandler) {
+    this.deletePrefixAnnByName =  function(originId, name, resultHandler) {
       var __args = arguments;
       if (__args.length === 3 && typeof __args[0] ==='number' && typeof __args[1] === 'string' && typeof __args[2] === 'function') {
         if (closed) {
           throw new Error('Proxy is closed');
         }
-        j_eb.send(j_address, {"originId":__args[0], "prefixAnnId":__args[1]}, {"action":"deletePrefixAnnByName"}, function(err, result) { __args[2](err, result && result.body); });
+        j_eb.send(j_address, {"originId":__args[0], "name":__args[1]}, {"action":"deletePrefixAnnByName"}, function(err, result) { __args[2](err, result && result.body); });
         return that;
       } else throw new TypeError('function invoked with invalid arguments');
     };

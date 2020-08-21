@@ -3,6 +3,7 @@ package io.nms.central.microservice.common.functional;
 import io.vertx.core.Future;
 import io.vertx.core.impl.CompositeFutureImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,4 +37,12 @@ public final class Functional {
         .collect(Collectors.toList())
       );
   }
+  
+  public static List<Byte> bytesToList(byte[] bytes) {
+	    final List<Byte> list = new ArrayList<>();
+	    for (byte b : bytes) {
+	        list.add(b);
+	    }
+	    return list;
+	}
 }

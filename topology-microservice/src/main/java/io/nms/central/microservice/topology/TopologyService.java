@@ -221,10 +221,10 @@ public interface TopologyService {
 	
 	/* PrefixAnn */
 	@Fluent	
-	TopologyService addPrefixAnn(PrefixAnn prefixAnn, Handler<AsyncResult<Integer>> resultHandler);
+	TopologyService addPrefixAnn(PrefixAnn pa, Handler<AsyncResult<Integer>> resultHandler);
 	
 	@Fluent	
-	TopologyService getPrefixAnn(String prefixAnnId, Handler<AsyncResult<PrefixAnn>> resultHandler);
+	TopologyService getPrefixAnn(String paId, Handler<AsyncResult<PrefixAnn>> resultHandler);
 	
 	@Fluent
 	TopologyService getAllPrefixAnns(Handler<AsyncResult<List<PrefixAnn>>> resultHandler);
@@ -236,10 +236,10 @@ public interface TopologyService {
 	TopologyService getPrefixAnnsByVnode(String nodeId, Handler<AsyncResult<List<PrefixAnn>>> resultHandler);
 	
 	@Fluent	
-	TopologyService deletePrefixAnn(String prefixAnnId, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService deletePrefixAnn(String paId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent	
-	TopologyService deletePrefixAnnByName(int originId, String prefixAnnId, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService deletePrefixAnnByName(int originId, String name, Handler<AsyncResult<Void>> resultHandler);
 	
 	
 	/* Route */

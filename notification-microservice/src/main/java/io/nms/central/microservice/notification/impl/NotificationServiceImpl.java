@@ -29,6 +29,9 @@ public class NotificationServiceImpl implements NotificationService {
 	private static final String COLL_EVENT = "event";
 	private static final String COLL_FAULT = "fault";
 	
+	private static final int TIMER_TO_DISCONN_SEC = 2 * 60;
+	private static final int TIMER_TO_DOWN_SEC = 5 * 60;
+	
 	private Map<Integer, Long> healthTimers;
 
 	private final MongoClient client;
@@ -64,7 +67,7 @@ public class NotificationServiceImpl implements NotificationService {
 			healthTimers.remove(resId);
 		}
 		
-		long timerId = vertx.setTimer(TimeUnit.SECONDS.toMillis(60), new Handler<Long>() {
+		long timerId = vertx.setTimer(TimeUnit.SECONDS.toMillis(TIMER_TO_DISCONN_SEC), new Handler<Long>() {
 		    @Override
 		    public void handle(Long aLong) {
 		    	healthTimers.remove(resId);
@@ -141,7 +144,7 @@ public class NotificationServiceImpl implements NotificationService {
 		sendStatusAwaitResult(status);
 		
 		if (s.equals("DISCONN")) {
-			long timerId = vertx.setTimer(TimeUnit.SECONDS.toMillis(120), new Handler<Long>() {
+			long timerId = vertx.setTimer(TimeUnit.SECONDS.toMillis(TIMER_TO_DOWN_SEC), new Handler<Long>() {
 			    @Override
 			    public void handle(Long aLong) {
 			    	healthTimers.remove(resId);
