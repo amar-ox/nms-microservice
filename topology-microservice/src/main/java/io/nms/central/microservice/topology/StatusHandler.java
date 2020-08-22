@@ -85,22 +85,16 @@ public class StatusHandler extends BaseMicroserviceVerticle {
 		int resId = status.getResId();
 		String resStatus = status.getStatus();
 
-		if (resType.equals("node")) {       
+		if (resType.equals("node")) {
 			topologyService.updateNodeStatus(resId, resStatus, ar -> {
 				if (ar.succeeded()) {
-					topologyService.generateAllRoutes(res -> {
-						if (res.succeeded()) {
-							publishUpdateToUI();
-							notifyConfigService();
-						} else {
-							res.cause().printStackTrace();
-						}
-					});
+					publishUpdateToUI();
+					notifyConfigService();
 				} else {
 					ar.cause().printStackTrace();
 				}
 			});
-		} 
+		}
 	}
 	
 	 private void publishUpdateToUI() {

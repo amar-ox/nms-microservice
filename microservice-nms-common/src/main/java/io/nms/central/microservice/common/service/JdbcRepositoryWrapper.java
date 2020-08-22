@@ -31,7 +31,9 @@ public class JdbcRepositoryWrapper {
 	    NODE,
 	    LTP,
 	    LINK,
-	    LC
+	    LC,
+	    ROUTE,
+	    PA
 	}
 	private Entity currentEntity = Entity.NONE;
 	
@@ -331,20 +333,18 @@ public class JdbcRepositoryWrapper {
 	
 	
 	/* --------------------------------- */
+	// TODO: use Entity + UUID to manage TXNs
 	protected Future<Void> beginTxnAndLock(Entity entity, String sql) {
 		Promise<Void> promise = Promise.promise();
 		if (!currentEntity.equals(Entity.NONE)) {
-			logger.info("TXN already started");
 			promise.complete();
 		} else {
-			logger.info("begin TXN: " + entity);
 			client.getConnection(ar -> {
 				if (ar.succeeded()) {
 					globalConn = ar.result();
 					currentEntity = entity;
 					globalConn.setAutoCommit(false, res -> {
 						if (res.succeeded()) {
-							logger.info("lock tables: " + entity);
 							globalConn.execute(sql, promise);
 						} else {
 							promise.fail(res.cause());
@@ -366,9 +366,11 @@ public class JdbcRepositoryWrapper {
 				if (updateResult.getUpdated() == 1) {
 					promise.complete(updateResult.getKeys().getInteger(0));
 				} else {
+					rollbackAndUnlock();
 					promise.fail("Not inserted");
 				}					 
 			} else {
+				rollbackAndUnlock();
 				promise.fail(ar.cause());
 			}
 		});
@@ -379,13 +381,38 @@ public class JdbcRepositoryWrapper {
 		Promise<Void> promise = Promise.promise();
 		globalConn.updateWithParams(sql, params, ar -> {
 			if (ar.succeeded()) {
-				logger.info("sql ok");
 				promise.complete();					 
 			} else {
-				logger.error("sql failed");
+				rollbackAndUnlock();
 				promise.fail(ar.cause());
 			}
 		});
+		return promise.future();
+	}
+	
+	protected Future<Void> globalExecute(String sql) {
+		Promise<Void> promise = Promise.promise();
+		globalConn.update(sql, ar -> {
+			if (ar.succeeded()) {
+				promise.complete();					 
+			} else {
+				rollbackAndUnlock();
+				promise.fail(ar.cause());
+			}
+		});
+		return promise.future();
+	}
+	
+	protected Future<List<JsonObject>> globalRetrieveAll(String sql) { 
+		Promise<List<JsonObject>> promise = Promise.promise();
+		globalConn.query(sql, r -> {
+				if (r.succeeded()) {
+					promise.complete(r.result().getRows());
+				} else {
+					rollbackAndUnlock();
+					promise.fail(r.cause());
+				}
+			});
 		return promise.future();
 	}
 	
@@ -393,10 +420,9 @@ public class JdbcRepositoryWrapper {
 		Promise<List<JsonObject>> promise = Promise.promise();
 		globalConn.queryWithParams(sql, params, r -> {
 				if (r.succeeded()) {
-					logger.info("sql ok");
 					promise.complete(r.result().getRows());
 				} else {
-					logger.error("sql failed");
+					rollbackAndUnlock();
 					promise.fail(r.cause());
 				}
 			});
@@ -407,7 +433,6 @@ public class JdbcRepositoryWrapper {
 		Promise<Optional<JsonObject>> promise = Promise.promise();
 		globalConn.queryWithParams(sql, params, r -> {
 			if (r.succeeded()) {
-				logger.info("sql ok");
 				List<JsonObject> resList = r.result().getRows();
 				if (resList == null || resList.isEmpty()) {
 					promise.complete(Optional.empty());
@@ -415,7 +440,7 @@ public class JdbcRepositoryWrapper {
 					promise.complete(Optional.of(resList.get(0)));
 				}
 			} else {
-				logger.error("sql failed");
+				rollbackAndUnlock();
 				promise.fail(r.cause());
 			}
 		});
@@ -425,26 +450,21 @@ public class JdbcRepositoryWrapper {
 	protected Future<Void> commitTxnAndUnlock(Entity entity) {
 		Promise<Void> promise = Promise.promise();
 		if (!currentEntity.equals(entity)) {
-			logger.info("TXN not ended yet");
 			promise.complete();
 		} else {
 			globalConn.commit(ar -> {
 				currentEntity = Entity.NONE;
 				if (ar.succeeded()) {
-					logger.info("commit TXN ok");
 					globalConn.execute("UNLOCK TABLES", done -> {
 						globalConn.close();
 						globalConn = null;
 						if (done.succeeded()) {
-							logger.info("tables unlocked");
 							promise.complete();
 						} else {
-							logger.error("tables unlock failed");
 							promise.fail(done.cause());
 						}
 					});
 				} else {
-					logger.error("commit TXN failed");
 					globalConn.close();
 					globalConn = null;
 					promise.fail(ar.cause());
@@ -452,6 +472,16 @@ public class JdbcRepositoryWrapper {
 			});
 		}
 		return promise.future();
+	}
+	
+	protected void rollbackAndUnlock() {
+		if (!currentEntity.equals(Entity.NONE)) {
+			globalConn.rollback(ar -> {
+				globalConn.execute("UNLOCK TABLES", done -> {
+					currentEntity = Entity.NONE;
+				});
+			});
+		}
 	}
 
 }

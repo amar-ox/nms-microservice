@@ -25,6 +25,20 @@ public class InternalSql {
 			+ "Vltp WRITE, Vltp AS sLtp WRITE, Vltp AS dLtp WRITE, "
 			+ "VlinkConn WRITE";
 	
+	public static final String LOCK_TABLES_FOR_LC_AUTO = "LOCK TABLES "
+			+ "Vctp WRITE, Vctp AS sCtp WRITE, Vctp AS dCtp WRITE, "
+			+ "Vltp WRITE, Vltp AS sLtp WRITE, Vltp AS dLtp WRITE, "
+			+ "Face WRITE, Face AS sF WRITE, Face as dF WRITE, Vnode WRITE, "
+			+ "Route WRITE, PrefixAnn WRITE, VlinkConn WRITE, Vlink WRITE";
+	
+	public static final String LOCK_TABLES_FOR_ROUTE = "LOCK TABLES "
+			+ "Vctp WRITE, Vctp AS sCtp WRITE, Vctp AS dCtp WRITE, "
+			+ "Vltp WRITE, Vltp AS sLtp WRITE, Vltp AS dLtp WRITE, "
+			+ "Face WRITE, Face AS sF WRITE, Face as dF WRITE, Vnode WRITE, "
+			+ "Route WRITE, PrefixAnn WRITE, VlinkConn WRITE, Vlink WRITE";
+	
+	/* ------------------------------------------ */
+	
 	// get info needed to generate CTPs for a LinkConn
 	public static final String FETCH_CTPGEN_INFO = "SELECT "
 			+ "sLtp.id AS sLtpId, dLtp.id AS dLtpId, sLtp.name AS sLtpName, dLtp.name AS dLtpName "

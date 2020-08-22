@@ -212,7 +212,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 						.compose(r -> commitTxnAndUnlock(Entity.NODE))
 						.onComplete(resultHandler);
 			} else {
-				// TODO: rollback / unlock on fail
 				resultHandler.handle(Future.failedFuture(ar.cause()));
 			}
 		});
@@ -546,6 +545,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 								.compose(r -> commitTxnAndUnlock(Entity.LINK))
 								.onComplete(resultHandler);
 						} else {
+							// TODO: unlock
 							resultHandler.handle(Future.failedFuture("Vlink not found"));
 						}
 					});
@@ -572,28 +572,42 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** VlinkConn **********/
 	@Override
 	public TopologyService addVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<Integer>> resultHandler) {
-		generateCtps(vlinkConn).onComplete(ar -> {
+		beginTxnAndLock(Entity.LC, InternalSql.LOCK_TABLES_FOR_LC_AUTO).onComplete(ar -> {
 			if (ar.succeeded()) {
-				List<Vctp> vctps = ar.result();
-				vlinkConn.setSrcVctpId(vctps.get(0).getId());
-				vlinkConn.setDestVctpId(vctps.get(1).getId());
+				generateCtps(vlinkConn).onComplete(res -> {
+					if (res.succeeded()) {
+						List<Vctp> vctps = res.result();
+						vlinkConn.setSrcVctpId(vctps.get(0).getId());
+						vlinkConn.setDestVctpId(vctps.get(1).getId());
 
-				JsonArray vlc = new JsonArray()
-						.add(vlinkConn.getName())
-						.add(vlinkConn.getLabel())
-						.add(vlinkConn.getDescription())
-						.add(new JsonObject(vlinkConn.getInfo()).encode())
-						.add(vlinkConn.getStatus())
-						.add(vlinkConn.getSrcVctpId())
-						.add(vlinkConn.getDestVctpId())
-						.add(vlinkConn.getVlinkId());
-				insertAndGetId(vlc, ApiSql.INSERT_VLINKCONN, vlcId -> {
-					if (vlcId.succeeded()) {
-						generateFaces(vlcId.result())
-						.map(vlcId.result())
-						.onComplete(resultHandler);
+						JsonArray vlc = new JsonArray()
+								.add(vlinkConn.getName())
+								.add(vlinkConn.getLabel())
+								.add(vlinkConn.getDescription())
+								.add(new JsonObject(vlinkConn.getInfo()).encode())
+								.add(vlinkConn.getStatus())
+								.add(vlinkConn.getSrcVctpId())
+								.add(vlinkConn.getDestVctpId())
+								.add(vlinkConn.getVlinkId());
+						globalInsert(vlc, ApiSql.INSERT_VLINKCONN).onComplete(vlcId -> {
+							if (vlcId.succeeded()) {
+								generateFaces(vlcId.result())
+										.compose(r -> commitTxnAndUnlock(Entity.LC))
+										.onComplete(done -> {
+											if (done.succeeded()) {
+												resultHandler.handle(Future.succeededFuture(vlcId.result()));
+											} else {
+												rollbackAndUnlock();
+												resultHandler.handle(Future.failedFuture(done.cause()));
+											}
+										});
+							} else {
+								resultHandler.handle(Future.failedFuture(vlcId.cause()));
+							}
+						});
 					} else {
-						resultHandler.handle(Future.failedFuture(vlcId.cause()));
+						rollbackAndUnlock();
+						resultHandler.handle(Future.failedFuture(res.cause()));
 					}
 				});
 			} else {
@@ -676,6 +690,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 								.compose(r -> commitTxnAndUnlock(Entity.LC))
 								.onComplete(resultHandler);
 						} else {
+							// TODO: unlock
 							resultHandler.handle(Future.failedFuture("VlinkConn not found"));
 						}
 					});
@@ -867,21 +882,30 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** PrefixAnn **********/ 
 	@Override
 	public TopologyService addPrefixAnn(PrefixAnn pa, Handler<AsyncResult<Integer>> resultHandler) {
-		JsonArray params = new JsonArray()
-				.add(pa.getName())
-				.add(pa.getOriginId())
-				.add(pa.getAvailable());
-		insertAndGetId(params, ApiSql.INSERT_PA, paId -> {
-			if (paId.succeeded()) {
-				generateRoutesToPrefix(pa.getName(), ar -> {
-					if (ar.succeeded()) {
-						resultHandler.handle(Future.succeededFuture(paId.result()));
+		beginTxnAndLock(Entity.PA, InternalSql.LOCK_TABLES_FOR_ROUTE).onComplete(tx -> {
+			if (tx.succeeded()) {
+				JsonArray params = new JsonArray()
+						.add(pa.getName())
+						.add(pa.getOriginId())
+						.add(pa.getAvailable());
+				globalInsert(params, ApiSql.INSERT_PA).onComplete(paId -> {
+					if (paId.succeeded()) {
+						generateRoutesToPrefix(pa.getName(), ar -> {
+							if (ar.succeeded()) {
+								commitTxnAndUnlock(Entity.PA)
+										.map(paId.result())
+										.onComplete(resultHandler);
+							} else {
+								rollbackAndUnlock();
+								resultHandler.handle(Future.failedFuture(ar.cause()));
+							}
+						});
 					} else {
-						resultHandler.handle(Future.failedFuture(ar.cause()));
+						resultHandler.handle(Future.failedFuture(paId.cause()));
 					}
 				});
 			} else {
-				resultHandler.handle(Future.failedFuture(paId.cause()));
+				resultHandler.handle(Future.failedFuture(tx.cause()));
 			}
 		});
 		return this;
@@ -1037,7 +1061,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		this.retrieveMany(params, ApiSql.FETCH_FACES_BY_NODE)
 		.map(rawList -> rawList.stream().map(Face::new)
 				.collect(Collectors.toList()))
-		.onComplete(resultHandler);
+				.onComplete(resultHandler);
 		return this;
 	}
 	@Override
@@ -1047,103 +1071,142 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 
 
-	/* ---------------- BG ------------------ */
-	public Future<List<Vctp>> generateCtps(VlinkConn vlc) {
-		Promise<List<Vctp>> promise = Promise.promise();
-		Future<List<Vctp>> vctps = retrieveOne(vlc.getVlinkId(), InternalSql.FETCH_CTPGEN_INFO)
-				.map(option -> option.orElseGet(JsonObject::new))
-				.compose(info -> routing.computeCtps(vlc.getName(), info));
-
-		vctps.compose(f -> insertVctps(f))
-		.onComplete(promise);
-		return promise.future();
-	}
-
-	public Future<List<Face>> generateFaces(int linkConnId) {
-		Promise<List<Face>> promise = Promise.promise();
-		Future<List<Face>> faces = retrieveOne(linkConnId, InternalSql.FETCH_FACEGEN_INFO)
-				.map(option -> option.orElseGet(JsonObject::new))
-				.compose(info -> routing.computeFaces(info));
-		// TODO: test if any update
-		faces.compose(f -> upsertFaces(f))
-		.onSuccess(r -> {
-			generateAllRoutes(ar -> {
-				if (ar.succeeded()) {
-					promise.complete(faces.result());
-				} else {
-					promise.fail(ar.cause());
-				}
-			});
-		})
-		.onFailure(e -> {
-			promise.fail(e.getCause());
-		});
-		return promise.future();
-	}
+	
 	@Override
 	public TopologyService generateRoutesToPrefix(String name, Handler<AsyncResult<List<Route>>> resultHandler) {
-		Future<List<Node>> nodes = this.retrieveAll(InternalSql.FETCH_ROUTEGEN_NODES)
-				.map(rawList -> rawList.stream()
-						.map(Node::new)
-						.collect(Collectors.toList()));
-		Future<List<Edge>> edges =this.retrieveAll(InternalSql.FETCH_ROUTEGEN_LCS)
-				.map(rawList -> rawList.stream()
-						.map(Edge::new)
-						.collect(Collectors.toList()));
-		JsonArray params = new JsonArray().add(name);
-		Future<List<PrefixAnn>> pas = this.retrieveMany(params, InternalSql.FETCH_ROUTEGEN_PAS_BY_NAME)
-				.map(rawList -> rawList.stream()
-						.map(PrefixAnn::new)
-						.collect(Collectors.toList()));
+		beginTxnAndLock(Entity.ROUTE, InternalSql.LOCK_TABLES_FOR_ROUTE).onComplete(ar -> {
+			if (ar.succeeded()) {
+				Future<List<Node>> nodes = this.globalRetrieveAll(InternalSql.FETCH_ROUTEGEN_NODES)
+						.map(rawList -> rawList.stream()
+								.map(Node::new)
+								.collect(Collectors.toList()));
+				Future<List<Edge>> edges =this.globalRetrieveAll(InternalSql.FETCH_ROUTEGEN_LCS)
+						.map(rawList -> rawList.stream()
+								.map(Edge::new)
+								.collect(Collectors.toList()));
+				JsonArray params = new JsonArray().add(name);
+				Future<List<PrefixAnn>> pas = this.globalRetrieveMany(params, InternalSql.FETCH_ROUTEGEN_PAS_BY_NAME)
+						.map(rawList -> rawList.stream()
+								.map(PrefixAnn::new)
+								.collect(Collectors.toList()));
 
-		Future<List<Route>> routes = CompositeFuture
-				.all(Arrays.asList(nodes, edges, pas))
-				.compose(r -> routing.computeRoutes(nodes.result(), edges.result(), pas.result()));
-		routes.compose(r -> upsertRoutes(r, false))
-			.map(routes.result())
-			.onComplete(resultHandler);
+				Future<List<Route>> routes = CompositeFuture
+						.all(Arrays.asList(nodes, edges, pas))
+						.compose(r -> routing.computeRoutes(nodes.result(), edges.result(), pas.result()));
+				routes
+						.compose(r -> upsertRoutes(r, false))
+						.compose(r -> commitTxnAndUnlock(Entity.ROUTE))
+						.onComplete(done -> {
+							if (done.succeeded()) {
+								resultHandler.handle(Future.succeededFuture(routes.result()));
+							} else {
+								rollbackAndUnlock();
+								resultHandler.handle(Future.failedFuture(done.cause()));
+							}
+						});
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
 		return this;
 	}
 	@Override
 	public TopologyService generateAllRoutes(Handler<AsyncResult<List<Route>>> resultHandler) {
-		Future<List<Node>> nodes = this.retrieveAll(InternalSql.FETCH_ROUTEGEN_NODES)
-				.map(rawList -> rawList.stream()
+		beginTxnAndLock(Entity.ROUTE, InternalSql.LOCK_TABLES_FOR_ROUTE).onComplete(ar -> {
+			if (ar.succeeded()) {
+				Future<List<Node>> nodes = this.globalRetrieveAll(InternalSql.FETCH_ROUTEGEN_NODES)
+						.map(rawList -> rawList.stream()
 						.map(Node::new)
 						.collect(Collectors.toList()));
-		Future<List<Edge>> edges =this.retrieveAll(InternalSql.FETCH_ROUTEGEN_LCS)
-				.map(rawList -> rawList.stream()
+				Future<List<Edge>> edges =this.globalRetrieveAll(InternalSql.FETCH_ROUTEGEN_LCS)
+						.map(rawList -> rawList.stream()
 						.map(Edge::new)
 						.collect(Collectors.toList()));
-		Future<List<PrefixAnn>> pas = this.retrieveAll(InternalSql.FETCH_ROUTEGEN_ALL_PAS)
-				.map(rawList -> rawList.stream()
+				Future<List<PrefixAnn>> pas = this.globalRetrieveAll(InternalSql.FETCH_ROUTEGEN_ALL_PAS)
+						.map(rawList -> rawList.stream()
 						.map(PrefixAnn::new)
 						.collect(Collectors.toList()));
 
-		Future<List<Route>> routes = CompositeFuture
-				.all(Arrays.asList(nodes, edges, pas))
-				.compose(r -> routing.computeRoutes(nodes.result(), edges.result(), pas.result()));
-		routes.compose(r -> upsertRoutes(r, true))
-			.map(routes.result())
-			.onComplete(resultHandler);
-
+				Future<List<Route>> routes = CompositeFuture
+						.all(Arrays.asList(nodes, edges, pas))
+						.compose(r -> routing.computeRoutes(nodes.result(), edges.result(), pas.result()));
+				routes
+						.compose(r -> upsertRoutes(r, false))
+						.compose(r -> commitTxnAndUnlock(Entity.ROUTE))
+						.onComplete(done -> {
+							if (done.succeeded()) {
+								resultHandler.handle(Future.succeededFuture(routes.result()));
+							} else {
+								rollbackAndUnlock();
+								resultHandler.handle(Future.failedFuture(done.cause()));
+							}
+						});
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
 		return this;
+	} 
+	
+	
+	/* ---------------- BG ------------------ */
+	private Future<List<Vctp>> generateCtps(VlinkConn vlc) {
+		// always called after global TXN was init
+		
+		Promise<List<Vctp>> promise = Promise.promise();
+		
+		JsonArray params = new JsonArray().add(vlc.getVlinkId());
+		Future<List<Vctp>> vctps = globalRetrieveOne(params, InternalSql.FETCH_CTPGEN_INFO)
+				.map(option -> option.orElseGet(JsonObject::new))
+				.compose(info -> routing.computeCtps(vlc.getName(), info));
+
+		vctps.compose(f -> insertVctps(f))
+				.onComplete(promise);
+		return promise.future();
 	}
 
-	private Future<List<Integer>> upsertRoutes(List<Route> routes, boolean clean) {
-		Promise<List<Integer>> promise = Promise.promise();
-
+	private Future<List<Face>> generateFaces(int linkConnId) {
+		// always called after global TXN was init
+		
+		Promise<List<Face>> promise = Promise.promise();
+		
+		JsonArray params = new JsonArray().add(linkConnId);
+		Future<List<Face>> faces = globalRetrieveOne(params, InternalSql.FETCH_FACEGEN_INFO)
+				.map(option -> option.orElseGet(JsonObject::new))
+				.compose(info -> routing.computeFaces(info));
+		faces.compose(f -> upsertFaces(f)).onComplete(ar -> {
+			if (ar.succeeded()) {
+				generateAllRoutes(res -> {
+					if (res.succeeded()) {
+						promise.complete(faces.result());
+					} else {
+						promise.fail(res.cause());
+					}
+				});
+			} else {
+				promise.fail(ar.cause());
+			}
+		});
+		return promise.future();
+	}
+	
+	private Future<Void> upsertRoutes(List<Route> routes, boolean clean) {
+		// always called after global TXN was init
+		
+		Promise<Void> promise = Promise.promise();
+		
 		Promise<Void> pClean = Promise.promise();
-		if (clean) {			
-			removeAll(InternalSql.DELETE_ALL_ROUTES, pClean);
+		if (clean) {
+			globalExecute(InternalSql.DELETE_ALL_ROUTES).onComplete(pClean);
 		} else {
 			pClean.complete();
 		}
 
 		pClean.future().onComplete(ar -> {
 			if (ar.succeeded()) {
-				List<Future<Integer>> fts = new ArrayList<>();
+				List<Future> fts = new ArrayList<>();
 				for (Route r : routes) {
-					Promise<Integer> p = Promise.promise();
+					Promise<Void> p = Promise.promise();
 					fts.add(p.future());
 					JsonArray params = new JsonArray()
 						.add(r.getPaId())
@@ -1152,9 +1215,9 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 						.add(r.getFaceId())
 						.add(r.getCost())				
 						.add(r.getOrigin());
-					upsert(params, InternalSql.UPDATE_ROUTE, p.future());
+					globalExecute(params, InternalSql.UPDATE_ROUTE).onComplete(p.future());
 				}
-				Functional.allOfFutures(fts).onComplete(promise);
+				CompositeFuture.all(fts).map((Void) null).onComplete(promise);
 			} else {
 				promise.fail(ar.cause());
 			}
@@ -1162,11 +1225,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return promise.future();
 	}
 
-	private Future<List<Integer>> upsertFaces(List<Face> faces) {
-		Promise<List<Integer>> promise = Promise.promise();
-		List<Future<Integer>> fts = new ArrayList<>();
+	private Future<Void> upsertFaces(List<Face> faces) {
+		// always called after global TXN was init
+		
+		Promise<Void> promise = Promise.promise();
+		
+		List<Future> fts = new ArrayList<>();
 		for (Face face : faces) {
-			Promise<Integer> p = Promise.promise();
+			Promise<Void> p = Promise.promise();
 			fts.add(p.future());
 			JsonArray params = new JsonArray()
 					.add(face.getLabel())
@@ -1176,16 +1242,17 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 					.add(face.getScheme())
 					.add(face.getVctpId())
 					.add(face.getVlinkConnId());
-			upsert(params, InternalSql.UPDATE_FACE, p.future());
+			globalExecute(params, InternalSql.UPDATE_FACE).onComplete(p);
 		}
-		Functional.allOfFutures(fts).onComplete(promise);
+		CompositeFuture.all(fts).map((Void) null).onComplete(promise);
 		return promise.future();
 	}
 
 	private Future<List<Vctp>> insertVctps(List<Vctp> vctps) {
-		// TODO: TXN
+		// always called after global TXN was init
+		
 		Promise<List<Vctp>> promise = Promise.promise();
-
+		
 		List<Future<Void>> fts = new ArrayList<>();
 		for (Vctp vctp : vctps) {
 			Promise<Void> p = Promise.promise();
@@ -1196,7 +1263,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 					.add(vctp.getDescription())
 					.add(new JsonObject().encode())
 					.add(vctp.getVltpId());
-			insertAndGetId(params, ApiSql.INSERT_VCTP, id -> {
+			globalInsert(params, ApiSql.INSERT_VCTP).onComplete(id -> {
 				if (id.succeeded()) {
 					vctp.setId(id.result());
 					p.complete();
@@ -1211,6 +1278,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return promise.future();
 	}
 
+	/* ------------------ STATUS ----------------- */
 	@Override
 	public TopologyService updateNodeStatus(int id, String status, Handler<AsyncResult<Void>> resultHandler) {
 		JsonArray params = new JsonArray().add(status).add(id);
@@ -1230,6 +1298,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 									futures.add(p.future());				
 									updateLtpStatus(ltp.getInteger("id"), status).onComplete(p);
 								}
+								
 								// Update PAs availability
 								Promise<Void> p = Promise.promise();
 								futures.add(p.future());
@@ -1238,11 +1307,19 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 										.add(id);
 								globalExecute(updPAs, InternalSql.UPDATE_PA_STATUS_BY_NODE).onComplete(p);
 
-								CompositeFuture.all(futures).map((Void) null).onComplete(done -> {
-									if (done.succeeded()) {
-										commitTxnAndUnlock(Entity.NODE).onComplete(resultHandler);
+								CompositeFuture.all(futures).map((Void) null).onComplete(arr -> {
+									if (arr.succeeded()) {
+										generateAllRoutes(done -> {
+											if (done.succeeded()) {
+												commitTxnAndUnlock(Entity.NODE).onComplete(resultHandler);
+											} else {
+												rollbackAndUnlock();
+												resultHandler.handle(Future.failedFuture(done.cause()));
+											}
+										});
 									} else {
-										resultHandler.handle(Future.failedFuture(done.cause()));
+										rollbackAndUnlock();
+										resultHandler.handle(Future.failedFuture(arr.cause()));
 									}
 								});
 							} else {
@@ -1261,7 +1338,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 
 	private Future<Void> updateLtpStatus(int id, String status) {
-		// TODO: start/stop txnAndLock
 		Promise<Void> promise = Promise.promise();
 		JsonArray params = new JsonArray().add(status).add(id);
 		globalExecute(params, InternalSql.UPDATE_LTP_STATUS).onComplete(u -> {
@@ -1357,11 +1433,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 						List<JsonObject> faces = ar.result();
 						JsonArray updFace1 = new JsonArray().add(status).add(faces.get(0).getInteger("id"));
 						JsonArray updFace2 = new JsonArray().add(status).add(faces.get(1).getInteger("id"));
-						/* Future<SQLConnection> f = txnBegin();
-						f.compose(r -> txnExecuteNoResult(f.result(), InternalSql.UPDATE_FACE_STATUS, updFace1))
-							.compose(r -> txnExecuteNoResult(f.result(), InternalSql.UPDATE_FACE_STATUS, updFace2))
-							.compose(r -> txnEnd(f.result()))
-							.onComplete(promise); */
 						globalExecute(updFace1, InternalSql.UPDATE_FACE_STATUS)
 							.compose(fOk -> globalExecute(updFace2, InternalSql.UPDATE_FACE_STATUS)).onComplete(promise);
 					} else {

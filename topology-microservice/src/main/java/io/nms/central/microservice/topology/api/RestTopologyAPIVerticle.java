@@ -1,10 +1,6 @@
 package io.nms.central.microservice.topology.api;
 
-import java.util.Base64;
-import java.util.List;
-
 import io.nms.central.microservice.common.RestAPIVerticle;
-import io.nms.central.microservice.common.functional.Functional;
 import io.nms.central.microservice.topology.TopologyService;
 import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.PrefixAnn;
