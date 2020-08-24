@@ -41,7 +41,7 @@ public class FaceConverter {
           break;
         case "scheme":
           if (member.getValue() instanceof String) {
-            obj.setScheme((String)member.getValue());
+            obj.setScheme(io.nms.central.microservice.topology.model.Face.SchemeEnum.valueOf((String)member.getValue()));
           }
           break;
         case "status":
@@ -92,7 +92,7 @@ public class FaceConverter {
       json.put("remote", obj.getRemote());
     }
     if (obj.getScheme() != null) {
-      json.put("scheme", obj.getScheme());
+      json.put("scheme", obj.getScheme().name());
     }
     if (obj.getStatus() != null) {
       json.put("status", obj.getStatus());

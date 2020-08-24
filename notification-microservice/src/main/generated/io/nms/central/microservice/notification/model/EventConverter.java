@@ -36,12 +36,7 @@ public class EventConverter {
           break;
         case "severity":
           if (member.getValue() instanceof String) {
-            obj.setSeverity((String)member.getValue());
-          }
-          break;
-        case "timestamp":
-          if (member.getValue() instanceof String) {
-            obj.setTimestamp((String)member.getValue());
+            obj.setSeverity(io.nms.central.microservice.notification.model.Event.SeverityEnum.valueOf((String)member.getValue()));
           }
           break;
       }
@@ -53,19 +48,20 @@ public class EventConverter {
   }
 
   public static void toJson(Event obj, java.util.Map<String, Object> json) {
-    json.put("code", obj.getCode());
+    if (obj.getCode() != null) {
+      json.put("code", obj.getCode());
+    }
     if (obj.getId() != null) {
       json.put("id", obj.getId());
     }
     if (obj.getMsg() != null) {
       json.put("msg", obj.getMsg());
     }
-    json.put("origin", obj.getOrigin());
-    if (obj.getSeverity() != null) {
-      json.put("severity", obj.getSeverity());
+    if (obj.getOrigin() != null) {
+      json.put("origin", obj.getOrigin());
     }
-    if (obj.getTimestamp() != null) {
-      json.put("timestamp", obj.getTimestamp());
+    if (obj.getSeverity() != null) {
+      json.put("severity", obj.getSeverity().name());
     }
   }
 }

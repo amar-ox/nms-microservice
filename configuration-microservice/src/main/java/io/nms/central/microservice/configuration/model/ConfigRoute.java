@@ -9,9 +9,9 @@ import io.vertx.core.json.JsonObject;
 public class ConfigRoute {
 	
 	private String prefix;
-	private int nextHop;
-	private int cost;
-	private String origin;
+	private Integer faceId;
+	private Integer cost;
+	private Integer origin;
 	
 	public ConfigRoute() {}
 	
@@ -27,7 +27,7 @@ public class ConfigRoute {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(prefix + nextHop + origin);
+		return Objects.hash(prefix + "" + faceId + "" + origin);
 	}
 
 	@Override
@@ -48,27 +48,27 @@ public class ConfigRoute {
 		this.prefix = prefix;
 	}
 
-	public int getNextHop() {
-		return nextHop;
+	public Integer getFaceId() {
+		return faceId;
 	}
 
-	public void setNextHop(int nextHop) {
-		this.nextHop = nextHop;
+	public void setFaceId(Integer faceId) {
+		this.faceId = faceId;
 	}
 
-	public int getCost() {
+	public Integer getCost() {
 		return cost;
 	}
 
-	public void setCost(int cost) {
+	public void setCost(Integer cost) {
 		this.cost = cost;
 	}
 
-	public String getOrigin() {
+	public Integer getOrigin() {
 		return origin;
 	}
 
-	public void setOrigin(String origin) {
+	public void setOrigin(Integer origin) {
 		this.origin = origin;
 	}
 

@@ -195,7 +195,7 @@ public class ApiSql {
 			"    `nextHopId` INT NOT NULL,\n" +
 			"    `faceId` INT NOT NULL,\n" +
 			"    `cost` INT NOT NULL,\n" +
-			"    `origin` VARCHAR(20) NOT NULL,\n" +
+			"    `origin` INT NOT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
 			"    `updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
 			"    UNIQUE KEY (`paId`, `nodeId`),\n" +

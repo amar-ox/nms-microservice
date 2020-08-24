@@ -221,7 +221,7 @@ public interface TopologyService {
 	
 	/* PrefixAnn */
 	@Fluent	
-	TopologyService addPrefixAnn(PrefixAnn pa, Handler<AsyncResult<Integer>> resultHandler);
+	TopologyService addPrefixAnn(PrefixAnn pa, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent	
 	TopologyService getPrefixAnn(String paId, Handler<AsyncResult<PrefixAnn>> resultHandler);

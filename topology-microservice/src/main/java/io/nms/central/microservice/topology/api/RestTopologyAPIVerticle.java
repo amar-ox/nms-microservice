@@ -1,6 +1,10 @@
 package io.nms.central.microservice.topology.api;
 
+import java.util.Base64;
+
 import io.nms.central.microservice.common.RestAPIVerticle;
+import io.nms.central.microservice.notification.model.Status;
+import io.nms.central.microservice.notification.model.Status.StatusEnum;
 import io.nms.central.microservice.topology.TopologyService;
 import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.PrefixAnn;
@@ -14,6 +18,7 @@ import io.nms.central.microservice.topology.model.Vsubnet;
 import io.nms.central.microservice.topology.model.Vtrail;
 import io.nms.central.microservice.topology.model.Vxc;
 import io.vertx.core.Future;
+import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -72,11 +77,12 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_XCS_BY_TRAIL = "/trail/:trailId/xcs";
 	private static final String API_XCS_BY_NODE = "/node/:nodeId/xcs";
 
-	private static final String API_ONE_PA = "/prefixAnn/:prefixAnnId";
-	private static final String API_ONE_PA_BY_NAME = "/prefixAnn/name/:paName";
-	private static final String API_ALL_PAS = "/prefixAnns";
-	private static final String API_PAS_BY_SUBNET = "/subnet/:subnetId/prefixAnns";
-	private static final String API_PAS_BY_NODE = "/node/:nodeId/prefixAnns";
+	private static final String API_PA = "/pa";
+	private static final String API_ONE_PA = "/pa/:paId";
+	private static final String API_ONE_PA_BY_NAME = "/pa/name/:paName";
+	private static final String API_ALL_PAS = "/pas";
+	private static final String API_PAS_BY_SUBNET = "/subnet/:subnetId/pas";
+	private static final String API_PAS_BY_NODE = "/node/:nodeId/pas";
 
 	private static final String API_ONE_ROUTE = "/route/:routeId";	
 	private static final String API_ALL_ROUTES = "/routes";
@@ -169,7 +175,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.get(API_ONE_FACE).handler(this::checkAdminRole).handler(this::apiGetFace);
 		router.delete(API_ONE_FACE).handler(this::checkAdminRole).handler(this::apiDeleteFace);
 
-		router.post(API_ALL_PAS).handler(this::apiAddPrefixAnn);
+		router.post(API_PA).handler(this::apiAddPrefixAnn);
 		router.get(API_ALL_PAS).handler(this::checkAdminRole).handler(this::apiGetAllPrefixAnns);
 		router.get(API_PAS_BY_SUBNET).handler(this::checkAdminRole).handler(this::apiGetPrefixAnnsBySubnet);
 		router.get(API_PAS_BY_NODE).handler(this::checkAdminRole).handler(this::apiGetPrefixAnnsByNode);
@@ -454,32 +460,38 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 
 	// Prefix Announcement API
 	private void apiAddPrefixAnn(RoutingContext context) {
-		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		String role = principal.getString("role");
 		PrefixAnn pa;
-		if (role.equals("agent")) {
-			pa = new PrefixAnn();
-			int originId = principal.getInteger("nodeId");
-			String b64name = context.getBodyAsJson().getString("name");
-			pa.setOriginId(originId);
-			pa.setName(b64name);
-			pa.setAvailable(true);
-		} else if (role.equals("admin")) {
+		try {
 			pa = Json.decodeValue(context.getBodyAsString(), PrefixAnn.class);
-		} else {
-			forbidden(context);
+		} catch (DecodeException e) {
+			badRequest(context, new Throwable("wrong or missing request body"));
 			return;
 		}
-		service.addPrefixAnn(pa, createResultHandler(context, "/prefixAnn"));
 		
-		/* Base64.Decoder decoder = Base64.getDecoder();
-		try {
-			byte[] decName = decoder.decode(b64name);
-			name = Functional.bytesToList(decName);
-		} catch(IllegalArgumentException iae) {
-			badRequest(context, new Throwable("Failed to decode name"));
+		if (pa.getName() == null) {
+			badRequest(context, new Throwable("name is missing"));
 			return;
-		} */
+		}
+		
+		if (!isBase64(pa.getName())) {
+			badRequest(context, new Throwable("name must be a base64 string"));
+			return;
+		}
+		
+		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+		String role = principal.getString("role");
+		
+		if (role.equals("agent")) {
+			int originId = principal.getInteger("nodeId");
+			pa.setOriginId(originId);
+			pa.setAvailable(true);
+		} else if (role.equals("admin")) {
+			if (pa.getOriginId() == null) {
+				badRequest(context, new Throwable("origin ID is missing"));
+				return;
+			}
+		}
+		service.addPrefixAnn(pa, createdResultHandler(context));
 	}
 	private void apiGetPrefixAnn(RoutingContext context) {
 		String prefixAnnId = context.request().getParam("prefixAnnId");			
@@ -503,13 +515,9 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	
 	private void apiDeleteOnePaByName(RoutingContext context) {
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		if (principal.getString("role").equals("agent")) {
-			String b64name = context.request().getParam("name");
-			int originId = principal.getInteger("nodeId"); 
-			service.deletePrefixAnnByName(originId, b64name, deleteResultHandler(context));
-		} else {
-			forbidden(context);
-		}
+		String name = context.request().getParam("name");
+		int originId = principal.getInteger("nodeId"); 
+		service.deletePrefixAnnByName(originId, name, deleteResultHandler(context));
 	}
 
 
@@ -536,5 +544,18 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private void apiDeleteRoute(RoutingContext context) {
 		String routeId = context.request().getParam("routeId");
 		service.deleteRoute(routeId, deleteResultHandler(context));
+	}
+	
+	private boolean isBase64(String str) {
+		if (str.isEmpty()) {
+			return false;
+		}
+		Base64.Decoder decoder = Base64.getDecoder();
+		try {
+			decoder.decode(str);
+			return true;
+		} catch(IllegalArgumentException iae) {
+			return false;
+		}
 	}
 }

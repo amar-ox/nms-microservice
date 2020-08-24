@@ -34,11 +34,6 @@ public class FaultConverter {
             obj.setOrigin(((Number)member.getValue()).intValue());
           }
           break;
-        case "timestamp":
-          if (member.getValue() instanceof String) {
-            obj.setTimestamp((String)member.getValue());
-          }
-          break;
       }
     }
   }
@@ -48,16 +43,17 @@ public class FaultConverter {
   }
 
   public static void toJson(Fault obj, java.util.Map<String, Object> json) {
-    json.put("code", obj.getCode());
+    if (obj.getCode() != null) {
+      json.put("code", obj.getCode());
+    }
     if (obj.getId() != null) {
       json.put("id", obj.getId());
     }
     if (obj.getMsg() != null) {
       json.put("msg", obj.getMsg());
     }
-    json.put("origin", obj.getOrigin());
-    if (obj.getTimestamp() != null) {
-      json.put("timestamp", obj.getTimestamp());
+    if (obj.getOrigin() != null) {
+      json.put("origin", obj.getOrigin());
     }
   }
 }

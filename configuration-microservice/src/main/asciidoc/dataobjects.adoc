@@ -20,10 +20,10 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[id]]`@id`|`Number (int)`|-
+|[[id]]`@id`|`Number (Integer)`|-
 |[[local]]`@local`|`String`|-
 |[[remote]]`@remote`|`String`|-
-|[[scheme]]`@scheme`|`String`|-
+|[[scheme]]`@scheme`|`link:enums.html#SchemeEnum[SchemeEnum]`|-
 |===
 
 [[ConfigObj]]
@@ -46,9 +46,9 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[cost]]`@cost`|`Number (int)`|-
-|[[nextHop]]`@nextHop`|`Number (int)`|-
-|[[origin]]`@origin`|`String`|-
+|[[cost]]`@cost`|`Number (Integer)`|-
+|[[faceId]]`@faceId`|`Number (Integer)`|-
+|[[origin]]`@origin`|`Number (Integer)`|-
 |[[prefix]]`@prefix`|`String`|-
 |===
 

@@ -167,11 +167,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public void computeConfigurations(List<Route> routes, List<Face> faces, List<Vnode> nodes, 
 			Handler<AsyncResult<List<ConfigObj>>> resultHandler) {
 		
-		// Timestamp ts = new Timestamp(new Date().getTime());
 		Map<Integer,ConfigObj> configsMap = new HashMap<Integer,ConfigObj>();
 		for (Vnode node : nodes) {
 				ConfigObj c = new ConfigObj();
-				// c.setTimestamp(ts.toString());
 				c.setNodeId(node.getId());
 				configsMap.put(node.getId(), c);
 		}
@@ -187,12 +185,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 				configsMap.get(nodeId).getConfig().addFace(cFace);
 			}
 		}
-		// TODO: in routing => cond: not DOWN
 		for (Route route : routes) {
 			int nodeId = route.getNodeId();
 			ConfigRoute cRoute = new ConfigRoute();
 			cRoute.setPrefix(route.getPrefix());
-			cRoute.setNextHop(route.getFaceId());
+			cRoute.setFaceId(route.getFaceId());
 			cRoute.setCost(route.getCost());
 			cRoute.setOrigin(route.getOrigin());
 			configsMap.get(nodeId).getConfig().addRoute(cRoute);
@@ -251,7 +248,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			
 			return patched.toString();
 		} catch (javax.json.JsonException e) {
-			throw new IllegalArgumentException("Error in json patch");
+			throw new IllegalArgumentException("error in json patch");
 		}
 	}
 }

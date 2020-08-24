@@ -13,6 +13,8 @@ import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.DecodeException;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -59,24 +61,25 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 
 		enableCorsSupport(router);
 
-
 		// Create a JWT Auth Provider
 		jwt = JWTAuth.create(vertx, new JWTAuthOptions()
 				.addPubSecKey(new PubSecKeyOptions()
 						.setAlgorithm("HS256")
 						.setPublicKey("keyboard cat")
 						.setSymmetric(true)));
-
-		// protect the API
-		router.route("/api/*").handler(JWTAuthHandler. create(jwt));
-
+		
 		// body handler
 		router.route().handler(BodyHandler.create());
-
+		
 		// this route is excluded from the auth handler
-		router.post("/login/agent").handler(this::agentLoginHandler);
-		router.post("/login/user").handler(this::userLoginHandler);
-		router.post("/logout").handler(this::logoutHandler);
+		router.post("/api/login/agent").handler(this::agentLoginHandler);
+		router.post("/api/login/user").handler(this::userLoginHandler);
+
+		// protect the API
+		router.route("/api/*").handler(JWTAuthHandler.create(jwt));
+		
+		// logout current client
+		router.post("/api/logout").handler(this::logoutHandler);
 
 		// version handler
 		router.get("/api/v").handler(this::apiVersion);
@@ -246,21 +249,35 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 						JsonObject principal = new JsonObject()
 								.put("username", acc.getUsername())
 								.put("role", acc.getRole());
-						context.response().end(jwt.generateToken(principal, new JWTOptions().setExpiresInMinutes(TOKEN_EXPIRES_MN)));
+						context.response()
+								.setStatusCode(200)
+								.end(jwt.generateToken(principal, new JWTOptions().setExpiresInMinutes(TOKEN_EXPIRES_MN)));
 					} else {
 						unauthorized(context);
 					}
 				});
 			} else {
-				internalError(context, ar.cause());
+				badRequest(context, ar.cause());
 			}
 		});
 	}
 
 	private void agentLoginHandler(RoutingContext context) {
-		String username = context.getBodyAsJson().getString("username");
-		String password = context.getBodyAsJson().getString("password");
-
+		JsonObject requestBody;
+		try {
+			requestBody = (JsonObject) Json.decodeValue(context.getBodyAsString());
+		} catch (DecodeException e) {
+			badRequest(context, new Throwable("wrong or missing request body"));
+			return;
+		}
+		
+		String username = requestBody.getString("username");
+		String password = requestBody.getString("password");
+		if ((username == null) || (password == null)) {
+			badRequest(context, new Throwable("username and/or password are missing"));
+			return;
+		}
+		
 		EventBusService.getProxy(discovery, AccountService.class, ar -> {
 			if (ar.succeeded()) {
 				AccountService service = ar.result();
@@ -273,13 +290,13 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 								.put("username", acc.getUsername())
 								.put("role", acc.getRole())
 								.put("nodeId", acc.getNodeId());
-						context.response().end(jwt.generateToken(principal, new JWTOptions().setExpiresInMinutes(TOKEN_EXPIRES_MN)));
+						responseToken(context, jwt.generateToken(principal, new JWTOptions().setExpiresInMinutes(TOKEN_EXPIRES_MN)));
 					} else {
 						unauthorized(context);
 					}
 				});
 			} else {
-				internalError(context, ar.cause());
+				badRequest(context, ar.cause());
 			}
 		});
 	}

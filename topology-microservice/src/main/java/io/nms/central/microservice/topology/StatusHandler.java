@@ -5,10 +5,12 @@ import java.util.Map;
 
 import io.nms.central.microservice.common.BaseMicroserviceVerticle;
 import io.nms.central.microservice.notification.model.Status;
+import io.nms.central.microservice.notification.model.Status.StatusEnum;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -35,7 +37,8 @@ public class StatusHandler extends BaseMicroserviceVerticle {
 					if (ar.succeeded()) {
 						MessageConsumer<JsonObject> statusConsumer = ar.result();
 						statusConsumer.handler(message -> {
-							Status status = new Status(message.body());
+							// Status status = new Status(message.body());
+							Status status = Json.decodeValue(message.body().encode(), Status.class);
 							initHandleStatus(status, message);
 						});
 						promise.complete();
@@ -52,13 +55,13 @@ public class StatusHandler extends BaseMicroserviceVerticle {
 		}
 		int resId = status.getResId();
 		if (statusTimers.containsKey(resId)) {
-			if (status.getStatus().equals("UP") || status.getStatus().equals("DISCONN")) {
+			if (status.getStatus().equals(StatusEnum.UP) || status.getStatus().equals(StatusEnum.DISCONN)) {
 				vertx.cancelTimer(statusTimers.get(resId));
 				statusTimers.remove(resId);
 				dispatchStatus(status);
 			}
 		} else {
-			if (status.getStatus().equals("UP") || status.getStatus().equals("DISCONN")) {
+			if (status.getStatus().equals(StatusEnum.UP) || status.getStatus().equals(StatusEnum.DISCONN)) {
 				dispatchStatus(status);
 			} else {
 				long timerId = vertx.setTimer(5000, new Handler<Long>() {
@@ -83,7 +86,7 @@ public class StatusHandler extends BaseMicroserviceVerticle {
 	private void dispatchStatus(Status status) {
 		String resType = status.getResType();
 		int resId = status.getResId();
-		String resStatus = status.getStatus();
+		String resStatus = status.getStatus().getValue();
 
 		if (resType.equals("node")) {
 			topologyService.updateNodeStatus(resId, resStatus, ar -> {

@@ -20,7 +20,7 @@ public class PrefixAnn {
 	private String updated;
 
 	private boolean available; 
-	private int originId;
+	private Integer originId;
 	
 	/*-----------------------------------------------*/
 	public PrefixAnn() {}
@@ -90,11 +90,11 @@ public class PrefixAnn {
 		this.name = name;
 	}
 
-	public int getOriginId() {
+	public Integer getOriginId() {
 		return originId;
 	}
 
-	public void setOriginId(int originId) {
+	public void setOriginId(Integer originId) {
 		this.originId = originId;
 	}
 

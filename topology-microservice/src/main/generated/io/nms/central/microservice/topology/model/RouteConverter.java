@@ -45,8 +45,8 @@ public class RouteConverter {
           }
           break;
         case "origin":
-          if (member.getValue() instanceof String) {
-            obj.setOrigin((String)member.getValue());
+          if (member.getValue() instanceof Number) {
+            obj.setOrigin(((Number)member.getValue()).intValue());
           }
           break;
         case "paId":
@@ -73,18 +73,28 @@ public class RouteConverter {
   }
 
   public static void toJson(Route obj, java.util.Map<String, Object> json) {
-    json.put("cost", obj.getCost());
+    if (obj.getCost() != null) {
+      json.put("cost", obj.getCost());
+    }
     if (obj.getCreated() != null) {
       json.put("created", obj.getCreated());
     }
-    json.put("faceId", obj.getFaceId());
+    if (obj.getFaceId() != null) {
+      json.put("faceId", obj.getFaceId());
+    }
     json.put("id", obj.getId());
-    json.put("nextHopId", obj.getNextHopId());
-    json.put("nodeId", obj.getNodeId());
+    if (obj.getNextHopId() != null) {
+      json.put("nextHopId", obj.getNextHopId());
+    }
+    if (obj.getNodeId() != null) {
+      json.put("nodeId", obj.getNodeId());
+    }
     if (obj.getOrigin() != null) {
       json.put("origin", obj.getOrigin());
     }
-    json.put("paId", obj.getPaId());
+    if (obj.getPaId() != null) {
+      json.put("paId", obj.getPaId());
+    }
     if (obj.getPrefix() != null) {
       json.put("prefix", obj.getPrefix());
     }

@@ -31,7 +31,7 @@ public class ConfigFaceConverter {
           break;
         case "scheme":
           if (member.getValue() instanceof String) {
-            obj.setScheme((String)member.getValue());
+            obj.setScheme(io.nms.central.microservice.topology.model.Face.SchemeEnum.valueOf((String)member.getValue()));
           }
           break;
       }
@@ -43,7 +43,9 @@ public class ConfigFaceConverter {
   }
 
   public static void toJson(ConfigFace obj, java.util.Map<String, Object> json) {
-    json.put("id", obj.getId());
+    if (obj.getId() != null) {
+      json.put("id", obj.getId());
+    }
     if (obj.getLocal() != null) {
       json.put("local", obj.getLocal());
     }
@@ -51,7 +53,7 @@ public class ConfigFaceConverter {
       json.put("remote", obj.getRemote());
     }
     if (obj.getScheme() != null) {
-      json.put("scheme", obj.getScheme());
+      json.put("scheme", obj.getScheme().name());
     }
   }
 }

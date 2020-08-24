@@ -3,6 +3,7 @@ package io.nms.central.microservice.configuration.api;
 import io.nms.central.microservice.common.RestAPIVerticle;
 import io.nms.central.microservice.configuration.ConfigurationService;
 import io.nms.central.microservice.configuration.model.ConfigObj;
+import io.nms.central.microservice.notification.model.Fault;
 import io.nms.central.microservice.notification.model.Status;
 import io.vertx.core.Future;
 import io.vertx.core.json.DecodeException;
@@ -101,9 +102,10 @@ public class RestConfigurationAPIVerticle extends RestAPIVerticle {
 						notChanged(context);
 					} else {
 						context.response()
-						.putHeader(HttpHeaders.ETAG, etag)
-						.putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-						.end(cg.getConfig().toString());
+								.setStatusCode(200)
+								.putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+								.putHeader(HttpHeaders.ETAG, etag)
+								.end(cg.getConfig().toString());
 					}
 				}
 			} else {
@@ -132,25 +134,32 @@ public class RestConfigurationAPIVerticle extends RestAPIVerticle {
 	}
 
  
-	// support PUT and PATCH: json patch an be larger than the whole put object 
+	// support PUT and PATCH: json patch an be larger than the whole put object
 	private void apiPutAgentRunningConfig(RoutingContext context) {
+		ConfigObj config;
+		try {
+			config = Json.decodeValue(context.getBodyAsString(), ConfigObj.class);
+		} catch (DecodeException e) {
+			badRequest(context, new Throwable("wrong or missing request body"));
+			return;
+		}
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
 		int nodeId = principal.getInteger("nodeId");
-		ConfigObj config = new ConfigObj(context.getBodyAsJson());
-		service.upsertRunningConfig(nodeId, config, resultVoidHandler(context, 200));
+		service.upsertRunningConfig(nodeId, config, createdResultHandler(context));
 	}
+	
 	private void apiPatchAgentRunningConfig(RoutingContext context) {
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		int nodeId = principal.getInteger("nodeId", 0);
+		int nodeId = principal.getInteger("nodeId");
 		try {
 			Object patch = Json.decodeValue(context.getBodyAsString());
 			if (patch instanceof JsonArray) {
-				service.updateRunningConfig(nodeId, (JsonArray) patch, resultVoidHandler(context, 200));
+				service.updateRunningConfig(nodeId, (JsonArray) patch, createdResultHandler(context));
 			} else {
-				badRequest(context, new IllegalStateException("patch must be an array"));
+				badRequest(context, new IllegalStateException("json patch must be an array"));
 			}
 		} catch (DecodeException e) {
-			badRequest(context, e);
+			badRequest(context, new Throwable("wrong or missing request body"));
 		}
 	}
 }

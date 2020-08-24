@@ -19,14 +19,14 @@ public class ConfigRouteConverter {
             obj.setCost(((Number)member.getValue()).intValue());
           }
           break;
-        case "nextHop":
+        case "faceId":
           if (member.getValue() instanceof Number) {
-            obj.setNextHop(((Number)member.getValue()).intValue());
+            obj.setFaceId(((Number)member.getValue()).intValue());
           }
           break;
         case "origin":
-          if (member.getValue() instanceof String) {
-            obj.setOrigin((String)member.getValue());
+          if (member.getValue() instanceof Number) {
+            obj.setOrigin(((Number)member.getValue()).intValue());
           }
           break;
         case "prefix":
@@ -43,8 +43,12 @@ public class ConfigRouteConverter {
   }
 
   public static void toJson(ConfigRoute obj, java.util.Map<String, Object> json) {
-    json.put("cost", obj.getCost());
-    json.put("nextHop", obj.getNextHop());
+    if (obj.getCost() != null) {
+      json.put("cost", obj.getCost());
+    }
+    if (obj.getFaceId() != null) {
+      json.put("faceId", obj.getFaceId());
+    }
     if (obj.getOrigin() != null) {
       json.put("origin", obj.getOrigin());
     }

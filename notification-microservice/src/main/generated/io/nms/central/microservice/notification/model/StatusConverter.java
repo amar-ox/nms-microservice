@@ -31,12 +31,7 @@ public class StatusConverter {
           break;
         case "status":
           if (member.getValue() instanceof String) {
-            obj.setStatus((String)member.getValue());
-          }
-          break;
-        case "timestamp":
-          if (member.getValue() instanceof String) {
-            obj.setTimestamp((String)member.getValue());
+            obj.setStatus(io.nms.central.microservice.notification.model.Status.StatusEnum.valueOf((String)member.getValue()));
           }
           break;
       }
@@ -56,10 +51,7 @@ public class StatusConverter {
       json.put("resType", obj.getResType());
     }
     if (obj.getStatus() != null) {
-      json.put("status", obj.getStatus());
-    }
-    if (obj.getTimestamp() != null) {
-      json.put("timestamp", obj.getTimestamp());
+      json.put("status", obj.getStatus().name());
     }
   }
 }

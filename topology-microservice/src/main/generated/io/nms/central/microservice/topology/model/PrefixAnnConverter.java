@@ -61,7 +61,9 @@ public class PrefixAnnConverter {
     if (obj.getName() != null) {
       json.put("name", obj.getName());
     }
-    json.put("originId", obj.getOriginId());
+    if (obj.getOriginId() != null) {
+      json.put("originId", obj.getOriginId());
+    }
     if (obj.getUpdated() != null) {
       json.put("updated", obj.getUpdated());
     }

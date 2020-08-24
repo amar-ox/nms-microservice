@@ -881,7 +881,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 
 	/********** PrefixAnn **********/ 
 	@Override
-	public TopologyService addPrefixAnn(PrefixAnn pa, Handler<AsyncResult<Integer>> resultHandler) {
+	public TopologyService addPrefixAnn(PrefixAnn pa, Handler<AsyncResult<Void>> resultHandler) {
 		beginTxnAndLock(Entity.PA, InternalSql.LOCK_TABLES_FOR_ROUTE).onComplete(tx -> {
 			if (tx.succeeded()) {
 				JsonArray params = new JsonArray()
@@ -893,7 +893,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 						generateRoutesToPrefix(pa.getName(), ar -> {
 							if (ar.succeeded()) {
 								commitTxnAndUnlock(Entity.PA)
-										.map(paId.result())
+										// .map(paId.result())
 										.onComplete(resultHandler);
 							} else {
 								rollbackAndUnlock();
@@ -993,10 +993,10 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	public TopologyService getRoutesByVsubnet(String vsubnetId, Handler<AsyncResult<List<Route>>> resultHandler) {
 		JsonArray params = new JsonArray().add(vsubnetId);
 		this.retrieveMany(params, ApiSql.FETCH_ROUTES_BY_VSUBNET)
-		.map(rawList -> rawList.stream()
-				.map(Route::new)
-				.collect(Collectors.toList()))
-		.onComplete(resultHandler);
+				.map(rawList -> rawList.stream()
+						.map(Route::new)
+						.collect(Collectors.toList()))
+				.onComplete(resultHandler);
 		return this;
 	}
 	@Override
@@ -1146,7 +1146,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 			}
 		});
 		return this;
-	} 
+	}
 	
 	
 	/* ---------------- BG ------------------ */
@@ -1239,7 +1239,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 					.add(face.getStatus())
 					.add(face.getLocal())
 					.add(face.getRemote())
-					.add(face.getScheme())
+					.add(face.getScheme().getValue())
 					.add(face.getVctpId())
 					.add(face.getVlinkConnId());
 			globalExecute(params, InternalSql.UPDATE_FACE).onComplete(p);
@@ -1282,7 +1282,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService updateNodeStatus(int id, String status, Handler<AsyncResult<Void>> resultHandler) {
 		JsonArray params = new JsonArray().add(status).add(id);
-		beginTxnAndLock(Entity.NODE, InternalSql.LOCK_ALL_TABLES_FOR_NODE).onComplete(tx -> {
+		beginTxnAndLock(Entity.NODE, InternalSql.LOCK_TABLES_FOR_NODE).onComplete(tx -> {
 			if (tx.succeeded()) {
 				globalExecute(params, InternalSql.UPDATE_NODE_STATUS).onComplete(u -> {
 					if (u.succeeded()) {

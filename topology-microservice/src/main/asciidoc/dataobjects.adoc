@@ -28,7 +28,7 @@
 |[[label]]`@label`|`String`|-
 |[[local]]`@local`|`String`|-
 |[[remote]]`@remote`|`String`|-
-|[[scheme]]`@scheme`|`String`|-
+|[[scheme]]`@scheme`|`link:enums.html#SchemeEnum[SchemeEnum]`|-
 |[[status]]`@status`|`String`|-
 |[[updated]]`@updated`|`String`|-
 |[[vctpId]]`@vctpId`|`Number (int)`|-
@@ -59,7 +59,7 @@
 |[[created]]`@created`|`String`|-
 |[[id]]`@id`|`Number (int)`|-
 |[[name]]`@name`|`String`|-
-|[[originId]]`@originId`|`Number (int)`|-
+|[[originId]]`@originId`|`Number (Integer)`|-
 |[[updated]]`@updated`|`String`|-
 |===
 
@@ -71,14 +71,14 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[cost]]`@cost`|`Number (int)`|-
+|[[cost]]`@cost`|`Number (Integer)`|-
 |[[created]]`@created`|`String`|-
-|[[faceId]]`@faceId`|`Number (int)`|-
+|[[faceId]]`@faceId`|`Number (Integer)`|-
 |[[id]]`@id`|`Number (int)`|-
-|[[nextHopId]]`@nextHopId`|`Number (int)`|-
-|[[nodeId]]`@nodeId`|`Number (int)`|-
-|[[origin]]`@origin`|`String`|-
-|[[paId]]`@paId`|`Number (int)`|-
+|[[nextHopId]]`@nextHopId`|`Number (Integer)`|-
+|[[nodeId]]`@nodeId`|`Number (Integer)`|-
+|[[origin]]`@origin`|`Number (Integer)`|-
+|[[paId]]`@paId`|`Number (Integer)`|-
 |[[prefix]]`@prefix`|`String`|-
 |[[updated]]`@updated`|`String`|-
 |===

@@ -1,34 +1,56 @@
 package io.nms.central.microservice.notification.model;
 
+import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.json.jackson.DatabindCodec;
 
 @DataObject(generateConverter = true)
 public class Status {
-	
+
+	public enum StatusEnum {
+		UP("UP"),
+		DOWN("DOWN"),
+		DISCONN("DISCONN");
+
+		private String value;
+		private StatusEnum(String value) { this.value = value; }
+		public String getValue() { return this.value; }
+	};
+
 	private String id;
 	
-	private int resId;
+	private StatusEnum status;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	private OffsetDateTime timestamp;
+	
+	private Integer resId;
 	private String resType;
-	private String status;
-	private String timestamp; 
-	
+
 	public Status() {}
-	
+
 	public Status(String id) {
 		this.id = id;
 	}
-	
+
 	public Status(JsonObject json) {
 		StatusConverter.fromJson(json, this);
 	}
-	
+
 	public JsonObject toJson() {
-		JsonObject json = new JsonObject();
+		/* JsonObject json = new JsonObject();
 		StatusConverter.toJson(this, json);
-		return json;
+		return json; */
+		return new JsonObject(Json.encode(this));
 	}
 
 	@Override
@@ -43,7 +65,8 @@ public class Status {
 
 	@Override
 	public String toString() {
-		return this.toJson().encodePrettily();
+		// return this.toJson().encodePrettily();
+		return Json.encode(this);
 	}
 
 	public String getId() {
@@ -70,21 +93,21 @@ public class Status {
 		this.resType = resType;
 	}
 
-	public String getStatus() {
+	public StatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(StatusEnum status) {
 		this.status = status;
 	}
 
-	public String getTimestamp() {
+	public OffsetDateTime getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(String timestamp) {
+	public void setTimestamp(OffsetDateTime timestamp) {
 		this.timestamp = timestamp;
 	}
 
-	
+
 }

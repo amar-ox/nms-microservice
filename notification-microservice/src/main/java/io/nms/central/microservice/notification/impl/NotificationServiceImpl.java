@@ -1,5 +1,6 @@
 package io.nms.central.microservice.notification.impl;
 
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,12 +11,16 @@ import io.nms.central.microservice.notification.NotificationService;
 import io.nms.central.microservice.notification.model.Event;
 import io.nms.central.microservice.notification.model.Fault;
 import io.nms.central.microservice.notification.model.Status;
+import io.nms.central.microservice.notification.model.Status.StatusEnum;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.mongo.MongoClient;
 
 /**
@@ -23,7 +28,7 @@ import io.vertx.ext.mongo.MongoClient;
  */
 public class NotificationServiceImpl implements NotificationService {
 
-	// private static final Logger logger = LoggerFactory.getLogger(FaultServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
 
 	private static final String COLL_STATUS = "status";
 	private static final String COLL_EVENT = "event";
@@ -71,10 +76,10 @@ public class NotificationServiceImpl implements NotificationService {
 		    @Override
 		    public void handle(Long aLong) {
 		    	healthTimers.remove(resId);
-		    	if (status.getStatus().equals("UP")) {
-		    		setNodeStatus(resId, "DISCONN");
+		    	if (status.getStatus().equals(StatusEnum.UP)) {
+		    		setNodeStatus(resId, StatusEnum.DISCONN);
 		    	} else {
-		    		setNodeStatus(resId, "DOWN");
+		    		setNodeStatus(resId, StatusEnum.DOWN);
 		    	}
 		    }
 		});
@@ -87,8 +92,8 @@ public class NotificationServiceImpl implements NotificationService {
 				.put("_id", status.getId())
 				.put("resType", status.getResType())
 				.put("resId", status.getResId())
-				.put("status", status.getStatus())
-				.put("timestamp", status.getTimestamp());
+				.put("status", status.getStatus().getValue())
+				.put("timestamp", status.getTimestamp().toString());
 		client.save(COLL_STATUS, jStatus, ar -> {
 			if (ar.succeeded()) {
 				resultHandler.handle(Future.succeededFuture());
@@ -107,10 +112,13 @@ public class NotificationServiceImpl implements NotificationService {
 				} else {
 					List<Status> result = ar.result().stream()
 							.map(raw -> {
-								// Status status = new Status(raw.put("id", raw.getString("_id")));
-								Status status = new Status(raw);
-								status.setId(raw.getString("_id"));
+								raw.put("id", raw.getString("_id"));
+								raw.remove("_id");
+								Status status = Json.decodeValue(raw.encode(), Status.class);
 								return status;
+								/* Status status = new Status(raw);
+								status.setId(raw.getString("_id"));
+								return status; */
 							})
 						.collect(Collectors.toList());
 					resultHandler.handle(Future.succeededFuture(result));
@@ -134,21 +142,21 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	/* ----------------------------- */
-	private void setNodeStatus(int resId, String s) {
+	private void setNodeStatus(int resId, StatusEnum se) {
 		Status status = new Status();
 		status.setResId(resId);
 		status.setResType("node");
-		status.setStatus(s);
-		status.setTimestamp("123456");
-		status.setId("ffff");
+		status.setStatus(se);
+		status.setTimestamp(OffsetDateTime.now());
+		status.setId(String.valueOf(status.hashCode()));
 		sendStatusAwaitResult(status);
 		
-		if (s.equals("DISCONN")) {
+		if (se.equals(StatusEnum.DISCONN)) {
 			long timerId = vertx.setTimer(TimeUnit.SECONDS.toMillis(TIMER_TO_DOWN_SEC), new Handler<Long>() {
 			    @Override
 			    public void handle(Long aLong) {
 			    	healthTimers.remove(resId);
-			    	setNodeStatus(resId, "DOWN");
+			    	setNodeStatus(resId, StatusEnum.DOWN);
 			    }
 			});
 			healthTimers.put(resId, timerId);
@@ -174,10 +182,10 @@ public class NotificationServiceImpl implements NotificationService {
 		JsonObject jEvent = new JsonObject()
 				.put("_id", event.getId())
 				.put("origin", event.getOrigin())
-				.put("severity", event.getSeverity())
+				.put("severity", event.getSeverity().getValue())
 				.put("code", event.getCode())
 				.put("msg", event.getMsg())
-				.put("timestamp", event.getTimestamp());
+				.put("timestamp", event.getTimestamp().toString());
 		client.save(COLL_EVENT, jEvent, ar -> {
 			if (ar.succeeded()) {
 				resultHandler.handle(Future.succeededFuture());
@@ -196,11 +204,13 @@ public class NotificationServiceImpl implements NotificationService {
 				} else {
 					List<Event> result = ar.result().stream()
 							.map(raw -> {
-								// raw.put("id", raw.getString("_id"));
-								// raw.remove("_id");
-								Event event = new Event(raw);
-								event.setId(raw.getString("_id"));
+								raw.put("id", raw.getString("_id"));
+								raw.remove("_id");
+								Event event = Json.decodeValue(raw.encode(), Event.class);
 								return event;
+								/* Event event = new Event(raw);
+								event.setId(raw.getString("_id"));
+								return event; */
 							})
 						.collect(Collectors.toList());
 					resultHandler.handle(Future.succeededFuture(result));
@@ -231,7 +241,7 @@ public class NotificationServiceImpl implements NotificationService {
 				.put("origin", fault.getOrigin())
 				.put("code", fault.getCode())
 				.put("msg", fault.getMsg())
-				.put("timestamp", fault.getTimestamp());
+				.put("timestamp", fault.getTimestamp().toString());
 		client.save(COLL_FAULT, jFault, ar -> {
 			if (ar.succeeded()) {
 				resultHandler.handle(Future.succeededFuture());
@@ -250,9 +260,13 @@ public class NotificationServiceImpl implements NotificationService {
 				} else {
 					List<Fault> result = ar.result().stream()
 							.map(raw -> {
-								Fault fault = new Fault(raw);
-								fault.setId(raw.getString("_id"));
+								raw.put("id", raw.getString("_id"));
+								raw.remove("_id");
+								Fault fault = Json.decodeValue(raw.encode(), Fault.class);
 								return fault;
+								/* Fault fault = new Fault(raw);
+								fault.setId(raw.getString("_id"));
+								return fault; */
 							})
 						.collect(Collectors.toList());
 					resultHandler.handle(Future.succeededFuture(result));

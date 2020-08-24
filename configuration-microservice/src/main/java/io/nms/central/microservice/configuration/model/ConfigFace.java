@@ -2,16 +2,17 @@ package io.nms.central.microservice.configuration.model;
 
 import java.util.Objects;
 
+import io.nms.central.microservice.topology.model.Face.SchemeEnum;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 
 @DataObject(generateConverter = true)
 public class ConfigFace {
 	
-	private int id;
+	private Integer id;
 	private String local;
 	private String remote;
-	private String scheme;
+	private SchemeEnum scheme;
 	
 	
 	public ConfigFace() {}
@@ -42,11 +43,11 @@ public class ConfigFace {
 		this.remote = remote;
 	}
 
-	public String getScheme() {
+	public SchemeEnum getScheme() {
 		return scheme;
 	}
 
-	public void setScheme(String scheme) {
+	public void setScheme(SchemeEnum scheme) {
 		this.scheme = scheme;
 	}
 
@@ -65,11 +66,11 @@ public class ConfigFace {
 		return this.toJson().encodePrettily();
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 	
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

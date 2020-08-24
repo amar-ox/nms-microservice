@@ -9,6 +9,14 @@ import io.vertx.core.json.JsonObject;
 
 @DataObject(generateConverter = true)
 public class Face {
+	
+	public enum SchemeEnum {
+		ether("ether");
+
+		private String value;
+		private SchemeEnum(String value) { this.value = value; }
+		public String getValue() { return this.value; }
+	};
 		
 	// in SQL table
 		// common fields
@@ -21,7 +29,7 @@ public class Face {
 	// face fields
 	private String local;
 	private String remote;
-	private String scheme;
+	private SchemeEnum scheme;
 	private int vctpId;
 	private int vlinkConnId;
 	private int vnodeId;
@@ -110,11 +118,11 @@ public class Face {
 		this.remote = remote;
 	}
 
-	public String getScheme() {
+	public SchemeEnum getScheme() {
 		return scheme;
 	}
 
-	public void setScheme(String scheme) {
+	public void setScheme(SchemeEnum scheme) {
 		this.scheme = scheme;
 	}
 

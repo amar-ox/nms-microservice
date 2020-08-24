@@ -1,20 +1,36 @@
 package io.nms.central.microservice.notification.model;
 
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 
 @DataObject(generateConverter = true)
 public class Event {
 	
+	public enum SeverityEnum {
+		LOW("LOW"),
+		MEDIUM("MEDIUM"),
+		HIGH("HIGH");
+
+		private String value;
+		private SeverityEnum(String value) { this.value = value; }
+		public String getValue() { return this.value; }
+	};
+	
 	private String id;
 	
-	private int origin;
-	private String severity;
-	private int code;
+	private Integer origin;
+	private SeverityEnum severity;
+	private Integer code;
 	private String msg;
-	private String timestamp; 
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	private OffsetDateTime timestamp; 
 	
 	public Event() {}
 	
@@ -27,9 +43,10 @@ public class Event {
 	}
 	
 	public JsonObject toJson() {
-		JsonObject json = new JsonObject();
+		/* JsonObject json = new JsonObject();
 		EventConverter.toJson(this, json);
-		return json;
+		return json; */
+		return new JsonObject(Json.encode(this));
 	}
 
 	@Override
@@ -44,7 +61,7 @@ public class Event {
 
 	@Override
 	public String toString() {
-		return this.toJson().encodePrettily();
+		return Json.encode(this);
 	}
 
 	public String getId() {
@@ -55,35 +72,35 @@ public class Event {
 		this.id = id;
 	}
 
-	public int getOrigin() {
+	public Integer getOrigin() {
 		return origin;
 	}
 
-	public void setOrigin(int origin) {
+	public void setOrigin(Integer origin) {
 		this.origin = origin;
 	}
 
-	public String getTimestamp() {
+	public OffsetDateTime getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(String timestamp) {
+	public void setTimestamp(OffsetDateTime timestamp) {
 		this.timestamp = timestamp;
 	}
 
-	public String getSeverity() {
+	public SeverityEnum getSeverity() {
 		return severity;
 	}
 
-	public void setSeverity(String severity) {
+	public void setSeverity(SeverityEnum severity) {
 		this.severity = severity;
 	}
 
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 
-	public void setCode(int code) {
+	public void setCode(Integer code) {
 		this.code = code;
 	}
 

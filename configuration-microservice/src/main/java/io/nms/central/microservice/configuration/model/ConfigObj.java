@@ -11,7 +11,6 @@ import io.vertx.core.json.JsonObject;
 public class ConfigObj {
 	
 	private int nodeId;
-	// private String timestamp;
 	private Config config = new Config();
 	
 	public ConfigObj() {}
@@ -49,14 +48,6 @@ public class ConfigObj {
 	public void setNodeId(int nodeId) {
 		this.nodeId = nodeId;
 	}
-
-	/* public String getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(String timestamp) {
-		this.timestamp = timestamp;
-	} */
 
 	public Config getConfig() {
 		return config;

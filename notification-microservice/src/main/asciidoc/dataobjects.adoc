@@ -8,12 +8,11 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[code]]`@code`|`Number (int)`|-
+|[[code]]`@code`|`Number (Integer)`|-
 |[[id]]`@id`|`String`|-
 |[[msg]]`@msg`|`String`|-
-|[[origin]]`@origin`|`Number (int)`|-
-|[[severity]]`@severity`|`String`|-
-|[[timestamp]]`@timestamp`|`String`|-
+|[[origin]]`@origin`|`Number (Integer)`|-
+|[[severity]]`@severity`|`link:enums.html#SeverityEnum[SeverityEnum]`|-
 |===
 
 [[Fault]]
@@ -24,11 +23,10 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[code]]`@code`|`Number (int)`|-
+|[[code]]`@code`|`Number (Integer)`|-
 |[[id]]`@id`|`String`|-
 |[[msg]]`@msg`|`String`|-
-|[[origin]]`@origin`|`Number (int)`|-
-|[[timestamp]]`@timestamp`|`String`|-
+|[[origin]]`@origin`|`Number (Integer)`|-
 |===
 
 [[Status]]
@@ -42,7 +40,6 @@
 |[[id]]`@id`|`String`|-
 |[[resId]]`@resId`|`Number (int)`|-
 |[[resType]]`@resType`|`String`|-
-|[[status]]`@status`|`String`|-
-|[[timestamp]]`@timestamp`|`String`|-
+|[[status]]`@status`|`link:enums.html#StatusEnum[StatusEnum]`|-
 |===
 

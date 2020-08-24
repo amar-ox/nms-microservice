@@ -13,6 +13,7 @@ import java.util.Stack;
 
 import io.nms.central.microservice.topology.model.Edge;
 import io.nms.central.microservice.topology.model.Face;
+import io.nms.central.microservice.topology.model.Face.SchemeEnum;
 import io.nms.central.microservice.topology.model.Node;
 import io.nms.central.microservice.topology.model.PrefixAnn;
 import io.nms.central.microservice.topology.model.Route;
@@ -25,6 +26,7 @@ import io.vertx.core.json.JsonObject;
 public class Routing {
 	
 	// private static final Logger logger = LoggerFactory.getLogger(Routing.class);
+	private static final int ROUTE_ORIGIN_AUTOGEN = 10; 
 
 	public Routing () {}
 
@@ -77,7 +79,7 @@ public class Routing {
 							r.setNextHopId(nh);
 							r.setFaceId(gb.getFace(thisNode, nh));
 							r.setCost(path.size()-1);
-							r.setOrigin("autogen");
+							r.setOrigin(ROUTE_ORIGIN_AUTOGEN);
 							routes.add(r);
 							processedNodes.add(thisNode);
 						}
@@ -102,8 +104,8 @@ public class Routing {
 		} else {
 			List<Face> faces = new ArrayList<Face>(2);
 			Face face1 = new Face();
-			face1.setLabel("autogen");
-			face1.setScheme("ether");
+			face1.setLabel("autogen face");
+			face1.setScheme(SchemeEnum.ether);
 			face1.setVlinkConnId(vlcId);
 			face1.setVctpId(sVctpId);						
 			face1.setLocal(sLtpPort);
@@ -111,8 +113,8 @@ public class Routing {
 			faces.add(face1);
 					
 			Face face2 = new Face();
-			face2.setLabel("autogen");
-			face2.setScheme("ether");
+			face2.setLabel("autogen face");
+			face2.setScheme(SchemeEnum.ether);
 			face2.setVlinkConnId(vlcId);
 			face2.setVctpId(dVctpId);						
 			face2.setLocal(dLtpPort);

@@ -17,12 +17,12 @@ public class Route {
 	private String created;
 	private String updated;	
 	
-	private int paId;
-	private int nodeId;
-	private int nextHopId;
-	private int faceId;
-	private int cost;
-	private String origin;
+	private Integer paId;
+	private Integer nodeId;
+	private Integer nextHopId;
+	private Integer faceId;
+	private Integer cost;
+	private Integer origin;
 	
 	// in object only
 	private String prefix;
@@ -88,51 +88,51 @@ public class Route {
 		this.updated = updated;
 	}
 
-	public int getNextHopId() {
+	public Integer getNextHopId() {
 		return nextHopId;
 	}
 
-	public void setNextHopId(int nextHopId) {
+	public void setNextHopId(Integer nextHopId) {
 		this.nextHopId = nextHopId;
 	}
 
-	public int getCost() {
+	public Integer getCost() {
 		return cost;
 	}
 
-	public void setCost(int cost) {
+	public void setCost(Integer cost) {
 		this.cost = cost;
 	}
 
-	public int getPaId() {
+	public Integer getPaId() {
 		return paId;
 	}
 
-	public void setPaId(int paId) {
+	public void setPaId(Integer paId) {
 		this.paId = paId;
 	}
 
-	public int getNodeId() {
+	public Integer getNodeId() {
 		return nodeId;
 	}
 
-	public void setNodeId(int nodeId) {
+	public void setNodeId(Integer nodeId) {
 		this.nodeId = nodeId;
 	}
 
-	public int getFaceId() {
+	public Integer getFaceId() {
 		return faceId;
 	}
 
-	public void setFaceId(int faceId) {
+	public void setFaceId(Integer faceId) {
 		this.faceId = faceId;
 	}
 
-	public String getOrigin() {
+	public Integer getOrigin() {
 		return origin;
 	}
 
-	public void setOrigin(String origin) {
+	public void setOrigin(Integer origin) {
 		this.origin = origin;
 	}
 

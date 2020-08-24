@@ -5,8 +5,13 @@ import io.nms.central.microservice.notification.NotificationService;
 import io.nms.central.microservice.notification.model.Event;
 import io.nms.central.microservice.notification.model.Fault;
 import io.nms.central.microservice.notification.model.Status;
+import io.nms.central.microservice.notification.model.Status.StatusEnum;
 import io.vertx.core.Future;
+import io.vertx.core.json.DecodeException;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -19,7 +24,7 @@ import io.vertx.ext.web.handler.BodyHandler;
  */
 public class RestNotificationAPIVerticle extends RestAPIVerticle {
 
-	// private static final Logger logger = LoggerFactory.getLogger(RestNotificationAPIVerticle.class);
+	private static final Logger logger = LoggerFactory.getLogger(RestNotificationAPIVerticle.class);
 
 	public static final String SERVICE_NAME = "notification-rest-api";
 	
@@ -45,6 +50,7 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 	@Override
 	public void start(Future<Void> future) throws Exception {
 		super.start();
+		
 		final Router router = Router.router(vertx);
 		// body handler
 		router.route().handler(BodyHandler.create());
@@ -82,15 +88,34 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 	}
 
 	private void apiPutStatus(RoutingContext context) {
-		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		int resId = principal.getInteger("nodeId", 0);
+		Status status;
+		try {
+			status = Json.decodeValue(context.getBodyAsString(), Status.class);
+		} catch (DecodeException e) {
+			badRequest(context, new Throwable("wrong or missing request body"));
+			return;
+		}
+		
+		if ((status.getStatus() == null || (status.getTimestamp() == null))) {
+			badRequest(context, new Throwable("status and/or timestamp are missing"));
+			return;
+		}
+		
+		if (status.getStatus().equals(StatusEnum.DISCONN)) {
+			badRequest(context, new Throwable("illegal status value"));
+			return;
+		}
+		
 		String statusId = context.request().getParam("statusId");
-		Status status = new Status(context.getBodyAsJson());
+		
+		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
+		int resId = principal.getInteger("nodeId");
+		
 		status.setId(statusId);
 		status.setResId(resId);
 		status.setResType("node");
-		JsonObject result = new JsonObject().put("message", "report processed");
-		service.processStatus(status, resultVoidHandler(context, result));
+		
+		service.processStatus(status, createdResultHandler(context));
 	}
 
 	private void apiGetAllStatus(RoutingContext context) {		
@@ -104,14 +129,40 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 	
 	
 	private void apiPutEvent(RoutingContext context) {
+		Event event;
+		try {
+			event = Json.decodeValue(context.getBodyAsString(), Event.class);
+		} catch (DecodeException e) {
+			badRequest(context, new Throwable("wrong or missing request body"));
+			return;
+		}
+		
+		if (event.getCode() == null) {
+			badRequest(context, new Throwable("code is missing"));
+			return;
+		}
+		if (event.getTimestamp() == null) {
+			badRequest(context, new Throwable("timestamp is missing"));
+			return;
+		}
+		if (event.getMsg() == null) {
+			badRequest(context, new Throwable("msg is missing"));
+			return;
+		}
+		if (event.getSeverity() == null) {
+			badRequest(context, new Throwable("severity is missing"));
+			return;
+		}
+		
+		String eventId = context.request().getParam("eventId");
+		
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
 		int origin = principal.getInteger("nodeId");
-		String eventId = context.request().getParam("eventId");
-		Event event = new Event(context.getBodyAsJson());
+		
 		event.setId(eventId);
 		event.setOrigin(origin);
-		JsonObject result = new JsonObject().put("message", "event_saved");
-		service.saveEvent(event, resultVoidHandler(context, result));
+		
+		service.saveEvent(event, createdResultHandler(context));
 	}
 
 	private void apiGetAllEvents(RoutingContext context) {		
@@ -125,14 +176,37 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 	
 	
 	private void apiPutFault(RoutingContext context) {
+		Fault fault;
+		try {
+			fault = Json.decodeValue(context.getBodyAsString(), Fault.class);
+		} catch (DecodeException e) {
+			badRequest(context, new Throwable("wrong or missing request body"));
+			return;
+		}
+		
+		if (fault.getCode() == null) {
+			badRequest(context, new Throwable("code is missing"));
+			return;
+		}
+		if (fault.getTimestamp() == null) {
+			badRequest(context, new Throwable("timestamp is missing"));
+			return;
+			
+		}
+		if (fault.getMsg() == null) {
+			badRequest(context, new Throwable("msg is missing"));
+			return;
+		}
+		
+		String faultId = context.request().getParam("faultId");
+		
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
 		int origin = principal.getInteger("nodeId");
-		String faultId = context.request().getParam("faultId");
-		Fault fault = new Fault(context.getBodyAsJson());
+		
 		fault.setId(faultId);
 		fault.setOrigin(origin);
-		JsonObject result = new JsonObject().put("message", "fault_saved");
-		service.saveFault(fault, resultVoidHandler(context, result));
+		
+		service.saveFault(fault, createdResultHandler(context));
 	}
 
 	private void apiGetAllFaults(RoutingContext context) {		
