@@ -1,14 +1,17 @@
 package io.nms.central.microservice.telemetry;
 
-import io.vertx.codegen.annotations.Fluent;
+import java.util.List;
+
+import io.nms.central.microservice.telemetry.model.Capability;
+import io.nms.central.microservice.telemetry.model.Receipt;
+import io.nms.central.microservice.telemetry.model.Result;
+import io.nms.central.microservice.telemetry.model.Specification;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-
-import java.util.List;
 
 /**
  * A service interface managing products.
@@ -16,10 +19,10 @@ import java.util.List;
  * This service is an event bus service (aka. service proxy)
  * </p>
  *
- * @author Eric Zhao
+ * @author Amar Abane
  */
-@VertxGen
-@ProxyGen
+// @VertxGen
+// @ProxyGen
 public interface TelemetryService {
 
   /**
@@ -31,22 +34,28 @@ public interface TelemetryService {
    * The address on which the service is published.
    */
   String SERVICE_ADDRESS = "service.telemetry";
-
-  /**
-   * A static method that creates a product service.
-   *
-   * @param config a json object for configuration
-   * @return initialized product service
-   */
-  // static ProductService createService(Vertx vertx, JsonObject config)
-
-  /**
-   * Initialize the persistence.
-   *
-   * @param resultHandler the result handler will be called as soon as the initialization has been accomplished. The async result indicates
-   *                      whether the operation was successful or not.
-   */
-  @Fluent
-  TelemetryService initializePersistence(Handler<AsyncResult<Void>> resultHandler);
   
+  String UI_ADDRESS = "nms.to.ui";
+  
+  void saveCapability(Capability cap, Handler<AsyncResult<Void>> resultHandler);
+  void getCapabilitiesByRole(String role, Handler<AsyncResult<List<Capability>>> resultHandler);
+  
+  void saveSpecification(Specification spec, Handler<AsyncResult<Void>> resultHandler);
+  void getAllSpecifications(Handler<AsyncResult<List<Specification>>> resultHandler);
+  void removeSpecification(String id, Handler<AsyncResult<Void>> resultHandler);
+  
+  void saveReceipt(Receipt rct, Handler<AsyncResult<Void>> resultHandler);
+  void getAllReceipts(Handler<AsyncResult<List<Receipt>>> resultHandler);
+  void removeReceipt(String id, Handler<AsyncResult<Void>> resultHandler);
+  
+  void saveResult(Result res, Handler<AsyncResult<Void>> resultHandler);
+  void getResult(String id, Handler<AsyncResult<Result>> resultHandler);
+  // void getAllResults(Handler<AsyncResult<List<Result>>> resultHandler);
+  // void removeResult(String id, Handler<AsyncResult<Void>> resultHandler);
+  // void removeAllResults(Handler<AsyncResult<Void>> resultHandler);
+  
+  void getAllResultOperations(String type, Handler<AsyncResult<JsonArray>> resultHandler);
+  void getResultsByOperation(String op, Handler<AsyncResult<List<Result>>> resultHandler);
+  void removeResultsByOperation(String op, Handler<AsyncResult<Void>> resultHandler);
+
 }

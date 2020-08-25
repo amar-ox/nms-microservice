@@ -12,6 +12,13 @@ services:
     image: mongo:latest
     expose:
       - "27017"
+  activemq:
+    image: rmohr/activemq
+    restart: always
+    expose:
+      - "5672"
+    ports:
+      - "5672:5672"
   account-microservice:
     image: nms/account-microservice
     links:
@@ -24,8 +31,10 @@ services:
     image: nms/telemetry-microservice
     links:
       - mongo
+      - activemq
     depends_on:
       - mongo
+      - activemq
     expose:
       - "8082"
   notification-microservice:

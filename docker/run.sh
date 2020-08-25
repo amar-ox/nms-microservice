@@ -22,11 +22,11 @@ docker-compose -f $DIR/docker-compose.yml stop
 
 # Start container cluster
 # First start persistence and auth container and wait for it
-docker-compose -f $DIR/docker-compose.yml up -d mysql mongo
+docker-compose -f $DIR/docker-compose.yml up -d mysql mongo activemq
 echo "Waiting for persistence init..."
 sleep 10
 
-docker-compose -f $DIR/docker-compose.yml up -d notification-microservice 
+docker-compose -f $DIR/docker-compose.yml up -d notification-microservice
 sleep 5
 
 docker-compose -f $DIR/docker-compose.yml up -d topology-microservice 

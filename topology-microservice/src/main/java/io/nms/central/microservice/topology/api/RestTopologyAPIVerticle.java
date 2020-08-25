@@ -3,8 +3,6 @@ package io.nms.central.microservice.topology.api;
 import java.util.Base64;
 
 import io.nms.central.microservice.common.RestAPIVerticle;
-import io.nms.central.microservice.notification.model.Status;
-import io.nms.central.microservice.notification.model.Status.StatusEnum;
 import io.nms.central.microservice.topology.TopologyService;
 import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.PrefixAnn;
@@ -491,7 +489,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 				return;
 			}
 		}
-		service.addPrefixAnn(pa, createdResultHandler(context));
+		service.addPrefixAnn(pa, resultVoidHandler(context, 200));
 	}
 	private void apiGetPrefixAnn(RoutingContext context) {
 		String prefixAnnId = context.request().getParam("prefixAnnId");			

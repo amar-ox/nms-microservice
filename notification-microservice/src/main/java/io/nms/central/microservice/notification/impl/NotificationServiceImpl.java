@@ -48,7 +48,7 @@ public class NotificationServiceImpl implements NotificationService {
 		this.healthTimers = new HashMap<Integer, Long>();
 	}
 	
-	/* -------------- Event --------------- */
+	/* -------------- Status --------------- */
 	@Override
 	public void processStatus(Status status, Handler<AsyncResult<Void>> resultHandler) { 
 		saveStatus(status, ar -> {

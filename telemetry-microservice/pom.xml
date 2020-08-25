@@ -23,11 +23,17 @@
       <version>1.0.0</version>
     </dependency>
 
-    <dependency>
+     <dependency>
       <groupId>io.vertx</groupId>
-      <artifactId>vertx-jdbc-client</artifactId>
-      <optional>true</optional>
+      <artifactId>vertx-mongo-client</artifactId>
     </dependency>
+    
+    <!-- For AMQP -->
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-amqp-client</artifactId>
+		</dependency>
+    
   </dependencies>
 
   <build>
