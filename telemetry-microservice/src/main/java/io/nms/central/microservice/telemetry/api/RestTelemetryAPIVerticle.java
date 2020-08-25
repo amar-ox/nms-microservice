@@ -27,19 +27,16 @@ public class RestTelemetryAPIVerticle extends RestAPIVerticle {
 
 	private static final String API_ALL_CAPABILITIES = "/capabilities";
 
-	private static final String API_ONE_SPECIFICATION = "/specification/:specId";
+	private static final String API_SPECIFICATION = "/specification";
 	private static final String API_ALL_SPECIFICATIONS = "/specifications";
 
-	private static final String API_ONE_INTERRUPT = "/interrupt/:itrId";
+	private static final String API_INTERRUPT = "/interrupt";
 
 	private static final String API_ALL_RECEIPTS = "/receipts";
 
 	private static final String API_ALL_OPERATIONS = "/operations/:type";
 	private static final String API_ONE_OPERATION = "/operation/:opId";
 	private static final String API_RESULTS_BY_OPS = "/operation/:opId/results";
-
-	private static final String API_ONE_RESULT = "/result/:resId";
-
 
 	private final TelemetryService service;
 	private final CasperTelemetryAPIVerticle casper;
@@ -63,9 +60,9 @@ public class RestTelemetryAPIVerticle extends RestAPIVerticle {
 		router.get(API_ALL_CAPABILITIES).handler(this::checkAdminRole).handler(this::apiGetAllCapabilities);
 
 		router.get(API_ALL_SPECIFICATIONS).handler(this::checkAdminRole).handler(this::apiGetAllSpecifications);
-		router.put(API_ONE_SPECIFICATION).handler(this::checkAdminRole).handler(this::apiSendSpecification);
+		router.post(API_SPECIFICATION).handler(this::checkAdminRole).handler(this::apiSendSpecification);
 
-		router.put(API_ONE_INTERRUPT).handler(this::checkAdminRole).handler(this::apiSendInterrupt);
+		router.post(API_INTERRUPT).handler(this::checkAdminRole).handler(this::apiSendInterrupt);
 
 		router.get(API_ALL_RECEIPTS).handler(this::checkAdminRole).handler(this::apiGetAllReceipts);
 
@@ -74,8 +71,6 @@ public class RestTelemetryAPIVerticle extends RestAPIVerticle {
 		router.delete(API_ONE_OPERATION).handler(this::checkAdminRole).handler(this::apiDeleteOperation);
 
 		router.get(API_RESULTS_BY_OPS).handler(this::checkAdminRole).handler(this::apiGetResultsByOp);
-
-		router.get(API_ONE_RESULT).handler(this::checkAdminRole).handler(this::apiGetResult);
 
 		// get HTTP host and port from configuration, or use default value
 		String host = config().getString("telemetry.http.address", "0.0.0.0");
@@ -150,10 +145,4 @@ public class RestTelemetryAPIVerticle extends RestAPIVerticle {
 		String opId = context.request().getParam("opId");
 		service.getResultsByOperation(opId, resultHandlerNonEmpty(context));
 	}
-
-	private void apiGetResult(RoutingContext context) {
-		String resId = context.request().getParam("resId");
-		service.getResult(resId, resultHandlerNonEmpty(context));
-	}
-
 }

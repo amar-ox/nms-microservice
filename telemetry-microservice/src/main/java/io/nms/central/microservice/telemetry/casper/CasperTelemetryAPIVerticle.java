@@ -51,6 +51,10 @@ public class CasperTelemetryAPIVerticle extends CasperAPIVerticle {
 		publishSpecAwaitReceipt(spec, topic, ar -> {
 			if (ar.succeeded()) {
 				Receipt specRct = ar.result();
+				if (!specRct.getErrors().isEmpty()) {
+					resultHandler.handle(Future.failedFuture(specRct.getErrors().get(0)));
+					return;
+				}
 				String resTopic = specRct.getEndpoint() + TOPIC_RESULTS + specRct.getRole();
 				subscribeToResults(resTopic, sub -> {
 					if (sub.succeeded()) {
@@ -83,6 +87,10 @@ public class CasperTelemetryAPIVerticle extends CasperAPIVerticle {
 		publishItrAwaitReceipt(itr, topic, ar -> {
 			if (ar.succeeded()) {
 				Receipt itrRct = ar.result();
+				if (!itrRct.getErrors().isEmpty()) {
+					resultHandler.handle(Future.failedFuture(itrRct.getErrors().get(0)));
+					return;
+				}
 				service.removeSpecification(itrRct.getSchema(), res -> {
 					if (res.succeeded()) {
 						service.removeReceipt(itrRct.getSchema(), done -> {

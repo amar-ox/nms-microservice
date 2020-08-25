@@ -44,6 +44,16 @@ public class TelemetryServiceImpl implements TelemetryService {
 	public TelemetryServiceImpl(Vertx vertx, JsonObject config) {
 		this.vertx = vertx;
 		this.client = MongoClient.create(vertx, config);
+		
+		/* this.client.removeDocuments(SPECIFICATIONS, new JsonObject(), ar -> {
+			return;
+		});
+		this.client.removeDocuments(RECEIPTS, new JsonObject(), ar -> {
+			return;
+		});
+		this.client.removeDocuments(RESULTS, new JsonObject(), ar -> {
+			return;
+		}); */
 	}
 
 	/* ------------ capability ------------ */
@@ -62,8 +72,6 @@ public class TelemetryServiceImpl implements TelemetryService {
 		df.setTimeZone(tz);
 		String nowAsISO = df.format(new Date());
 		doc.put("_ts", nowAsISO);
-		
-		logger.info("*********** CAP: " + doc.encodePrettily());
 		
 		client.save(CAPABILITIES, doc, ar -> {
 			if (ar.succeeded()) {
@@ -91,7 +99,6 @@ public class TelemetryServiceImpl implements TelemetryService {
 				List<Capability> result = res.result().stream()
 						.map(raw -> {
 							Capability cap = Json.decodeValue(raw.encode(), Capability.class);
-							logger.info("*************** CAP: " + cap.toString());
 							return cap;
 						})
 						.collect(Collectors.toList());
@@ -130,7 +137,7 @@ public class TelemetryServiceImpl implements TelemetryService {
 	@Override
 	public void getAllSpecifications(Handler<AsyncResult<List<Specification>>> resultHandler) {
 		JsonObject fields = new JsonObject().put("_id", 0).put("_ts", 0);
-		client.findWithOptions(CAPABILITIES, new JsonObject(), new FindOptions().setFields(fields), res -> {
+		client.findWithOptions(SPECIFICATIONS, new JsonObject(), new FindOptions().setFields(fields), res -> {
 			if (res.succeeded()) {
 				List<Specification> result = res.result().stream()
 							.map(raw -> {
@@ -258,7 +265,7 @@ public class TelemetryServiceImpl implements TelemetryService {
 		JsonObject match = new JsonObject()
 				.put("result", type);
 			JsonObject group = new JsonObject()
-				.put("id", "$schema")
+				.put("_id", "$schema")
 				.put("endpoint", new JsonObject().put("$first", "$endpoint"))
 				.put("name", new JsonObject().put("$first", "$name"))
 				.put("begins", new JsonObject().put("$min", "$timestamp"))

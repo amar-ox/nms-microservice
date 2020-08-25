@@ -216,11 +216,11 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
 					notFound(context);
 				} else {
 					context.response()
-					.putHeader("content-type", "application/json")
-					.end(res.toString());
+							.putHeader("content-type", "application/json")
+							.end(res.toString());
 				}
 			} else {
-				internalError(context, ar.cause());
+				badRequest(context, ar.cause());
 				ar.cause().printStackTrace();
 			}
 		};
@@ -366,8 +366,8 @@ public abstract class RestAPIVerticle extends BaseMicroserviceVerticle {
 
 	protected void badRequest(RoutingContext context, Throwable ex) {
 		context.response().setStatusCode(400)
-		.putHeader("content-type", "application/json")
-		.end(new JsonObject().put("message", ex.getMessage()).encodePrettily());
+				.putHeader("content-type", "application/json")
+				.end(new JsonObject().put("message", ex.getMessage()).encodePrettily());
 	}
 
 	protected void unauthorized(RoutingContext context) {
