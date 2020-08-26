@@ -37,6 +37,7 @@ import io.vertx.core.json.jackson.DatabindCodec;
 public class Message {
 	
 	/* message data */
+	protected String id;
 	protected String verb;
 	protected String label;
 	protected String token;
@@ -132,7 +133,14 @@ public class Message {
 		}
 	}
 	
-	/* ------------------- last updates -------------------- */	
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public String getId() {
+		return id;
+	}
+	
 	public void setParameter(String key, String value) {
 		parameters.put(key, value);
 	}

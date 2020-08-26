@@ -37,6 +37,8 @@ public class RestTelemetryAPIVerticle extends RestAPIVerticle {
 	private static final String API_ALL_OPERATIONS = "/operations/:type";
 	private static final String API_ONE_OPERATION = "/operation/:opId";
 	private static final String API_RESULTS_BY_OPS = "/operation/:opId/results";
+	
+	private static final String API_ONE_RESULT = "/result/:resId";
 
 	private final TelemetryService service;
 	private final CasperTelemetryAPIVerticle casper;
@@ -71,6 +73,8 @@ public class RestTelemetryAPIVerticle extends RestAPIVerticle {
 		router.delete(API_ONE_OPERATION).handler(this::checkAdminRole).handler(this::apiDeleteOperation);
 
 		router.get(API_RESULTS_BY_OPS).handler(this::checkAdminRole).handler(this::apiGetResultsByOp);
+		
+		router.get(API_ONE_RESULT).handler(this::checkAdminRole).handler(this::apiGetResult);
 
 		// get HTTP host and port from configuration, or use default value
 		String host = config().getString("telemetry.http.address", "0.0.0.0");
@@ -144,5 +148,10 @@ public class RestTelemetryAPIVerticle extends RestAPIVerticle {
 	private void apiGetResultsByOp(RoutingContext context) {
 		String opId = context.request().getParam("opId");
 		service.getResultsByOperation(opId, resultHandlerNonEmpty(context));
+	}
+	
+	private void apiGetResult(RoutingContext context) {
+		String resId = context.request().getParam("resId");
+		service.getResult(resId, resultHandlerNonEmpty(context));
 	}
 }

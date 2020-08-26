@@ -230,7 +230,7 @@ public class TelemetryServiceImpl implements TelemetryService {
 			return;
 		}
 
-		doc.put("_id", res.getSchema());
+		// doc.put("_id", res.getSchema());
 
 		TimeZone tz = TimeZone.getTimeZone("UTC");
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
@@ -250,10 +250,16 @@ public class TelemetryServiceImpl implements TelemetryService {
 	public void getResult(String id, Handler<AsyncResult<Result>> resultHandler) {
 		JsonObject query = new JsonObject().put("_id", id);
 		JsonObject fields = new JsonObject().put("_id", 0).put("_ts", 0);
-		client.findOne(RECEIPTS, query, fields, res -> {
+		client.findOne(RESULTS, query, fields, res -> {
 			if (res.succeeded()) {
-				Result rs = Json.decodeValue(res.result().encode(), Result.class);
-				resultHandler.handle(Future.succeededFuture(rs));
+				if (res.result() == null) {
+					resultHandler.handle(Future.succeededFuture());
+				} else {
+					JsonObject raw = res.result();
+					raw.put("id", id);
+					Result rs = Json.decodeValue(res.result().encode(), Result.class);
+					resultHandler.handle(Future.succeededFuture(rs));
+				}
 			} else {
 				resultHandler.handle(Future.failedFuture(res.cause()));
 			}
@@ -301,6 +307,7 @@ public class TelemetryServiceImpl implements TelemetryService {
 				List<Result> result = res.result().stream()
 						.map(raw -> {
 							Result rs = Json.decodeValue(raw.encode(), Result.class);
+							rs.setId(raw.getString("_id"));
 							return rs;
 						})
 					.collect(Collectors.toList());
