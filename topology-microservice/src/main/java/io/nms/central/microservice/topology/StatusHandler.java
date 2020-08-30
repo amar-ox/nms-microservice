@@ -101,14 +101,15 @@ public class StatusHandler extends BaseMicroserviceVerticle {
 	}
 	
 	 private void publishUpdateToUI() {
-		    vertx.eventBus().publish(TopologyService.UI_ADDRESS, new JsonObject());
+		 vertx.eventBus().publish(TopologyService.UI_ADDRESS, new JsonObject()
+				.put("service", TopologyService.SERVICE_ADDRESS));
 	 }
 	 
 	 private void notifyConfigService() {
-			vertx.eventBus().request(TopologyService.CONFIG_ADDRESS, new JsonObject(), reply -> {
-				if (reply.failed()) {
-					logger.warn("configuration service replies: ", reply.cause().getMessage());
-				}
-			});
+		vertx.eventBus().request(TopologyService.CONFIG_ADDRESS, new JsonObject(), reply -> {
+			if (reply.failed()) {
+				logger.warn("configuration service replies: ", reply.cause().getMessage());
+			}
+		});
 	}
 }

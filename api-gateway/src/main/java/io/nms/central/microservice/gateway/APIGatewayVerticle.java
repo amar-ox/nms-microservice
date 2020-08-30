@@ -1,16 +1,18 @@
 package io.nms.central.microservice.gateway;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import io.nms.central.microservice.account.AccountService;
 import io.nms.central.microservice.account.model.Account;
 import io.nms.central.microservice.common.RestAPIVerticle;
-import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.DecodeException;
@@ -18,15 +20,19 @@ import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import io.vertx.core.net.JksOptions;
+import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.ext.auth.PubSecKeyOptions;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.auth.jwt.JWTOptions;
+import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.JWTAuthHandler;
+import io.vertx.ext.web.handler.sockjs.BridgeOptions;
+import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 import io.vertx.servicediscovery.Record;
 import io.vertx.servicediscovery.ServiceDiscovery;
 import io.vertx.servicediscovery.types.EventBusService;
@@ -69,7 +75,7 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 						.setSymmetric(true)));
 		
 		// body handler
-		router.route().handler(BodyHandler.create());
+		router.route("/api/*").handler(BodyHandler.create());
 		
 		// this route is excluded from the auth handler
 		router.post("/api/login/agent").handler(this::agentLoginHandler);
@@ -89,15 +95,41 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 
 		// static content
 		// router.route("/*").handler(StaticHandler.create());
+		
+		/*-----------------------------------------------------------------*/
+		Set<String> allowHeaders = new HashSet<>();
+	    allowHeaders.add("x-requested-with");
+	    allowHeaders.add("Access-Control-Allow-Method");
+	    allowHeaders.add("Access-Control-Allow-Origin");
+	    allowHeaders.add("Access-Control-Allow-Credentials");
+	    allowHeaders.add("origin");
+	    allowHeaders.add("Content-Type");
+	    allowHeaders.add("accept");
+	    Set<HttpMethod> allowMethods = new HashSet<>();
+	    allowMethods.add(HttpMethod.GET);
+	    allowMethods.add(HttpMethod.OPTIONS);
+
+	    router.route("/eventbus/*").handler(CorsHandler.create(".*.")
+	    		.allowedHeaders(allowHeaders)
+	    		.allowCredentials(true)
+	    		.allowedMethods(allowMethods));
+	    
+	    // event bus bridge
+	    SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
+	    BridgeOptions bridgeOptions = new BridgeOptions()
+				.addOutboundPermitted(new PermittedOptions().setAddress("nms.to.ui"));
+		sockJSHandler.bridge(bridgeOptions);
+		
+	    router.route("/eventbus/*").handler(sockJSHandler);
+	    /*----------------------------------------------------------------*/
 
 		// enable HTTPS
 		HttpServerOptions httpServerOptions = new HttpServerOptions()
 				.setSsl(true)
-				.setKeyStoreOptions(new JksOptions().setPath("server.jks").setPassword("123456"));
-		/* .setPemKeyCertOptions(
-    		  new PemKeyCertOptions()
-    		  		.setKeyPath("certs/nms.controller.key.pem")
-    		  		.setCertPath("certs/nms.controller.cert.pem")); */
+				.setPemKeyCertOptions(
+    		            new PemKeyCertOptions()
+    		  		       .setKeyPath("cert/mnms.controller.key.pem")
+    		  		       .setCertPath("cert/mnms.controller.crt.pem"));
 
 		// create http server
 		vertx.createHttpServer(httpServerOptions)
@@ -105,7 +137,6 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 		.listen(port, host, ar -> {
 			if (ar.succeeded()) {
 				publishApiGateway(host, port)
-				.compose(r -> deployEventbusVerticle())
 				.onComplete(promise);
 				logger.info("API Gateway is running on port " + port);
 				// publish log
@@ -115,14 +146,6 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 			}
 		});
 	}
-
-	private Future<Void> deployEventbusVerticle() {
-		Promise<String> promise = Promise.promise();
-		vertx.deployVerticle(new NmsUIVerticle(),
-				new DeploymentOptions().setConfig(config()), promise.future());
-		return promise.future().map(r -> null);
-	}
-
 
 	private void dispatchRequests(RoutingContext context) {
 		int initialOffset = 5; // length of `/api/`
