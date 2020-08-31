@@ -83,7 +83,7 @@ services:
       - nms
   api-gateway:
     image: nms/api-gateway
-    hostname: mnms.controller.com
+    hostname: mnms.controller
     ports:
       - "8787:8787"
     environment:
