@@ -1,0 +1,402 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: NMS Controller-to-Agent API
+  description: The Agent-facing API provided by the controller.
+servers:
+  - url: 'https://nms.controller:8787/api'
+security:
+  - bearerAuth: []
+paths:
+  /login/agent:
+    post:
+      description: Authenticate to the controller as an Agent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Agent authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenContent'
+        '400':
+          description: Incorrect authentication object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authentication information is invalid.
+  '/notification/status/{statusId}':
+    put:
+      description: Node Status sent from the Agent.
+      parameters:
+        - name: statusId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Status'
+      responses:
+        '201':
+          description: Status successfully processed.
+        '400':
+          description: Incorrect Status object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+  '/notification/event/{eventId}':
+    put:
+      description: Event message sent from the Agent.
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '201':
+          description: Event message saved.
+        '400':
+          description: Incorrect Event object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+  '/notification/fault/{faultId}':
+    put:
+      description: Fault message sent from the Agent.
+      parameters:
+        - name: faultId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Fault'
+      responses:
+        '201':
+          description: Fault message saved.
+        '400':
+          description: Incorrect Fault object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+  /topology/pa:
+    post:
+      description: Register a prefix (prefix announement).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Prefix'
+      responses:
+        '200':
+          description: Prefix saved and processed.
+        '400':
+          description: Failed to process prefix announcement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+  '/topology/pa/name/{name}':
+    delete:
+      description: Withdraw a prefix previously announced (by its name).
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            description: Binary encoding of the Name TLV-VALUE.
+            type: string
+            format: byte
+      responses:
+        '204':
+          description: The prefix was withdrawn successfully.
+        '401':
+          description: Authorization information is missing or invalid.
+  /configuration/candidate-config:
+    get:
+      description: Returns the candidate configuration of the node.
+      parameters:
+        - in: header
+          name: If-None-Match
+          description: Value that the configuration digest must not match
+          schema:
+            type: string
+          required: false
+      responses:
+        '200':
+          description: Successfully returned candidate configuration.
+          headers:
+            ETag:
+              description: Digest of the config object.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Config'
+        '304':
+          description: Candidate configuration not changed.
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: Candidate configuration not found.
+  /configuration/running-config:
+    put:
+      description: Update or create the running configuration of the node.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Config'
+      responses:
+        '201':
+          description: Running configuration updated.
+        '400':
+          description: Incorrect Config object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+    patch:
+      description: Update parts of the running configuration of the node.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchRequest'
+      responses:
+        '201':
+          description: Running configuration updated.
+        '400':
+          description: Incorrect JSON patch object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    TokenContent:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+    BadRequestContent:
+      type: object
+      properties:
+        message:
+          type: string
+    Prefix:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          description: Binary encoding of the Name TLV-VALUE.
+          type: string
+          format: byte
+    Config:
+      type: object
+      required:
+        - faces
+        - routes
+      properties:
+        faces:
+          type: array
+          description: The list of faces.
+          items:
+            $ref: '#/components/schemas/Face'
+        routes:
+          description: The list of routes.
+          type: array
+          items:
+            $ref: '#/components/schemas/Route'
+    Face:
+      type: object
+      required:
+        - id
+        - local
+        - remote
+        - scheme
+      properties:
+        id:
+          type: integer
+          description: The ID assigned by the controller to the face.
+        local:
+          type: string
+          description: The local address of the face.
+        remote:
+          type: string
+          description: The remote address of the face.
+        scheme:
+          type: string
+          enum:
+            - ether
+          description: The underlying protocol.
+        vlan:
+          type: integer
+          minimum: 1
+          maximum: 4095
+          default: 1
+          description: The VLAN tag the face belongs to.
+    Route:
+      type: object
+      required:
+        - prefix
+        - faceId
+        - origin
+        - cost
+      properties:
+        prefix:
+          type: string
+          format: byte
+          description: The prefix of the route. Binary encoding of the Name TLV-VALUE.
+        faceId:
+          type: integer
+          description: The ID of the face associated with this route.
+        origin:
+          type: integer
+          description: The origin of the route.
+          minimum: 1
+          maximum: 4095
+        cost:
+          type: integer
+          description: The cost of the route.
+        childInherit:
+          type: boolean
+          description: Child Inherit flag.
+          default: true
+        capture:
+          type: boolean
+          description: Capture flag.
+          default: false
+    Status:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          enum:
+            - UP
+            - DOWN
+        timestamp:
+          type: string
+          format: date-time
+    Event:
+      type: object
+      required:
+        - code
+        - severity
+        - msg
+        - timestamp
+      properties:
+        code:
+          type: integer
+        severity:
+          type: string
+          enum:
+            - LOW
+            - MEDIUM
+            - HIGH
+        msg:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    Fault:
+      type: object
+      required:
+        - code
+        - msg
+        - timestamp
+      properties:
+        code:
+          type: integer
+        msg:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    PatchRequest:
+      type: array
+      description: The list of JSONPatch documents to apply.
+      items:
+        $ref: '#/components/schemas/PatchDocument'
+    PatchDocument:
+      description: Subset of a JSONPatch document as defined by RFC 6902.
+      required:
+        - op
+        - path
+        - value
+      properties:
+        op:
+          type: string
+          description: The operation to be performed.
+          enum:
+            - add
+            - remove
+            - replace
+        path:
+          type: string
+          description: A JSON-Pointer.
+        value:
+          nullable: false
+          description: 'Can be anything: string, number, array, object, etc.'
