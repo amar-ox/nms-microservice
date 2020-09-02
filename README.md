@@ -1,8 +1,10 @@
 
-<h1 align="center"> Multiverse Network Management System [Controller] </h1>
+<!-- h1 align="center"> Multiverse Network Management System [Controller] </h1 -->
 <p align="center">
   <img src="docs/images/logo.png" />
 </p>
+
+> Note: This repo is the Controller part of the MNMS project.
 
 ## Overview
 The Multiverse Network Management System (MNMS) project aims at providing a feature-rich solution for configuring, monitoring and managing networks. 
@@ -21,7 +23,7 @@ For the telemetry service, the controller and the agents use the publish-subscri
 This project works with Vert.x **3.9.0**. It can be deployed as a multicontainer application. The following instructions have been tested to run on Ubuntu 16.04, 18.04, and 20.04.
 
 ### Prerequisites
-In order to build and run the controller, the system requires the following tools to be installed:
+In order to build and run the controller, the system must have the following installed:
 - Java 8 (openJDK 1.8)
 - Maven (versions 3.3 to 3.6 should work fine)
 - Docker (19.03.12)
@@ -87,10 +89,10 @@ In addition, the browser will show up the nice green lock.
 To do so, import the file `nms-microservice/ca/mnms-rootCa.crt.pem` as a CA certificate into your browser. The steps depend on the browser:
 
 - Chorme: navigate to `chrome://settings/certificates`. In the `Authorities` tab, import the certificate file and check `Trust this certificate for identifying websites`.
-- Firefox: navigate to `about:preferences#privacy`, scroll down to the `Certificates` section and click on `View certificates...`. 
+- Firefox: navigate to `about:preferences#privacy`, scroll down to the `Certificates` section and click on `View Certificates`. 
 Import the certificate file and check `Trust this CA to identify websites`.
 
-### Getting stated
+### MNMS is Ready
 The Multiverse Network Management System is finally ready.
 The Web console is accessible at `https://mnms.gui:4443`.
 Login with: `username=admin password=admin`.
@@ -99,7 +101,17 @@ Login with: `username=admin password=admin`.
 [TBD]
 
 ## Use Telemetry (experimental)
-[TBD]
+> Note: The telemetry service is not secured yet, i.e., agents are not authenticated to the controller and communications are not encrypted. We rely on the next version of MNMS to secure telemetry.
+
+To use the telemetry service, you have to deploy a [Telemetry Agent](https://github.com/amar-ox/nms-telemetry-agent):
+```
+git clone https://github.com/amar-ox/nms-telemetry-agent.git
+cd nms-telemetry-agent
+mvn clean install
+java -jar target/nms-telemetry-agent-fat.jar src/conf/conf.json
+```
+> Note: In this example, the agent is configured to run on the same host as the controller.
+More information on configuring the agents will be available soon.
 
 ## Contributing
 Contributions and feedback are definitely welcome!

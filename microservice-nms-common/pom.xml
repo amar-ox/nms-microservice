@@ -15,11 +15,6 @@
   <dependencies>
     <dependency>
       <groupId>io.vertx</groupId>
-      <artifactId>vertx-auth-oauth2</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
       <artifactId>vertx-jdbc-client</artifactId>
       <optional>true</optional>
     </dependency>

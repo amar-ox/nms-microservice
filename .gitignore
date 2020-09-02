@@ -1,6 +1,8 @@
 # IntelliJ project files
 .idea
 *.iml
+.project
+/.settings
 
 # build files
 build

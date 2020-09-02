@@ -11,7 +11,7 @@
 
   <modules>
     <!-- infrastructure components -->
-    <module>microservice-nms-common</module>    
+    <module>microservice-nms-common</module>
     <module>api-gateway</module>
 
     <!-- service components -->    
