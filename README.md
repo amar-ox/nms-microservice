@@ -46,7 +46,7 @@ sudo ./run.sh
 ```
 
 #### Web-console (GUI)
-Second, deploy the Web-console. Open another terminal run the following commands:
+Second, deploy the Web-console. Open another terminal and run the following commands:
 
 ```
 git clone https://github.com/amar-ox/nms-console.git
