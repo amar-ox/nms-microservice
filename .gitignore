@@ -7,6 +7,7 @@ build
 target
 .vertx
 
+*/.externalToolBuilders
 */.classpath
 */*.project
 */.settings
