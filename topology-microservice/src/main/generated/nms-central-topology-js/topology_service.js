@@ -33,7 +33,7 @@ var Vctp = Java.type('io.nms.central.microservice.topology.model.Vctp');
 var Vxc = Java.type('io.nms.central.microservice.topology.model.Vxc');
 
 /**
- A service interface managing products.
+ A service interface managing topology.
  <p>
  This service is an event bus service (aka. service proxy)
  </p>

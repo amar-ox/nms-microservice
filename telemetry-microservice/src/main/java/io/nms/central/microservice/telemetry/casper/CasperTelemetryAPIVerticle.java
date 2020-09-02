@@ -15,7 +15,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
 /**
- * This verticle exposes a HTTP endpoint to process shopping products management with REST APIs.
+ * This verticle implements methods to manage telemetry operations with CaSpeR API.
  *
  * @author Amar Abane
  */

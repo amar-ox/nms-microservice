@@ -11,12 +11,10 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
 /**
- * A service interface managing products.
+ * A service interface managing notifications.
  * <p>
  * This service is an event bus service (aka. service proxy)
  * </p>
- *
- * @author Eric Zhao
  */
 @VertxGen
 @ProxyGen

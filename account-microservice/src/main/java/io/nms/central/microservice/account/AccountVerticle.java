@@ -13,9 +13,8 @@ import io.vertx.serviceproxy.ProxyHelper;
 
 
 /**
- * A verticle publishing the product service.
+ * A verticle publishing the accounts service.
  *
- * @author Eric Zhao
  */
 public class AccountVerticle extends BaseMicroserviceVerticle {
 

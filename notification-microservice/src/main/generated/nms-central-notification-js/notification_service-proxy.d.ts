@@ -16,7 +16,7 @@
 
 
 /**
- A service interface managing products.
+ A service interface managing notifications.
  <p>
  This service is an event bus service (aka. service proxy)
  </p>

@@ -116,9 +116,6 @@ public class NotificationServiceImpl implements NotificationService {
 								raw.remove("_id");
 								Status status = Json.decodeValue(raw.encode(), Status.class);
 								return status;
-								/* Status status = new Status(raw);
-								status.setId(raw.getString("_id"));
-								return status; */
 							})
 						.collect(Collectors.toList());
 					resultHandler.handle(Future.succeededFuture(result));
@@ -208,9 +205,6 @@ public class NotificationServiceImpl implements NotificationService {
 								raw.remove("_id");
 								Event event = Json.decodeValue(raw.encode(), Event.class);
 								return event;
-								/* Event event = new Event(raw);
-								event.setId(raw.getString("_id"));
-								return event; */
 							})
 						.collect(Collectors.toList());
 					resultHandler.handle(Future.succeededFuture(result));
@@ -264,9 +258,6 @@ public class NotificationServiceImpl implements NotificationService {
 								raw.remove("_id");
 								Fault fault = Json.decodeValue(raw.encode(), Fault.class);
 								return fault;
-								/* Fault fault = new Fault(raw);
-								fault.setId(raw.getString("_id"));
-								return fault; */
 							})
 						.collect(Collectors.toList());
 					resultHandler.handle(Future.succeededFuture(result));

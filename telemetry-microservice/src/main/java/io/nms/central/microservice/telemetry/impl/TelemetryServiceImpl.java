@@ -25,7 +25,7 @@ import io.vertx.ext.mongo.FindOptions;
 import io.vertx.ext.mongo.MongoClient;
 
 /**
- * JDBC implementation of {@link io.vertx.blueprint.microservice.product.ProductService}.
+ *  This verticle implements the telemetry service.
  *
  * @author Amar Abane
  */
@@ -229,8 +229,6 @@ public class TelemetryServiceImpl implements TelemetryService {
 			resultHandler.handle(Future.failedFuture("error while encoding result"));
 			return;
 		}
-
-		// doc.put("_id", res.getSchema());
 
 		TimeZone tz = TimeZone.getTimeZone("UTC");
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");

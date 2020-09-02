@@ -47,9 +47,6 @@ public class Status {
 	}
 
 	public JsonObject toJson() {
-		/* JsonObject json = new JsonObject();
-		StatusConverter.toJson(this, json);
-		return json; */
 		return new JsonObject(Json.encode(this));
 	}
 

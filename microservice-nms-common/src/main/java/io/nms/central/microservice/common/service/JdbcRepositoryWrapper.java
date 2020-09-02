@@ -18,8 +18,6 @@ import io.vertx.ext.sql.UpdateResult;
 
 /**
  * Helper and wrapper class for JDBC repository services.
- *
- * @author Eric Zhao
  */
 public class JdbcRepositoryWrapper {
 
@@ -61,19 +59,6 @@ public class JdbcRepositoryWrapper {
 			});
 		}));
 	}
-
-	/* protected <R> void execute(JsonArray params, String sql, R ret, Handler<AsyncResult<R>> resultHandler) {
-		client.getConnection(connHandler(resultHandler, connection -> {
-			connection.updateWithParams(sql, params, r -> {
-				if (r.succeeded()) {
-					resultHandler.handle(Future.succeededFuture(ret));
-				} else {
-					resultHandler.handle(Future.failedFuture(r.cause()));
-				}
-				connection.close();
-			});
-		}));
-	} */
 	
 	protected void insertAndGetId(JsonArray params, String sql, Handler<AsyncResult<Integer>> resultHandler) {
 		client.getConnection(connHandler(resultHandler, connection -> {
@@ -269,68 +254,6 @@ public class JdbcRepositoryWrapper {
 		client.getConnection(promise);
 		return promise.future();
 	}
-	
-	/* protected Future<SQLConnection> txnBegin() {
-		Promise<SQLConnection> promise = Promise.promise();
-		client.getConnection(ar -> {
-			if (ar.succeeded()) {
-				SQLConnection conn = ar.result(); 
-				conn.setAutoCommit(false, res -> {
-					if (res.succeeded()) {
-						promise.complete(conn);
-					} else {
-						promise.fail(res.cause());
-					}
-				});
-			} else {
-				promise.fail(ar.cause());
-			}
-		});
-		return promise.future();
-	}
-	
-	protected Future<Integer> txnExecute(SQLConnection conn, String sql, JsonArray params) {
-		Promise<Integer> promise = Promise.promise();
-		conn.updateWithParams(sql, params, r -> {
-			if (r.succeeded()) {
-				UpdateResult updateResult = r.result();
-				if (updateResult.getUpdated() == 1) {
-					promise.complete(updateResult.getKeys().getInteger(0));					 
-				} else {
-					promise.fail("Not inserted");
-				}
-			} else {
-				promise.fail(r.cause());
-			}
-		});
-		return promise.future();
-	}
-	
-	protected Future<Void> txnExecuteNoResult(SQLConnection conn, String sql, JsonArray params) {
-		Promise<Void> promise = Promise.promise();
-		conn.updateWithParams(sql, params, r -> {
-			if (r.succeeded()) {
-				promise.complete();
-			} else {
-				promise.fail(r.cause());
-			}
-		});
-		return promise.future();
-	}
-	
-	protected Future<Void> txnEnd(SQLConnection conn) {
-		Promise<Void> promise = Promise.promise();
-		conn.commit(ar -> {
-			conn.close();
-			if (ar.succeeded()) {				
-				promise.complete();
-			} else {
-				promise.fail(ar.cause());				
-			}
-		});
-		return promise.future();
-	} */
-	
 	
 	/* --------------------------------- */
 	// TODO: use Entity + UUID to manage TXNs

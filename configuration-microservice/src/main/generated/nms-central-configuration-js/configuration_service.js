@@ -26,7 +26,7 @@ var ConfigObj = Java.type('io.nms.central.microservice.configuration.model.Confi
 var Vnode = Java.type('io.nms.central.microservice.topology.model.Vnode');
 
 /**
- A service interface managing products.
+ A service interface managing node configurations.
  <p>
  This service is an event bus service (aka. service proxy)
  </p>

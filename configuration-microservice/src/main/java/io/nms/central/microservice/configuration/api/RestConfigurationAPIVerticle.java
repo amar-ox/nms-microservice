@@ -17,7 +17,7 @@ import io.vertx.core.http.HttpHeaders;
 
 
 /**
- * This verticle exposes a HTTP endpoint to process shopping products management with REST APIs.
+ * This verticle exposes a HTTP endpoint to process nodes configuration with REST APIs.
  *
  * @author Amar Abane
  */

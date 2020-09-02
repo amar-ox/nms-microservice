@@ -42,8 +42,6 @@ import io.vertx.servicediscovery.types.HttpEndpoint;
  * A verticle for global API gateway.
  * This API gateway uses HTTP-HTTP pattern. It's also responsible for
  * load balance and failure handling.
- *
- * @author Eric Zhao
  */
 public class APIGatewayVerticle extends RestAPIVerticle {
 

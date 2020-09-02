@@ -15,9 +15,8 @@ import io.vertx.serviceproxy.ProxyHelper;
 
 
 /**
- * A verticle publishing the product service.
+ * A verticle publishing the configuration service.
  *
- * @author Eric Zhao
  */
 public class ConfigurationVerticle extends BaseMicroserviceVerticle {
 

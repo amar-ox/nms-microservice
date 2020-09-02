@@ -27,14 +27,8 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
 import io.vertx.ext.mongo.UpdateOptions;
 
-
-/* import javax.json.Json;
-import javax.json.JsonException;
-import javax.json.JsonPatch;
-import javax.json.JsonReader; */
-
 /**
- *
+ * This verticle implements the configuration service
  */
 public class ConfigurationServiceImpl implements ConfigurationService {
 

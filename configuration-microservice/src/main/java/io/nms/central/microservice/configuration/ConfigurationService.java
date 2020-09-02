@@ -13,12 +13,10 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 
 /**
- * A service interface managing products.
+ * A service interface managing node configurations.
  * <p>
  * This service is an event bus service (aka. service proxy)
  * </p>
- *
- * @author Eric Zhao
  */
 @VertxGen
 @ProxyGen

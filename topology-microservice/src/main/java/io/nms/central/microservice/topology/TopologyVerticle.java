@@ -15,9 +15,7 @@ import io.vertx.serviceproxy.ProxyHelper;
 
 
 /**
- * A verticle publishing the product service.
- *
- * @author Eric Zhao
+ * A verticle publishing the tepology service.
  */
 public class TopologyVerticle extends BaseMicroserviceVerticle {
 

@@ -13,9 +13,7 @@ import io.vertx.serviceproxy.ProxyHelper;
 
 
 /**
- * A verticle publishing the product service.
- *
- * @author Eric Zhao
+ * A verticle publishing the notification service.
  */
 public class NotificationVerticle extends BaseMicroserviceVerticle {
 

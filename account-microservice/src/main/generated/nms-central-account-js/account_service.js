@@ -24,7 +24,7 @@ var Account = Java.type('io.nms.central.microservice.account.model.Account');
 var Agent = Java.type('io.nms.central.microservice.account.model.Agent');
 
 /**
- A service interface managing products.
+ A service interface managing user accounts.
  <p>
  This service is an event bus service (aka. service proxy)
  </p>

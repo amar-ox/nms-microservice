@@ -43,9 +43,6 @@ public class Event {
 	}
 	
 	public JsonObject toJson() {
-		/* JsonObject json = new JsonObject();
-		EventConverter.toJson(this, json);
-		return json; */
 		return new JsonObject(Json.encode(this));
 	}
 

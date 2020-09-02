@@ -18,9 +18,7 @@ import io.vertx.ext.web.handler.BodyHandler;
 
 
 /**
- * This verticle exposes a HTTP endpoint to process shopping products management with REST APIs.
- *
- * @author Eric Zhao
+ * This verticle exposes a HTTP endpoint to process notifications with REST APIs.
  */
 public class RestNotificationAPIVerticle extends RestAPIVerticle {
 

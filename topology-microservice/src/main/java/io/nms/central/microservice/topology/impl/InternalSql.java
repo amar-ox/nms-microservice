@@ -2,9 +2,6 @@ package io.nms.central.microservice.topology.impl;
 
 public class InternalSql {
 	
-	/* public static final String LOCK_ALL_TABLES_FOR_NODE = "LOCK TABLES "
-			+ "Vnode WRITE, Vltp WRITE, Vctp WRITE, Vlink WRITE, VlinkConn WRITE, PrefixAnn WRITE, Face WRITE, Route WRITE"; */
-	
 	public static final String LOCK_TABLES_FOR_NODE = "LOCK TABLES "
 			+ "Vltp WRITE, Vltp AS sLtp WRITE, Vltp AS dLtp WRITE, "
 			+ "Vctp WRITE, Vctp AS sCtp WRITE, Vctp AS dCtp WRITE, "

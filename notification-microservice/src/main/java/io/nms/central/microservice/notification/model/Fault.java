@@ -32,9 +32,6 @@ public class Fault {
 	}
 	
 	public JsonObject toJson() {
-		/* JsonObject json = new JsonObject();
-		FaultConverter.toJson(this, json);
-		return json; */
 		return new JsonObject(Json.encode(this));
 	}
 

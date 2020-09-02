@@ -14,9 +14,7 @@ import io.vertx.serviceproxy.ServiceBinder;
 
 
 /**
- * A verticle publishing the product service.
- *
- * @author Amar Abane
+ * A verticle publishing the telemetry service.
  */
 public class TelemetryVerticle extends BaseMicroserviceVerticle {
 
@@ -33,17 +31,6 @@ public class TelemetryVerticle extends BaseMicroserviceVerticle {
 		
 		// create the casper verticle
 		casperVerticle = new CasperTelemetryAPIVerticle(telemetryService);
-
-		// register the service proxy on event bus
-		/* ServiceBinder binder = new ServiceBinder(vertx);
-		binder.setAddress(SERVICE_ADDRESS);
-		binder.register(TelemetryService.class, telemetryService);
-
-		// publish the service in the discovery infrastructure    
-		publishEventBusService(SERVICE_NAME, SERVICE_ADDRESS, TelemetryService.class)
-				.compose(servicePublished -> deployCasperVerticle())
-				.compose(capserDeployed -> deployRestVerticle())
-				.onComplete(future); */
 		
 		deployCasperVerticle()
 			.compose(capserDeployed -> deployRestVerticle())

@@ -25,7 +25,7 @@ var Event = Java.type('io.nms.central.microservice.notification.model.Event');
 var Fault = Java.type('io.nms.central.microservice.notification.model.Fault');
 
 /**
- A service interface managing products.
+ A service interface managing notifications.
  <p>
  This service is an event bus service (aka. service proxy)
  </p>

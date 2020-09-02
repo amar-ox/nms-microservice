@@ -136,27 +136,5 @@ public class AccountServiceImpl implements AccountService {
 			}
 		});
 	}
-	
-	/* @Override
-	public void authenticateAgent(String username, String password, Handler<AsyncResult<Account>> resultHandler) {
-		JsonObject query = new JsonObject()
-				.put("username", username)
-				.put("password", password);
-		JsonObject fields = new JsonObject().put("password", 0);
-		
-		client.findOne(COLL_AGENT, query, fields, ar -> {
-			if (ar.succeeded()) {
-				if (ar.result() == null) {
-					resultHandler.handle(Future.succeededFuture(null));
-				} else {
-					Account result = new Account(ar.result());
-					resultHandler.handle(Future.succeededFuture(result));
-				}
-			} else {
-				resultHandler.handle(Future.failedFuture(ar.cause()));
-			}
-		});
-	} */
-	
 }
 
