@@ -17,9 +17,7 @@ import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonObject;
 
 /**
  * A service interface managing topology.
@@ -48,7 +46,7 @@ public interface TopologyService {
 	
 	
 	@Fluent	
-	TopologyService initializePersistence(Handler<AsyncResult<List<Integer>>> resultHandler);
+	TopologyService initializePersistence(Handler<AsyncResult<Void>> resultHandler);
 
 	
 	/* Vsubnet */
@@ -282,11 +280,4 @@ public interface TopologyService {
 	/* Processing */
 	@Fluent
 	TopologyService updateNodeStatus(int id, String status, Handler<AsyncResult<Void>> resultHandler);
-	
-	@Fluent
-	TopologyService generateAllRoutes(Handler<AsyncResult<List<Route>>> resultHandler);
-	
-	@Fluent
-	TopologyService generateRoutesToPrefix(String name, Handler<AsyncResult<List<Route>>> resultHandler);
-	
 }

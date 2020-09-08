@@ -35,13 +35,9 @@ public class TopologyVerticle extends BaseMicroserviceVerticle {
     	.onComplete(future);
   }
   
-  private Future<List<Integer>> initTopologyDatabase(TopologyService service) {
-	  Promise<List<Integer>> initPromise = Promise.promise();
+  private Future<Void> initTopologyDatabase(TopologyService service) {
+	  Promise<Void> initPromise = Promise.promise();
 	    service.initializePersistence(initPromise);
-	    /*return initPromise.future().map(v -> {
-	      ExampleHelper.initData(vertx, config());
-	      return null;
-	    });*/
 	    return initPromise.future();
   }
   

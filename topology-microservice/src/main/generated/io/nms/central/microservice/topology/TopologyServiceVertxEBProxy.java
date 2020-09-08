@@ -74,7 +74,7 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
   }
 
   @Override
-  public  TopologyService initializePersistence(Handler<AsyncResult<List<Integer>>> resultHandler){
+  public  TopologyService initializePersistence(Handler<AsyncResult<Void>> resultHandler){
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return this;
@@ -83,11 +83,11 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
 
     DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
     _deliveryOptions.addHeader("action", "initializePersistence");
-    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
+    _vertx.eventBus().<Void>request(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
       } else {
-        resultHandler.handle(Future.succeededFuture(ProxyUtils.convertList(res.result().body().getList())));
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
       }
     });
     return this;
@@ -1595,53 +1595,6 @@ public class TopologyServiceVertxEBProxy implements TopologyService {
         resultHandler.handle(Future.failedFuture(res.cause()));
       } else {
         resultHandler.handle(Future.succeededFuture(res.result().body()));
-      }
-    });
-    return this;
-  }
-  @Override
-  public  TopologyService generateAllRoutes(Handler<AsyncResult<List<Route>>> resultHandler){
-    if (closed) {
-      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return this;
-    }
-    JsonObject _json = new JsonObject();
-
-    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "generateAllRoutes");
-    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
-      if (res.failed()) {
-        resultHandler.handle(Future.failedFuture(res.cause()));
-      } else {
-        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
-          .map(o -> { if (o == null) return null;
-              return o instanceof Map ? new Route(new JsonObject((Map) o)) : new Route((JsonObject) o);
-            })
-          .collect(Collectors.toList())));
-      }
-    });
-    return this;
-  }
-  @Override
-  public  TopologyService generateRoutesToPrefix(String name, Handler<AsyncResult<List<Route>>> resultHandler){
-    if (closed) {
-      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
-      return this;
-    }
-    JsonObject _json = new JsonObject();
-    _json.put("name", name);
-
-    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "generateRoutesToPrefix");
-    _vertx.eventBus().<JsonArray>request(_address, _json, _deliveryOptions, res -> {
-      if (res.failed()) {
-        resultHandler.handle(Future.failedFuture(res.cause()));
-      } else {
-        resultHandler.handle(Future.succeededFuture(res.result().body().stream()
-          .map(o -> { if (o == null) return null;
-              return o instanceof Map ? new Route(new JsonObject((Map) o)) : new Route((JsonObject) o);
-            })
-          .collect(Collectors.toList())));
       }
     });
     return this;

@@ -75,14 +75,7 @@ public class StatusHandler extends BaseMicroserviceVerticle {
 			}
 		}
 		sender.reply(new JsonObject());
-	}
-	/**
-	 * Dispatch the order to the infrastructure layer.
-	 * Here we simply save the order to the persistence and modify inventory changes.
-	 *
-	 * @param order  order data object
-	 * @param sender message sender
-	 */
+	}	
 	private void dispatchStatus(Status status) {
 		String resType = status.getResType();
 		int resId = status.getResId();

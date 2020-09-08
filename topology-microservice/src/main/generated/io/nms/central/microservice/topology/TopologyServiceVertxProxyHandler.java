@@ -127,7 +127,7 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
       accessed();
       switch (action) {
         case "initializePersistence": {
-          service.initializePersistence(HelperUtils.createListHandler(msg));
+          service.initializePersistence(HelperUtils.createHandler(msg));
           break;
         }
         case "addVsubnet": {
@@ -857,35 +857,6 @@ public class TopologyServiceVertxProxyHandler extends ProxyHandler {
           service.updateNodeStatus(json.getValue("id") == null ? null : (json.getLong("id").intValue()),
                         (java.lang.String)json.getValue("status"),
                         HelperUtils.createHandler(msg));
-          break;
-        }
-        case "generateAllRoutes": {
-          service.generateAllRoutes(res -> {
-                        if (res.failed()) {
-                          if (res.cause() instanceof ServiceException) {
-                            msg.reply(res.cause());
-                          } else {
-                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
-                          }
-                        } else {
-                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
-                        }
-                     });
-          break;
-        }
-        case "generateRoutesToPrefix": {
-          service.generateRoutesToPrefix((java.lang.String)json.getValue("name"),
-                        res -> {
-                        if (res.failed()) {
-                          if (res.cause() instanceof ServiceException) {
-                            msg.reply(res.cause());
-                          } else {
-                            msg.reply(new ServiceException(-1, res.cause().getMessage()));
-                          }
-                        } else {
-                          msg.reply(new JsonArray(res.result().stream().map(r -> r == null ? null : r.toJson()).collect(Collectors.toList())));
-                        }
-                     });
           break;
         }
         default: throw new IllegalStateException("Invalid action: " + action);

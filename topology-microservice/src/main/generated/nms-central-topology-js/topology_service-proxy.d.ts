@@ -27,7 +27,7 @@ export default class TopologyService {
 
   constructor (eb: any, address: string);
 
-  initializePersistence(resultHandler: (err: any, result: Array<number>) => any) : TopologyService;
+  initializePersistence(resultHandler: (err: any, result: any) => any) : TopologyService;
 
   addVsubnet(vsubnet: any, resultHandler: (err: any, result: any) => any) : TopologyService;
 
@@ -168,8 +168,4 @@ export default class TopologyService {
   deleteFace(faceId: string, resultHandler: (err: any, result: any) => any) : TopologyService;
 
   updateNodeStatus(id: number, status: string, resultHandler: (err: any, result: any) => any) : TopologyService;
-
-  generateAllRoutes(resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
-
-  generateRoutesToPrefix(name: string, resultHandler: (err: any, result: Array<any>) => any) : TopologyService;
 }

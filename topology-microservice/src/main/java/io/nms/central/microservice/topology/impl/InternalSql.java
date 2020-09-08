@@ -109,6 +109,9 @@ public class InternalSql {
 	+ "    WHERE Vnode.id = ? OR Vnode.name = ? "
 	+ ") as n "
 	+ "SET available=IFNULL(?, available) WHERE PrefixAnn.originId = n.id"; */
+
+	// get all node IDs
+	public static final String FETCH_ALL_NODE_IDS = "SELECT id FROM Vnode";
 	
 	// get LTPs of a node by id or name
 	public static final String FETCH_LTPS_BY_NODE = "SELECT "

@@ -505,7 +505,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		service.getPrefixAnnsByVnode(nodeId, resultHandler(context, Json::encodePrettily));
 	}
 	private void apiDeletePrefixAnn(RoutingContext context) {
-		String prefixAnnId = context.request().getParam("prefixAnnId");			
+		String prefixAnnId = context.request().getParam("paId");			
 		service.deletePrefixAnn(prefixAnnId, deleteResultHandler(context));
 	}
 	

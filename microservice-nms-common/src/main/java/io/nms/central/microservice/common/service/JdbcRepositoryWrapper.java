@@ -2,6 +2,7 @@ package io.nms.central.microservice.common.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -33,8 +34,8 @@ public class JdbcRepositoryWrapper {
 	    ROUTE,
 	    PA
 	}
-	private Entity currentEntity = Entity.NONE;
-	
+	private Entity currEntity = Entity.NONE;
+	private UUID currUUID = null;
 
 	public JdbcRepositoryWrapper(Vertx vertx, JsonObject config) {
 		this.client = JDBCClient.create(vertx, config);
@@ -115,21 +116,21 @@ public class JdbcRepositoryWrapper {
 	protected <K> Future<Optional<JsonObject>> retrieveOne(K param, String sql) {
 		return getConnection()
 				.compose(connection -> {
-					Future<Optional<JsonObject>> future = Future.future();
+					Promise<Optional<JsonObject>> promise = Promise.promise();
 					connection.queryWithParams(sql, new JsonArray().add(param), r -> {
 						if (r.succeeded()) {
 							List<JsonObject> resList = r.result().getRows();
 							if (resList == null || resList.isEmpty()) {
-								future.complete(Optional.empty());
+								promise.complete(Optional.empty());
 							} else {
-								future.complete(Optional.of(resList.get(0)));
+								promise.complete(Optional.of(resList.get(0)));
 							}
 						} else {
-							future.fail(r.cause());
+							promise.fail(r.cause());
 						}
 						connection.close();
 					});
-					return future;
+					return promise.future();
 				});
 	}
 	
@@ -177,32 +178,31 @@ public class JdbcRepositoryWrapper {
 	
 	protected Future<List<JsonObject>> retrieveMany(JsonArray param, String sql) {
 		return getConnection().compose(connection -> {
-			Future<List<JsonObject>> future = Future.future();
+			Promise<List<JsonObject>> promise = Promise.promise();
 			connection.queryWithParams(sql, param, r -> {
 				if (r.succeeded()) {
-					future.complete(r.result().getRows());					
+					promise.complete(r.result().getRows());
 				} else {
-					future.fail(r.cause());
+					promise.fail(r.cause());
 				}
 				connection.close();
 			});
-			return future;
+			return promise.future();
 		});
 	}
 
 	protected Future<List<JsonObject>> retrieveAll(String sql) {
 		return getConnection().compose(connection -> {
-			Future<List<JsonObject>> future = Future.future();
+			Promise<List<JsonObject>> promise = Promise.promise();
 			connection.query(sql, r -> {
 				if (r.succeeded()) {
-					future.complete(r.result().getRows());
-					// logger.debug("retrieveAll: "+r.result().getRows().get(0).encodePrettily());
+					promise.complete(r.result().getRows());
 				} else {
-					future.fail(r.cause());
+					promise.fail(r.cause());
 				}
 				connection.close();
 			});
-			return future;
+			return promise.future();
 		});
 	}
 
@@ -256,19 +256,25 @@ public class JdbcRepositoryWrapper {
 	}
 	
 	/* --------------------------------- */
-	// TODO: use Entity + UUID to manage TXNs
-	protected Future<Void> beginTxnAndLock(Entity entity, String sql) {
+	protected Future<Void> beginTxnAndLock(Entity entity, UUID uuid, String sql) {
 		Promise<Void> promise = Promise.promise();
-		if (!currentEntity.equals(Entity.NONE)) {
+		if ((currUUID != null) && uuid.equals(currUUID)) {
 			promise.complete();
 		} else {
 			client.getConnection(ar -> {
 				if (ar.succeeded()) {
-					globalConn = ar.result();
-					currentEntity = entity;
-					globalConn.setAutoCommit(false, res -> {
+					ar.result().setAutoCommit(false, res -> {
 						if (res.succeeded()) {
-							globalConn.execute(sql, promise);
+							ar.result().execute(sql, p -> {
+								if (p.succeeded()) {
+									globalConn = ar.result();
+									currUUID = uuid;
+									currEntity = entity;
+									promise.complete();
+								} else {
+									promise.fail(p.cause());
+								}
+							});
 						} else {
 							promise.fail(res.cause());
 						}
@@ -370,15 +376,14 @@ public class JdbcRepositoryWrapper {
 		return promise.future();
 	}
 	
-	protected Future<Void> commitTxnAndUnlock(Entity entity) {
+	protected Future<Void> commitTxnAndUnlock(Entity entity, UUID uuid) {
 		Promise<Void> promise = Promise.promise();
-		if (!currentEntity.equals(entity)) {
-			promise.complete();
-		} else {
+		if (currUUID.equals(uuid) && currEntity.equals(entity)) {
 			globalConn.commit(ar -> {
-				currentEntity = Entity.NONE;
 				if (ar.succeeded()) {
 					globalConn.execute("UNLOCK TABLES", done -> {
+						currEntity = Entity.NONE;
+						currUUID = null;
 						globalConn.close();
 						globalConn = null;
 						if (done.succeeded()) {
@@ -393,15 +398,18 @@ public class JdbcRepositoryWrapper {
 					promise.fail(ar.cause());
 				}
 			});
+		} else {
+			promise.complete();
 		}
 		return promise.future();
 	}
 	
 	protected void rollbackAndUnlock() {
-		if (!currentEntity.equals(Entity.NONE)) {
+		if (!currEntity.equals(Entity.NONE)) {
 			globalConn.rollback(ar -> {
 				globalConn.execute("UNLOCK TABLES", done -> {
-					currentEntity = Entity.NONE;
+					currEntity = Entity.NONE;
+					currUUID = null;
 				});
 			});
 		}

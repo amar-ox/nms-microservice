@@ -3,11 +3,11 @@ package io.nms.central.microservice.topology.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import io.nms.central.microservice.common.functional.Functional;
 import io.nms.central.microservice.common.service.JdbcRepositoryWrapper;
 import io.nms.central.microservice.topology.TopologyService;
 import io.nms.central.microservice.topology.model.Edge;
@@ -50,7 +50,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 
 	@Override
-	public TopologyService initializePersistence(Handler<AsyncResult<List<Integer>>> resultHandler) {
+	public TopologyService initializePersistence(Handler<AsyncResult<Void>> resultHandler) {
 		List<String> statements = new ArrayList<String>();
 		statements.add(ApiSql.CREATE_TABLE_VSUBNET);
 		statements.add(ApiSql.CREATE_TABLE_VNODE);
@@ -63,13 +63,38 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		statements.add(ApiSql.CREATE_TABLE_PREFIX_ANN);
 		statements.add(ApiSql.CREATE_TABLE_FACE);
 		statements.add(ApiSql.CREATE_TABLE_ROUTE);
-		client.getConnection(connHandler(resultHandler, connection -> {
-			connection.batch(statements, r -> {
-				resultHandler.handle(r);
-				connection.close();
-			});
-		}));
+		client.getConnection(conn -> {
+			if (conn.succeeded()) {
+				conn.result().batch(statements, r -> {
+					conn.result().close();
+					if (r.succeeded()) {
+						initializeStatus(resultHandler);
+					} else {
+						resultHandler.handle(Future.failedFuture(r.cause()));
+					}
+				});
+			} else {
+				resultHandler.handle(Future.failedFuture(conn.cause()));
+			}
+		});
 		return this;
+	}
+
+	private void initializeStatus(Handler<AsyncResult<Void>> resultHandler) {
+		this.retrieveAll(InternalSql.FETCH_ALL_NODE_IDS).onComplete(res -> {
+			if (res.succeeded()) {
+				List<JsonObject> nodeIds = res.result();
+				List<Future> futures = new ArrayList<>();				
+				for (JsonObject nId : nodeIds) {
+					Promise<Void> p = Promise.promise();
+					futures.add(p.future()); 
+					updateNodeStatus(nId.getInteger("id"), "DOWN", p);
+				}
+				CompositeFuture.all(futures).map((Void) null).onComplete(resultHandler);
+			} else {
+				resultHandler.handle(Future.failedFuture(res.cause()));
+			}
+		});
 	}
 
 
@@ -185,7 +210,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		Promise<Void> vltpsDeleted = Promise.promise();
 		JsonArray pVnodeId = new JsonArray().add(vnodeId);
 		
-		beginTxnAndLock(Entity.NODE, InternalSql.LOCK_TABLES_FOR_NODE).onComplete(ar -> {
+		UUID op = UUID.randomUUID();
+		beginTxnAndLock(Entity.NODE, op, InternalSql.LOCK_TABLES_FOR_NODE).onComplete(ar -> {
 			if (ar.succeeded()) {
 				globalRetrieveMany(pVnodeId, InternalSql.FETCH_LTPS_BY_NODE).onComplete(res -> {
 					if (res.succeeded()) {
@@ -194,7 +220,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 						for (JsonObject ltp : ltps) {
 							Promise<Void> p = Promise.promise();
 							futures.add(p.future());				
-							deleteVltp(String.valueOf(ltp.getInteger("id")), p);
+							deleteVltp(op, String.valueOf(ltp.getInteger("id")), p);
 						}
 						CompositeFuture.all(futures).map((Void) null).onComplete(vltpsDeleted);
 					} else {
@@ -209,7 +235,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		vltpsDeleted.future().onComplete(ar -> {
 			if (ar.succeeded()) {
 				globalExecute(pVnodeId, ApiSql.DELETE_VNODE)
-						.compose(r -> commitTxnAndUnlock(Entity.NODE))
+						.compose(r -> commitTxnAndUnlock(Entity.NODE, op))
 						.onComplete(resultHandler);
 			} else {
 				resultHandler.handle(Future.failedFuture(ar.cause()));
@@ -303,39 +329,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	@Override
 	public TopologyService deleteVltp(String vltpId, Handler<AsyncResult<Void>> resultHandler) {
-		Promise<Void> linkDeleted = Promise.promise();
-		JsonArray pVltpId = new JsonArray().add(vltpId);
-		
-		beginTxnAndLock(Entity.LTP, InternalSql.LOCK_TABLES_FOR_LTP).onComplete(ar -> {
-			if (ar.succeeded()) {
-				globalRetrieveOne(pVltpId, InternalSql.FETCH_LINK_BY_LTP)
-					.map(option -> option.orElse(null))
-					.onComplete(res -> {
-						if (res.succeeded()) {
-							if (res.result() != null) {
-								JsonObject link = res.result();
-								deleteVlink(String.valueOf(link.getInteger("id")), linkDeleted);
-							} else {
-								linkDeleted.complete();
-							}
-						} else {
-							resultHandler.handle(Future.failedFuture(res.cause()));
-						}
-				});
-			} else {
-				resultHandler.handle(Future.failedFuture(ar.cause()));
-			}
-		});
-		
-		linkDeleted.future().onComplete(ar -> {
-			if (ar.succeeded()) {
-				globalExecute(pVltpId, ApiSql.DELETE_VLTP)
-					.compose(r -> commitTxnAndUnlock(Entity.LTP))
-					.onComplete(resultHandler);
-			} else {
-				resultHandler.handle(Future.failedFuture(ar.cause()));
-			}
-		});
+		final UUID op = UUID.randomUUID();
+		deleteVltp(op, vltpId, resultHandler);
 		return this;
 	}
 	@Override
@@ -450,14 +445,15 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vlink.getDestVltpId());
 		JsonArray updSrcLtp = new JsonArray().add(true).add(vlink.getSrcVltpId());
 		JsonArray updDestLtp = new JsonArray().add(true).add(vlink.getDestVltpId());
-
-		beginTxnAndLock(Entity.LINK, InternalSql.LOCK_TABLES_FOR_LINK).onComplete(ar -> {
+		
+		UUID opp = UUID.randomUUID();
+		beginTxnAndLock(Entity.LINK, opp, InternalSql.LOCK_TABLES_FOR_LINK).onComplete(ar -> {
 			if (ar.succeeded()) {
 				Future<Integer> vlinkId = globalInsert(pVlink, ApiSql.INSERT_VLINK);
 				vlinkId
 						.compose(r -> globalExecute(updSrcLtp, InternalSql.UPDATE_LTP_BUSY))
 						.compose(r -> globalExecute(updDestLtp, InternalSql.UPDATE_LTP_BUSY))
-						.compose(r -> commitTxnAndUnlock(Entity.LINK))
+						.compose(r -> commitTxnAndUnlock(Entity.LINK, opp))
 						.map(vlinkId.result())
 						.onComplete(resultHandler);
 			} else {
@@ -506,53 +502,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	@Override
 	public TopologyService deleteVlink(String vlinkId, Handler<AsyncResult<Void>> resultHandler) {
-		Promise<Void> vlcsDeleted = Promise.promise();
-		JsonArray pVlinkId = new JsonArray().add(vlinkId);
-		
-		beginTxnAndLock(Entity.LINK, InternalSql.LOCK_TABLES_FOR_LINK).onComplete(ar -> {
-			if (ar.succeeded()) {
-				globalRetrieveMany(pVlinkId, InternalSql.FETCH_LCS_BY_LINK).onComplete(res -> {
-					if (res.succeeded()) {
-						List<JsonObject> lcs = res.result();
-						List<Future> futures = new ArrayList<>();
-						for (JsonObject lc : lcs) {
-							Promise<Void> p = Promise.promise();
-							futures.add(p.future());
-							deleteVlinkConn(String.valueOf(lc.getInteger("id")), p);
-						}
-						CompositeFuture.all(futures).map((Void) null).onComplete(vlcsDeleted);
-					} else {
-						resultHandler.handle(Future.failedFuture(res.cause()));
-					}
-				});
-			} else {
-				resultHandler.handle(Future.failedFuture(ar.cause()));
-			}
-		});
-		
-		vlcsDeleted.future().onComplete(ar -> {
-			if (ar.succeeded()) {
-				globalRetrieveOne(pVlinkId, ApiSql.FETCH_VLINK_BY_ID)
-					.map(option -> option.map(Vlink::new).orElse(null))
-					.onComplete(res -> {
-						if (res.succeeded() && res.result() != null) {
-							JsonArray pSrcLtp = new JsonArray().add(false).add(res.result().getSrcVltpId());
-							JsonArray pDestLtp = new JsonArray().add(false).add(res.result().getDestVltpId());
-							
-							globalExecute(pVlinkId, ApiSql.DELETE_VLINK)
-								.compose(r -> globalExecute(pSrcLtp, InternalSql.UPDATE_LTP_BUSY))
-								.compose(r -> globalExecute(pDestLtp, InternalSql.UPDATE_LTP_BUSY))
-								.compose(r -> commitTxnAndUnlock(Entity.LINK))
-								.onComplete(resultHandler);
-						} else {
-							// TODO: unlock
-							resultHandler.handle(Future.failedFuture("Vlink not found"));
-						}
-					});
-			} else {
-				resultHandler.handle(Future.failedFuture(ar.cause()));
-			}
-		});		
+		final UUID op = UUID.randomUUID();
+		deleteVlink(op, vlinkId, resultHandler);		
 		return this;
 	}
 	@Override
@@ -572,7 +523,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** VlinkConn **********/
 	@Override
 	public TopologyService addVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<Integer>> resultHandler) {
-		beginTxnAndLock(Entity.LC, InternalSql.LOCK_TABLES_FOR_LC_AUTO).onComplete(ar -> {
+		UUID op = UUID.randomUUID();
+		beginTxnAndLock(Entity.LC, op, InternalSql.LOCK_TABLES_FOR_LC_AUTO).onComplete(ar -> {
 			if (ar.succeeded()) {
 				generateCtps(vlinkConn).onComplete(res -> {
 					if (res.succeeded()) {
@@ -591,8 +543,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 								.add(vlinkConn.getVlinkId());
 						globalInsert(vlc, ApiSql.INSERT_VLINKCONN).onComplete(vlcId -> {
 							if (vlcId.succeeded()) {
-								generateFaces(vlcId.result())
-										.compose(r -> commitTxnAndUnlock(Entity.LC))
+								generateFaces(op, vlcId.result())
+										.compose(r -> commitTxnAndUnlock(Entity.LC, op))
 										.onComplete(done -> {
 											if (done.succeeded()) {
 												resultHandler.handle(Future.succeededFuture(vlcId.result()));
@@ -673,31 +625,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 	@Override
 	public TopologyService deleteVlinkConn(String vlinkConnId, Handler<AsyncResult<Void>> resultHandler) {
-		JsonArray pVlcId = new JsonArray().add(vlinkConnId);
-		
-		beginTxnAndLock(Entity.LC, InternalSql.LOCK_TABLES_FOR_LC).onComplete(ar -> {
-			if (ar.succeeded()) {
-				globalRetrieveOne(pVlcId, ApiSql.FETCH_VLINKCONN_BY_ID)
-					.map(option -> option.map(VlinkConn::new).orElse(null))
-					.onComplete(res -> {
-						if (res.succeeded() && res.result() != null) {
-							JsonArray delSrcVctp = new JsonArray().add(res.result().getSrcVctpId());
-							JsonArray delDestVctp = new JsonArray().add(res.result().getDestVctpId());
-							
-							globalExecute(pVlcId, ApiSql.DELETE_VLINKCONN)
-								.compose(r -> globalExecute(delSrcVctp, ApiSql.DELETE_VCTP))
-								.compose(r -> globalExecute(delDestVctp, ApiSql.DELETE_VCTP))
-								.compose(r -> commitTxnAndUnlock(Entity.LC))
-								.onComplete(resultHandler);
-						} else {
-							// TODO: unlock
-							resultHandler.handle(Future.failedFuture("VlinkConn not found"));
-						}
-					});
-			} else {
-				resultHandler.handle(Future.failedFuture(ar.cause()));
-			}
-		});
+		final UUID op = UUID.randomUUID();
+		deleteVlinkConn(op, vlinkConnId, resultHandler);
 		return this;
 	}
 	@Override
@@ -882,7 +811,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** PrefixAnn **********/ 
 	@Override
 	public TopologyService addPrefixAnn(PrefixAnn pa, Handler<AsyncResult<Void>> resultHandler) {
-		beginTxnAndLock(Entity.PA, InternalSql.LOCK_TABLES_FOR_ROUTE).onComplete(tx -> {
+		UUID op = UUID.randomUUID();
+		beginTxnAndLock(Entity.PA, op, InternalSql.LOCK_TABLES_FOR_ROUTE).onComplete(tx -> {
 			if (tx.succeeded()) {
 				JsonArray params = new JsonArray()
 						.add(pa.getName())
@@ -890,11 +820,9 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 						.add(pa.getAvailable());
 				globalInsert(params, ApiSql.INSERT_PA).onComplete(paId -> {
 					if (paId.succeeded()) {
-						generateRoutesToPrefix(pa.getName(), ar -> {
+						generateRoutesToPrefix(op, pa.getName(), ar -> {
 							if (ar.succeeded()) {
-								commitTxnAndUnlock(Entity.PA)
-										// .map(paId.result())
-										.onComplete(resultHandler);
+								commitTxnAndUnlock(Entity.PA, op).onComplete(resultHandler);
 							} else {
 								rollbackAndUnlock();
 								resultHandler.handle(Future.failedFuture(ar.cause()));
@@ -1071,10 +999,12 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	}
 
 
-	
-	@Override
-	public TopologyService generateRoutesToPrefix(String name, Handler<AsyncResult<List<Route>>> resultHandler) {
-		beginTxnAndLock(Entity.ROUTE, InternalSql.LOCK_TABLES_FOR_ROUTE).onComplete(ar -> {
+	public void generateRoutesToPrefix(UUID op, String name, Handler<AsyncResult<List<Route>>> resultHandler) {
+		UUID opp[] = {op};
+		if (op == null) {
+			opp[0] = UUID.randomUUID();
+		}
+		beginTxnAndLock(Entity.ROUTE, opp[0], InternalSql.LOCK_TABLES_FOR_ROUTE).onComplete(ar -> {
 			if (ar.succeeded()) {
 				Future<List<Node>> nodes = this.globalRetrieveAll(InternalSql.FETCH_ROUTEGEN_NODES)
 						.map(rawList -> rawList.stream()
@@ -1095,7 +1025,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 						.compose(r -> routing.computeRoutes(nodes.result(), edges.result(), pas.result()));
 				routes
 						.compose(r -> upsertRoutes(r, false))
-						.compose(r -> commitTxnAndUnlock(Entity.ROUTE))
+						.compose(r -> commitTxnAndUnlock(Entity.ROUTE, opp[0]))
 						.onComplete(done -> {
 							if (done.succeeded()) {
 								resultHandler.handle(Future.succeededFuture(routes.result()));
@@ -1108,11 +1038,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				resultHandler.handle(Future.failedFuture(ar.cause()));
 			}
 		});
-		return this;
 	}
-	@Override
-	public TopologyService generateAllRoutes(Handler<AsyncResult<List<Route>>> resultHandler) {
-		beginTxnAndLock(Entity.ROUTE, InternalSql.LOCK_TABLES_FOR_ROUTE).onComplete(ar -> {
+	
+	public void generateAllRoutes(UUID op, Handler<AsyncResult<List<Route>>> resultHandler) {
+		UUID opp[] = {op};
+		if (op == null) {
+			opp[0] = UUID.randomUUID();
+		}
+		beginTxnAndLock(Entity.ROUTE, opp[0], InternalSql.LOCK_TABLES_FOR_ROUTE).onComplete(ar -> {
 			if (ar.succeeded()) {
 				Future<List<Node>> nodes = this.globalRetrieveAll(InternalSql.FETCH_ROUTEGEN_NODES)
 						.map(rawList -> rawList.stream()
@@ -1132,7 +1065,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 						.compose(r -> routing.computeRoutes(nodes.result(), edges.result(), pas.result()));
 				routes
 						.compose(r -> upsertRoutes(r, false))
-						.compose(r -> commitTxnAndUnlock(Entity.ROUTE))
+						.compose(r -> commitTxnAndUnlock(Entity.ROUTE, opp[0]))
 						.onComplete(done -> {
 							if (done.succeeded()) {
 								resultHandler.handle(Future.succeededFuture(routes.result()));
@@ -1145,11 +1078,119 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				resultHandler.handle(Future.failedFuture(ar.cause()));
 			}
 		});
-		return this;
 	}
 	
 	
 	/* ---------------- BG ------------------ */
+	private void deleteVltp(UUID op, String vltpId, Handler<AsyncResult<Void>> resultHandler) {
+		Promise<Void> linkDeleted = Promise.promise();
+		JsonArray pVltpId = new JsonArray().add(vltpId);
+		beginTxnAndLock(Entity.LTP, op, InternalSql.LOCK_TABLES_FOR_LTP).onComplete(ar -> {
+			if (ar.succeeded()) {
+				globalRetrieveOne(pVltpId, InternalSql.FETCH_LINK_BY_LTP)
+					.map(option -> option.orElse(null))
+					.onComplete(res -> {
+						
+						if (res.succeeded()) {
+							if (res.result() != null) {
+								JsonObject link = res.result();
+								deleteVlink(op, String.valueOf(link.getInteger("id")), linkDeleted);
+							} else {
+								linkDeleted.complete();
+							}
+						} else {
+							resultHandler.handle(Future.failedFuture(res.cause()));
+						}
+				});
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
+		
+		linkDeleted.future().onComplete(ar -> {
+			if (ar.succeeded()) {
+				globalExecute(pVltpId, ApiSql.DELETE_VLTP)
+					.compose(r -> commitTxnAndUnlock(Entity.LTP, op))
+					.onComplete(resultHandler);
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
+	}
+	public void deleteVlink(UUID op, String vlinkId, Handler<AsyncResult<Void>> resultHandler) {
+		Promise<Void> vlcsDeleted = Promise.promise();
+		JsonArray pVlinkId = new JsonArray().add(vlinkId);
+		beginTxnAndLock(Entity.LINK, op, InternalSql.LOCK_TABLES_FOR_LINK).onComplete(ar -> {
+			if (ar.succeeded()) {
+				globalRetrieveMany(pVlinkId, InternalSql.FETCH_LCS_BY_LINK).onComplete(res -> {
+					if (res.succeeded()) {
+						List<JsonObject> lcs = res.result();
+						List<Future> futures = new ArrayList<>();
+						for (JsonObject lc : lcs) {
+							Promise<Void> p = Promise.promise();
+							futures.add(p.future());
+							deleteVlinkConn(op, String.valueOf(lc.getInteger("id")), p);
+						}
+						CompositeFuture.all(futures).map((Void) null).onComplete(vlcsDeleted);
+					} else {
+						resultHandler.handle(Future.failedFuture(res.cause()));
+					}
+				});
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
+		
+		vlcsDeleted.future().onComplete(ar -> {
+			if (ar.succeeded()) {
+				globalRetrieveOne(pVlinkId, ApiSql.FETCH_VLINK_BY_ID)
+					.map(option -> option.map(Vlink::new).orElse(null))
+					.onComplete(res -> {
+						if (res.succeeded() && res.result() != null) {
+							JsonArray pSrcLtp = new JsonArray().add(false).add(res.result().getSrcVltpId());
+							JsonArray pDestLtp = new JsonArray().add(false).add(res.result().getDestVltpId());
+							
+							globalExecute(pVlinkId, ApiSql.DELETE_VLINK)
+								.compose(r -> globalExecute(pSrcLtp, InternalSql.UPDATE_LTP_BUSY))
+								.compose(r -> globalExecute(pDestLtp, InternalSql.UPDATE_LTP_BUSY))
+								.compose(r -> commitTxnAndUnlock(Entity.LINK, op))
+								.onComplete(resultHandler);
+						} else {
+							// TODO: unlock
+							resultHandler.handle(Future.failedFuture("Vlink not found"));
+						}
+					});
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
+	}
+	public void deleteVlinkConn(UUID op, String vlinkConnId, Handler<AsyncResult<Void>> resultHandler) {
+		JsonArray pVlcId = new JsonArray().add(vlinkConnId);
+		beginTxnAndLock(Entity.LC, op, InternalSql.LOCK_TABLES_FOR_LC).onComplete(ar -> {
+			if (ar.succeeded()) {
+				globalRetrieveOne(pVlcId, ApiSql.FETCH_VLINKCONN_BY_ID)
+					.map(option -> option.map(VlinkConn::new).orElse(null))
+					.onComplete(res -> {
+						if (res.succeeded() && res.result() != null) {
+							JsonArray delSrcVctp = new JsonArray().add(res.result().getSrcVctpId());
+							JsonArray delDestVctp = new JsonArray().add(res.result().getDestVctpId());
+							
+							globalExecute(pVlcId, ApiSql.DELETE_VLINKCONN)
+								.compose(r -> globalExecute(delSrcVctp, ApiSql.DELETE_VCTP))
+								.compose(r -> globalExecute(delDestVctp, ApiSql.DELETE_VCTP))
+								.compose(r -> commitTxnAndUnlock(Entity.LC, op))
+								.onComplete(resultHandler);
+						} else {
+							// TODO: unlock
+							resultHandler.handle(Future.failedFuture("VlinkConn not found"));
+						}
+					});
+			} else {
+				resultHandler.handle(Future.failedFuture(ar.cause()));
+			}
+		});
+	}
 	private Future<List<Vctp>> generateCtps(VlinkConn vlc) {
 		// always called after global TXN was init
 		
@@ -1165,7 +1206,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		return promise.future();
 	}
 
-	private Future<List<Face>> generateFaces(int linkConnId) {
+	private Future<List<Face>> generateFaces(UUID op, int linkConnId) {
 		// always called after global TXN was init
 		
 		Promise<List<Face>> promise = Promise.promise();
@@ -1176,7 +1217,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.compose(info -> routing.computeFaces(info));
 		faces.compose(f -> upsertFaces(f)).onComplete(ar -> {
 			if (ar.succeeded()) {
-				generateAllRoutes(res -> {
+				generateAllRoutes(op, res -> {
 					if (res.succeeded()) {
 						promise.complete(faces.result());
 					} else {
@@ -1281,8 +1322,9 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/* ------------------ STATUS ----------------- */
 	@Override
 	public TopologyService updateNodeStatus(int id, String status, Handler<AsyncResult<Void>> resultHandler) {
+		UUID op = UUID.randomUUID();
 		JsonArray params = new JsonArray().add(status).add(id);
-		beginTxnAndLock(Entity.NODE, InternalSql.LOCK_TABLES_FOR_NODE).onComplete(tx -> {
+		beginTxnAndLock(Entity.NODE, op, InternalSql.LOCK_TABLES_FOR_NODE).onComplete(tx -> {
 			if (tx.succeeded()) {
 				globalExecute(params, InternalSql.UPDATE_NODE_STATUS).onComplete(u -> {
 					if (u.succeeded()) {
@@ -1309,9 +1351,9 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 
 								CompositeFuture.all(futures).map((Void) null).onComplete(arr -> {
 									if (arr.succeeded()) {
-										generateAllRoutes(done -> {
+										generateAllRoutes(op, done -> {
 											if (done.succeeded()) {
-												commitTxnAndUnlock(Entity.NODE).onComplete(resultHandler);
+												commitTxnAndUnlock(Entity.NODE, op).onComplete(resultHandler);
 											} else {
 												rollbackAndUnlock();
 												resultHandler.handle(Future.failedFuture(done.cause()));
