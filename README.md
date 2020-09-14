@@ -15,7 +15,7 @@ The agents and the controller interact in order to provide two sets of services 
 - Telemetry, which allows the operator to trigger customized measurements and collect results.
 - Network management through which the operator configures and manages the network, assisted by the automatic processing features of the controller.
 
-The current version (v1) of MNMS supports NDN deployments with the NDN-DPDK forwarder. 
+The current version (v1) of MNMS supports NDN deployments with the [NDN-DPDK](https://github.com/usnistgov/ndn-dpdk) forwarder. 
 
 For the network management services, the controller and the [Management Agent](https://github.com/elmiomar/nms-agent) communicate over HTTPS using the REST API. The OpenAPI Controller-Agent specification can be found [here](https://github.com/amar-ox/nms-microservice/blob/master/docs/openapi/controller-to-agent.yaml). 
 
