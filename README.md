@@ -23,14 +23,14 @@ For the telemetry service, the controller and the [Telemetry Agent](https://gith
 
 ## Deployment Instuructions
 The controller (this repo) and the [Web console](https://github.com/amar-ox/nms-console.git) are deployable as Docker containers. 
-The following instructions have been tested to run on Ubuntu 16.04, 18.04, and 20.04.
+The following instructions have been tested to run on Ubuntu 18.04 and 20.04.
 
 ### Prerequisites
 The system must have the following tools installed:
 - Java 8 (openJDK 1.8)
 - Maven (versions 3.3 to 3.6 should work fine)
-- Docker (19.03.12)
-- Docker-compose (1.26.2)
+- Docker (19.03)
+- Docker-compose (1.26 or 1.27)
 
 ### Build/Run
 #### Controller
@@ -71,7 +71,9 @@ To do so, import the file `nms-microservice/ca/mnms-rootCa.crt.pem` as a CA cert
 
 - Chorme: navigate to `chrome://settings/certificates`. In the `Authorities` tab, import the certificate file and check `Trust this certificate for identifying websites`.
 - Firefox: navigate to `about:preferences#privacy`, scroll down to the `Certificates` section and click on `View Certificates`. 
-Import the certificate file and check `Trust this CA to identify websites`.
+In the `Authorities` tab, import the certificate file and check `Trust this CA to identify websites`.
+
+Restart your browser after adding the certificate.
 
 ### MNMS is Ready
 The Multiverse Network Management System is finally ready.
