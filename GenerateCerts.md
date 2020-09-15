@@ -105,7 +105,7 @@ To set the certificates in the right directories do the following:
 In order to allow https traffic between the controller and the Web-console server, browsers must be configured to trust the local certificate authority which signed the controller and the Web-console server certificates.
 In addition, the browser will show up the nice green lock when accessing the Web-console.
 
-To do so, import the file `mnms-rootCa.crt.pem` as a CA certificate into your browser. 
+To do so, import the file `mnms-rootCA.crt.pem` as a CA certificate into your browser. 
 The steps depend on the browser:
 
 - Chrome: navigate to `chrome://settings/certificates`. In the `Authorities` tab, import the certificate file and check `Trust this certificate for identifying websites`.
