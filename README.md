@@ -35,6 +35,11 @@ The system must have the following tools installed:
 - Docker (19.03)
 - Docker-compose (1.26 or 1.27)
 
+### Prepare The System
+
+To build and securely run MNMS components, you need to generate and trust your own certificates.
+Instructions are provided [here](GenerateCerts.md).
+
 ### Build/Run
 
 #### Controller
@@ -71,17 +76,6 @@ Edit the `/etc/hosts` file and add the following entries:
 127.0.0.1    mnms.gui
 127.0.0.1    mnms.controller
 ```
-
-In order to allow https traffic between the controller and the Web-console server, browsers must be configured to trust the certificate authority which signed the controller and the Web-console server certificates.
-In addition, the browser will show up the nice green lock when accessing the Web-console.
-
-To do so, import the file `nms-microservice/ca/mnms-rootCa.crt.pem` as a CA certificate into your browser. The steps depend on the browser:
-
-- Chrome: navigate to `chrome://settings/certificates`. In the `Authorities` tab, import the certificate file and check `Trust this certificate for identifying websites`.
-- Firefox: navigate to `about:preferences#privacy`, scroll down to the `Certificates` section and click on `View Certificates`.
-In the `Authorities` tab, import the certificate file and check `Trust this CA to identify websites`.
-
-Restart your browser after adding the certificate.
 
 ### MNMS is Ready
 
