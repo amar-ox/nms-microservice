@@ -38,7 +38,7 @@ The system must have the following tools installed:
 ### Prepare The System
 
 To build and securely run MNMS components, you need to generate and trust your own certificates.
-Instructions are provided [here](GenerateCerts.md).
+Instructions are provided [here](GenerateCerts.md) (clone the Controller and Web-console repos before).
 
 ### Build/Run
 
