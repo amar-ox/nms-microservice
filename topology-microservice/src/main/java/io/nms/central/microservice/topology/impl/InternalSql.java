@@ -109,6 +109,9 @@ public class InternalSql {
 	+ "    WHERE Vnode.id = ? OR Vnode.name = ? "
 	+ ") as n "
 	+ "SET available=IFNULL(?, available) WHERE PrefixAnn.originId = n.id"; */
+	
+	// get node status
+	public static final String GET_NODE_STATUS = "SELECT status FROM Vnode WHERE id = ?";
 
 	// get all node IDs
 	public static final String FETCH_ALL_NODE_IDS = "SELECT id FROM Vnode";

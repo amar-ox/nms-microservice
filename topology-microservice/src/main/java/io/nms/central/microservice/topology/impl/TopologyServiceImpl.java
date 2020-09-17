@@ -814,24 +814,38 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		UUID op = UUID.randomUUID();
 		beginTxnAndLock(Entity.PA, op, InternalSql.LOCK_TABLES_FOR_ROUTE).onComplete(tx -> {
 			if (tx.succeeded()) {
-				JsonArray params = new JsonArray()
-						.add(pa.getName())
-						.add(pa.getOriginId())
-						.add(pa.getAvailable());
-				globalInsert(params, ApiSql.INSERT_PA).onComplete(paId -> {
-					if (paId.succeeded()) {
-						generateRoutesToPrefix(op, pa.getName(), ar -> {
-							if (ar.succeeded()) {
-								commitTxnAndUnlock(Entity.PA, op).onComplete(resultHandler);
+				JsonArray pNode = new JsonArray().add(pa.getOriginId()); 
+				globalRetrieveOne(pNode, InternalSql.GET_NODE_STATUS)
+						.map(option -> option.orElse(null))
+						.onComplete(res -> {
+							if (res.succeeded()) {
+								if (res.result() != null) {
+									String status = res.result().getString("status");
+									JsonArray params = new JsonArray()
+											.add(pa.getName())
+											.add(pa.getOriginId())
+											.add(!status.equals("DOWN"));
+									globalInsert(params, ApiSql.INSERT_PA).onComplete(paId -> {
+										if (paId.succeeded()) {
+											generateRoutesToPrefix(op, pa.getName(), ar -> {
+												if (ar.succeeded()) {
+													commitTxnAndUnlock(Entity.PA, op).onComplete(resultHandler);
+												} else {
+													rollbackAndUnlock();
+													resultHandler.handle(Future.failedFuture(ar.cause()));
+												}
+											});
+										} else {
+											resultHandler.handle(Future.failedFuture(paId.cause()));
+										}
+									});
+								} else {
+									resultHandler.handle(Future.failedFuture("Origin not found"));
+								}
 							} else {
-								rollbackAndUnlock();
-								resultHandler.handle(Future.failedFuture(ar.cause()));
+								resultHandler.handle(Future.failedFuture(res.cause()));
 							}
 						});
-					} else {
-						resultHandler.handle(Future.failedFuture(paId.cause()));
-					}
-				});
 			} else {
 				resultHandler.handle(Future.failedFuture(tx.cause()));
 			}
