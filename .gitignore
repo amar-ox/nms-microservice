@@ -11,3 +11,5 @@ target
 */.externalToolBuilders
 */.classpath
 */.settings
+
+*.pem
