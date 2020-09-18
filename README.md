@@ -34,20 +34,29 @@ The system must have the following tools installed:
 - Maven (versions 3.3 to 3.6 should work fine)
 - Docker (19.03)
 - Docker-compose (1.26 or 1.27)
+- OpenSSL (1.1.1)
 
 ### Prepare The System
 
-To build and securely run MNMS components, you need to generate and trust your own certificates.
-Instructions are provided [here](GenerateCerts.md) (clone the Controller and Web-console repos before).
+In order to build and securely run MNMS components, you need to generate and trust your own certificates.
+Issue the following commands to create the directory structure of the project and set your certificates:
+
+```bash
+mkdir multiverse && cd multiverse
+git clone https://github.com/amar-ox/nms-microservice.git
+git clone https://github.com/amar-ox/nms-console.git
+cp nms-microservice/gencerts.sh .
+./gencerts.sh
+```
 
 ### Build/Run
 
 #### Controller
 
-First, deploy the controller. Open a terminal and run the following commands:
+First, deploy the controller (nms-microservice). 
+In a terminal pointing to the `multiverse` directory, run the following commands:
 
 ```bash
-git clone https://github.com/amar-ox/nms-microservice.git
 cd nms-microservice
 mvn clean install -Dmaven.test.skip=true
 cd docker
@@ -57,10 +66,10 @@ sudo ./run.sh
 
 #### Web-console (GUI)
 
-Second, deploy the Web-console. Open another terminal and run the following commands:
+Second, deploy the Web-console (nms-console). 
+In another terminal pointing to the `multiverse` directory, run the following commands:
 
 ```bash
-git clone https://github.com/amar-ox/nms-console.git
 cd nms-console
 sudo docker build -t mnms/console .
 sudo docker run -it -p 4443:443 --network=docker_nms --rm --name mnms-console mnms/console
@@ -76,6 +85,18 @@ Edit the `/etc/hosts` file and add the following entries:
 127.0.0.1    mnms.gui
 127.0.0.1    mnms.controller
 ```
+
+In order to allow https traffic between the controller and the Web-console server, browsers must be configured to trust the local certificate authority which signed the controller and the Web-console server certificates.
+In addition, the browser will show up the nice green lock when accessing the Web-console.
+
+To do so, import the file `nms-microservice/ca/mnms-rootCA.crt.pem` as a CA certificate into your browser. 
+The steps depend on the browser:
+
+- Chrome: navigate to `chrome://settings/certificates`. In the `Authorities` tab, import the certificate file and check `Trust this certificate for identifying websites`.
+- Firefox: navigate to `about:preferences#privacy`, scroll down to the `Certificates` section and click on `View Certificates`.
+In the `Authorities` tab, import the certificate file and check `Trust this CA to identify websites`.
+
+Restart your browser after importing the certificate.
 
 ### MNMS is Ready
 
@@ -110,3 +131,4 @@ More information on configuring the agents will be available soon.
 ## Contributing
 
 Contributions and feedback are definitely welcome!
+
