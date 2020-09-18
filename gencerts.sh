@@ -58,9 +58,9 @@ EOF
 
 # generate controller certificate
 openssl req -out mnms.controller.csr -newkey rsa:2048 -nodes -keyout mnms.controller.key.pem -config req.conf
-openssl req -noout -text -in mnms.controller.csr
+# openssl req -noout -text -in mnms.controller.csr
 openssl x509 -req -days 365 -sha256 -extfile <(printf "subjectAltName=DNS:mnms.controller,IP:127.0.0.1") -in mnms.controller.csr -CA ../mnms-rootCA.crt.pem -CAkey ../mnms-rootCA.key.pem -CAcreateserial -out mnms.controller.crt.pem
-openssl x509 -in mnms.controller.crt.pem -text -noout
+# openssl x509 -in mnms.controller.crt.pem -text -noout
 
 rm req.conf
 
@@ -86,9 +86,9 @@ EOF
 
 # generate console certificate
 openssl req -out mnms.gui.csr -newkey rsa:2048 -nodes -keyout mnms.gui.key.pem -config req.conf
-openssl req -noout -text -in mnms.gui.csr
+# openssl req -noout -text -in mnms.gui.csr
 openssl x509 -req -days 365 -sha256 -extfile <(printf "subjectAltName=DNS:mnms.gui,IP:127.0.0.1") -in mnms.gui.csr -CA ../mnms-rootCA.crt.pem -CAkey ../mnms-rootCA.key.pem -CAcreateserial -out mnms.gui.crt.pem
-openssl x509 -in mnms.gui.crt.pem -text -noout
+# openssl x509 -in mnms.gui.crt.pem -text -noout
 
 rm req.conf
 
@@ -98,5 +98,5 @@ cp $ROOT_CA $CONSOLE_DIR/docker/cert
 cp $CONTROLLER_CERT/*.pem $CONTROLLER_DIR/api-gateway/src/main/resources/cert
 cp $CONSOLE_CERT/*.pem $CONSOLE_DIR/docker/cert
 
-cd ../
+cd ../../
 rm -rf certs/
