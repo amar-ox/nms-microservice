@@ -97,7 +97,7 @@ openssl x509 -req -in mnms.gui.csr -CA ../mnms-rootCA.crt.pem -CAkey ../mnms-roo
 To set the certificates in the right directories do the following:
 
 - copy the file `mnms-rootCA.crt.pem` into both `<controller-dir>/ca/` and `<console-dir>/docker/cert/` directories
-- copy the files `mnms.controller.crt.pem` and `mnms.controller.key.pem` into the `<controller-dir>/api-gareway/src/main/resources/cert/` directory
+- copy the files `mnms.controller.crt.pem` and `mnms.controller.key.pem` into the `<controller-dir>/api-gateway/src/main/resources/cert/` directory
 - copy the files `mnms.gui.crt.pem` and `mnms.gui.key.pem` into `<console-dir>/docker/cert/` directory
 
 ## Trust Certificates Locally
