@@ -4,7 +4,7 @@ info:
   title: NMS Controller-to-Agent API
   description: The Agent-facing API provided by the controller.
 servers:
-  - url: 'https://nms.controller:8787/api'
+  - url: 'https://mnms.controller:8787/api'
 security:
   - bearerAuth: []
 paths:
