@@ -50,8 +50,8 @@ public class InternalSql {
 	// get info needed to generate Faces for a LinkConn
 	public static final String FETCH_FACEGEN_INFO = "SELECT "
 			+ "VlinkConn.id AS vlinkConnId, sCtp.id AS sVctpId, dCtp.id AS dVctpId, "
-			+ "JSON_EXTRACT(sLtp.info, '$.port') AS sLtpPort, "
-			+ "JSON_EXTRACT(dLtp.info, '$.port') AS dLtpPort "
+			+ "JSON_UNQUOTE(JSON_EXTRACT(sLtp.info, '$.port')) AS sLtpPort, "
+			+ "JSON_UNQUOTE(JSON_EXTRACT(dLtp.info, '$.port')) AS dLtpPort "
 			+ "FROM ((VlinkConn "
 			+ "INNER JOIN Vctp AS sCtp ON sCtp.id=srcVctpId INNER JOIN Vltp AS sLtp ON sLtp.id=sCtp.vltpId) "
 			+ "INNER JOIN Vctp AS dCtp ON dCtp.id=destVctpId INNER JOIN Vltp AS dLtp ON dLtp.id=dCtp.vltpId) "
