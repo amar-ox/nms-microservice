@@ -7,9 +7,42 @@ servers:
   - url: 'https://mnms.controller:8787/api'
 security:
   - bearerAuth: []
+tags:
+- name: "authentication"
+  description: "login and logout users"
+  externalDocs:
+    description: "More info:"
+    url: "https://github.com/amar-ox/nms-microservice"
+- name: "subnets"
+  description: "get and configure topology subnets."
+  externalDocs:
+    description: "More info:"
+    url: "https://github.com/amar-ox/nms-microservice"
+- name: "nodes"
+  description: "get and update the list of L2 nodes of the topology"
+  externalDocs:
+    description: "More info:"
+    url: "https://github.com/amar-ox/nms-microservice"
+- name: "interfaces"
+  description: "get and update inforamtion about interfaces of each node"
+  externalDocs:
+    description: "More info:"
+    url: "https://github.com/amar-ox/nms-microservice"
+- name: "links"
+  description: "get and update physical links"
+  externalDocs:
+    description: "More info:"
+    url: "https://github.com/amar-ox/nms-microservice"
+- name: "graphs"
+  description: "get and update the physical topology graph"
+  externalDocs:
+    description: "More info:"
+    url: "https://github.com/amar-ox/nms-microservice"
 paths:
   /login/agent:
     post:
+      tags:
+      - "authentication"
       description: Authenticate to the controller as an Agent.
       requestBody:
         required: true
@@ -34,6 +67,8 @@ paths:
           description: Authentication information is invalid.
   /topology/subnet:
     post:
+      tags:
+      - "subnets"
       description: Create a new Subnet.
       requestBody:
         required: true
@@ -58,6 +93,8 @@ paths:
         '401':
           description: Authorization information is missing or invalid.
     get:
+      tags:
+      - "subnets"
       description: Returns all existing Subnets.
       responses:
         '200':
@@ -68,8 +105,10 @@ paths:
                 $ref: '#/components/schemas/SubnetArray'
         '401':
           description: Authorization information is missing or invalid.
-  '/topology/subnet/{subnetId}':
+  /topology/subnet/{subnetId}:
     get:
+      tags:
+      - "subnets"
       description: Retrieve one Subnet.
       parameters:
         - name: subnetId
@@ -90,6 +129,8 @@ paths:
         '404':
           description: Subnet not found.
     delete:
+      tags:
+      - "subnets"
       description: Delete one Subnet.
       parameters:
         - name: subnetId
@@ -104,6 +145,8 @@ paths:
         '401':
           description: Authorization information is missing or invalid.
     put:
+      tags:
+      - "subnets"
       description: Modify existing Subnet.
       parameters:
         - name: subnetId
@@ -133,6 +176,8 @@ paths:
           description: Subnet not found.
   /topology/node:
     post:
+      tags:
+      - "nodes"
       description: Create a new Node.
       requestBody:
         required: true
@@ -157,6 +202,8 @@ paths:
         '401':
           description: Authorization information is missing or invalid.
     get:
+      tags:
+      - "nodes"
       description: Returns all existing Nodes.
       responses:
         '200':
@@ -167,8 +214,10 @@ paths:
                 $ref: '#/components/schemas/NodeArray'
         '401':
           description: Authorization information is missing or invalid.
-  '/topology/node/{nodeId}':
+  /topology/node/{nodeId}:
     get:
+      tags:
+      - "ndoes"
       description: Retrieve one Node.
       parameters:
         - name: nodeId
@@ -189,6 +238,8 @@ paths:
         '404':
           description: Node not found.
     delete:
+      tags:
+      - "nodes"
       description: Delete one Node.
       parameters:
         - name: nodeId
@@ -203,6 +254,8 @@ paths:
         '401':
           description: Authorization information is missing or invalid.
     put:
+      tags:
+      - "nodes"
       description: Modify existing node.
       parameters:
         - name: nodeId
@@ -268,7 +321,7 @@ paths:
                   $ref: '#/components/schemas/LtpArray'
         '401':
           description: Authorization information is missing or invalid.
-  '/topology/ltp/{ltpId}':
+  /topology/ltp/{ltpId}:
     get:
       description: Retrieve one LTP.
       parameters:
@@ -333,6 +386,8 @@ paths:
           description: LTP not found.
   /topology/link:
     post:
+      tags:
+      - "links"
       description: Create a new Link (physical).
       requestBody:
         required: true
@@ -357,6 +412,8 @@ paths:
         '401':
           description: Authorization information is missing or invalid.
     get:
+      tags:
+      - "links"
       description: Returns all existing Links.
       responses:
         '200':
@@ -367,8 +424,10 @@ paths:
                 $ref: '#/components/schemas/LinkArray'
         '401':
           description: Authorization information is missing or invalid.
-  '/topology/link/{linkId}':
+  /topology/link/{linkId}:
     get:
+      tags:
+      - "links"
       description: Retrieve one Link.
       parameters:
         - name: linkId
@@ -389,6 +448,8 @@ paths:
         '404':
           description: Link not found.
     delete:
+      tags:
+      - "links"
       description: Delete one Link.
       parameters:
         - name: linkId
@@ -403,6 +464,8 @@ paths:
         '401':
           description: Authorization information is missing or invalid.
     put:
+      tags:
+      - "links"
       description: Modify existing Link.
       parameters:
         - name: linkId
@@ -430,8 +493,10 @@ paths:
           description: Authorization information is missing or invalid.
         '404':
           description: Link not found.
-  '/topology/subnet/{subnetId}/nodes':
+  /topology/subnet/{subnetId}/nodes:
     get:
+      tags:
+      - "nodes"
       description: Retrieve all the Nodes of a Subnet.
       parameters:
         - name: subnetId
@@ -449,8 +514,10 @@ paths:
                 $ref: '#/components/schemas/NodeArray'
         '401':
           description: Authorization information is missing or invalid.
-  '/topology/subnet/{subnetId}/links':
+  /topology/subnet/{subnetId}/links:
     get:
+      tags:
+      - "links"
       description: Retrieve all the Links of a Subnet.
       parameters:
         - name: subnetId
@@ -468,8 +535,10 @@ paths:
                 $ref: '#/components/schemas/LinkArray'
         '401':
           description: Authorization information is missing or invalid.
-  '/topology/node/{nodeId}/ltps':
+  /topology/node/{nodeId}/ltps:
     get:
+      tags:
+      - "link termination point"
       description: Retrieve all the LTPs of a Node.
       parameters:
         - name: nodeId
