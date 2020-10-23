@@ -1,0 +1,854 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Multiverse controller API for L2 topology
+  description: The API provided by the controller for Agent L2 topology discovery.
+servers:
+  - url: 'https://mnms.controller:8787/api'
+security:
+  - bearerAuth: []
+paths:
+  /login/agent:
+    post:
+      description: Authenticate to the controller as an Agent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Agent authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenContent'
+        '400':
+          description: Incorrect authentication object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authentication information is invalid.
+  /topology/subnet:
+    post:
+      description: Create a new Subnet.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subnet'
+      responses:
+        '201':
+          description: Subnet created.
+          headers:
+            Location:
+              description: Relative path to the created Subnet.
+              schema:
+                type: string
+        '400':
+          description: Incorrect Subnet object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+    get:
+      description: Returns all existing Subnets.
+      responses:
+        '200':
+          description: Subnets retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubnetArray'
+        '401':
+          description: Authorization information is missing or invalid.
+  '/topology/subnet/{subnetId}':
+    get:
+      description: Retrieve one Subnet.
+      parameters:
+        - name: subnetId
+          description: Subnet assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Subnet retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubnetConcise'
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: Subnet not found.
+    delete:
+      description: Delete one Subnet.
+      parameters:
+        - name: subnetId
+          description: Subnet assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Subnet deleted.
+        '401':
+          description: Authorization information is missing or invalid.
+    put:
+      description: Modify existing Subnet.
+      parameters:
+        - name: subnetId
+          description: Subnet assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subnet'
+      responses:
+        '201':
+          description: Subnet updated.
+        '400':
+          description: Incorrect Subnet object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: Subnet not found.
+  /topology/node:
+    post:
+      description: Create a new Node.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Node'
+      responses:
+        '201':
+          description: Node created.
+          headers:
+            Location:
+              description: Relative path to the created Node.
+              schema:
+                type: string
+        '400':
+          description: Incorrect Node object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+    get:
+      description: Returns all existing Nodes.
+      responses:
+        '200':
+          description: Nodes retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeArray'
+        '401':
+          description: Authorization information is missing or invalid.
+  '/topology/node/{nodeId}':
+    get:
+      description: Retrieve one Node.
+      parameters:
+        - name: nodeId
+          description: Node assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Node retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeFull'
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: Node not found.
+    delete:
+      description: Delete one Node.
+      parameters:
+        - name: nodeId
+          description: Node assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Node deleted.
+        '401':
+          description: Authorization information is missing or invalid.
+    put:
+      description: Modify existing node.
+      parameters:
+        - name: nodeId
+          description: Node assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Node'
+      responses:
+        '201':
+          description: Node updated.
+        '400':
+          description: Incorrect Node object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: Node not found.
+  /topology/ltp:
+    post:
+      description: Create a new Link Termination Point (LTP).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ltp'
+      responses:
+        '201':
+          description: LTP created.
+          headers:
+            Location:
+              description: Relative path to the created LTP.
+              schema:
+                type: string
+        '400':
+          description: Incorrect LTP object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+    get:
+      description: Returns all existing LTPs.
+      responses:
+        '200':
+          description: LTPs retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LtpArray'
+        '401':
+          description: Authorization information is missing or invalid.
+  '/topology/ltp/{ltpId}':
+    get:
+      description: Retrieve one LTP.
+      parameters:
+        - name: ltpId
+          description: LTP assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: LTP retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LtpFull'
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: LTP not found.
+    delete:
+      description: Delete one LTP.
+      parameters:
+        - name: ltpId
+          description: LTP assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: LTP deleted.
+        '401':
+          description: Authorization information is missing or invalid.
+    put:
+      description: Modify existing LTP.
+      parameters:
+        - name: ltpId
+          description: LTP assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ltp'
+      responses:
+        '201':
+          description: LTP updated.
+        '400':
+          description: Incorrect LTP object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: LTP not found.
+  /topology/link:
+    post:
+      description: Create a new Link (physical).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Link'
+      responses:
+        '201':
+          description: Link created.
+          headers:
+            Location:
+              description: Relative path to the created Link.
+              schema:
+                type: string
+        '400':
+          description: Incorrect Link object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+    get:
+      description: Returns all existing Links.
+      responses:
+        '200':
+          description: Links retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkArray'
+        '401':
+          description: Authorization information is missing or invalid.
+  '/topology/link/{linkId}':
+    get:
+      description: Retrieve one Link.
+      parameters:
+        - name: linkId
+          description: Link assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Link retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkFull'
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: Link not found.
+    delete:
+      description: Delete one Link.
+      parameters:
+        - name: linkId
+          description: Link assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Link deleted.
+        '401':
+          description: Authorization information is missing or invalid.
+    put:
+      description: Modify existing Link.
+      parameters:
+        - name: linkId
+          description: Link assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Link'
+      responses:
+        '201':
+          description: Link updated.
+        '400':
+          description: Incorrect Link object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestContent'
+        '401':
+          description: Authorization information is missing or invalid.
+        '404':
+          description: Link not found.
+  '/topology/subnet/{subnetId}/nodes':
+    get:
+      description: Retrieve all the Nodes of a Subnet.
+      parameters:
+        - name: subnetId
+          description: Subnet assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully returned Nodes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeArray'
+        '401':
+          description: Authorization information is missing or invalid.
+  '/topology/subnet/{subnetId}/links':
+    get:
+      description: Retrieve all the Links of a Subnet.
+      parameters:
+        - name: subnetId
+          description: Subnet assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully returned Links.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkArray'
+        '401':
+          description: Authorization information is missing or invalid.
+  '/topology/node/{nodeId}/ltps':
+    get:
+      description: Retrieve all the LTPs of a Node.
+      parameters:
+        - name: nodeId
+          description: Node assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully returned LTPs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LtpArray'
+        '401':
+          description: Authorization information is missing or invalid.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    TokenContent:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+    BadRequestContent:
+      type: object
+      properties:
+        message:
+          type: string
+    CommonFields:
+      type: object
+      required:
+        - name
+        - label
+        - description
+        - info
+      properties:
+        name:
+          type: string
+          description: >-
+            A unique formatted name: "sX" for Subnet, "sX:nY" for Node,
+            "sX:nY:lZ" for LTP, "sX:nY:lZ=sP:nQ:lR" for Link, where X,Y,Z,P,Q,R
+            are integers.
+        label:
+          type: string
+          description: 'Client-defined string (e.g., switch1)'
+        description:
+          type: string
+          description: 'Client-defined short text (e.g., switch of floor 1)'
+        info:
+          type: object
+          description: JSON object that includes any additional info
+    Subnet:
+      description: Minimal Subnet object for creation.
+      allOf:
+        - $ref: '#/components/schemas/CommonFields'
+    SubnetConcise:
+      description: Subnet object without contained Nodes and Links.
+      allOf:
+        - $ref: '#/components/schemas/Subnet'
+        - type: object
+          required:
+            - id
+            - created
+            - updated
+          properties:
+            id:
+              type: integer
+              description: A unique ID obtained from the database.
+            created:
+              type: string
+              format: date-time
+              description: Creation datetime.
+            updated:
+              type: string
+              format: date-time
+              description: Last modification datetime.
+    SubnetArray:
+      description: List of Subnets.
+      type: array
+      items:
+        $ref: '#/components/schemas/SubnetConcise'
+    Node:
+      description: Minimal Node object for creation.
+      allOf:
+        - $ref: '#/components/schemas/CommonFields'
+        - type: object
+          required:
+            - vsubnetId
+            - status
+            - type
+            - posx
+            - posy
+            - location
+      properties:
+        vsubnetId:
+          type: integer
+          description: ID of the Subnet containing the Node.
+        status:
+          type: string
+          enum:
+            - UP
+            - DOWN
+            - DISCONN
+        type:
+          type: string
+          description: 'Type of the Node (switch, router, forwarder, etc.)'
+        posx:
+          type: integer
+          description: X position on the map.
+        posy:
+          type: integer
+          description: Y position on the map.
+        location:
+          type: string
+          description: Physical location label.
+    NodeConcise:
+      description: Node object without contained LTPs.
+      allOf:
+        - $ref: '#/components/schemas/Node'
+        - type: object
+          required:
+            - id
+            - created
+            - updated
+          properties:
+            id:
+              type: integer
+              description: A unique ID obtained from the database.
+            created:
+              type: string
+              format: date-time
+              description: Creation datetime.
+            updated:
+              type: string
+              format: date-time
+              description: Last modification datetime.
+    NodeFull:
+      description: Node object with contained LTPs.
+      allOf:
+        - $ref: '#/components/schemas/NodeConcise'
+        - type: object
+          required:
+            - vltps
+          properties:
+            vltps:
+              type: array
+              description: List of LTPs.
+              items:
+                $ref: '#/components/schemas/LtpConcise'
+    NodeArray:
+      type: array
+      description: List of Nodes without contained LTPs.
+      items:
+        $ref: '#/components/schemas/NodeConcise'
+    Ltp:
+      description: Minimal LTP object for creation.
+      allOf:
+        - $ref: '#/components/schemas/CommonFields'
+        - type: object
+          required:
+            - vnodeId
+            - busy
+            - port
+          properties:
+            vnodeId:
+              type: integer
+              description: ID of the Node containing the LTP.
+            busy:
+              type: boolean
+              description: Whether the LTP has a physical link or not.
+            port:
+              type: string
+              description: MAC address of the LTP.
+    LtpConcise:
+      description: LTP object without contained CTPs.
+      allOf:
+        - $ref: '#/components/schemas/Ltp'
+        - type: object
+          required:
+            - id
+            - created
+            - updated
+            - status
+          properties:
+            id:
+              type: integer
+              description: A unique ID obtained from the database.
+            created:
+              type: string
+              format: date-time
+              description: Creation datetime.
+            updated:
+              type: string
+              format: date-time
+              description: Last modification datetime.
+            status:
+              type: string
+              enum:
+                - UP
+                - DOWN
+                - DISCONN
+    LtpFull:
+      description: LTP object with contained CTPs.
+      allOf:
+        - $ref: '#/components/schemas/LtpConcise'
+        - type: object
+          required:
+            - vctps
+          properties:
+            vctps:
+              type: array
+              description: List of CTPs.
+              items:
+                $ref: '#/components/schemas/CtpConcise'
+    LtpArray:
+      type: array
+      description: List of LTPs without contained CTPs.
+      items:
+        $ref: '#/components/schemas/LtpConcise'
+    CtpConcise:
+      description: Connection Termination Point (CTP) object.
+      allOf:
+        - $ref: '#/components/schemas/CommonFields'
+        - type: object
+          required:
+            - id
+            - created
+            - updated
+            - vlinkId
+            - vltpId
+      properties:
+        id:
+          type: integer
+          description: A unique ID obtained from the database.
+        created:
+          type: string
+          format: date-time
+          description: Creation datetime.
+        updated:
+          type: string
+          format: date-time
+          description: Last modification datetime.
+        vlinkId:
+          type: integer
+          description: ID of the Link that carries the connection (will change)
+        vltpId:
+          type: integer
+          description: ID of the LTP that carries the connection.
+    Link:
+      description: Minimal Link object for creation.
+      allOf:
+        - $ref: '#/components/schemas/CommonFields'
+        - type: object
+          required:
+            - srcVltpId
+            - destVltpId
+            - type
+          properties:
+            srcVltpId:
+              type: integer
+              description: ID of the source LTP.
+            destVltpId:
+              type: integer
+              description: ID of the destination LTP.
+            type:
+              type: string
+              description: Whether the Link is inside a Subnet or connects two Subnets.
+              enum:
+                - IN
+                - OUT
+    LinkConcise:
+      description: Link object without contained logical links.
+      allOf:
+        - $ref: '#/components/schemas/Link'
+        - type: object
+          required:
+            - id
+            - created
+            - updated
+            - status
+            - srcVnodeId
+            - destVnodeId
+          properties:
+            id:
+              type: integer
+              description: A unique ID obtained from the database.
+            created:
+              type: string
+              format: date-time
+              description: Creation datetime.
+            updated:
+              type: string
+              format: date-time
+              description: Last modification datetime.
+            status:
+              type: string
+              enum:
+                - UP
+                - DOWN
+                - DISCONN
+            srcVnodeId:
+              type: integer
+              description: ID of the source Node.
+            destVnodeId:
+              type: integer
+              description: ID of the destination Node.
+    LinkFull:
+      description: Link object with contained logical links.
+      allOf:
+        - $ref: '#/components/schemas/LinkConcise'
+        - type: object
+          required:
+            - vlinkConns
+          properties:
+            vlinkConns:
+              type: array
+              description: List of logical links carried by the physical Link.
+              items:
+                $ref: '#/components/schemas/LogicalLinkConcise'
+    LinkArray:
+      type: array
+      description: List of Links without contained logical links.
+      items:
+        $ref: '#/components/schemas/LinkConcise'
+    LogicalLinkConcise:
+      description: Logical link object.
+      allOf:
+        - $ref: '#/components/schemas/CommonFields'
+        - type: object
+          required:
+            - id
+            - created
+            - updated
+            - vlinkId
+            - destVctpId
+            - srcVctpId
+            - status
+          properties:
+            id:
+              type: integer
+              description: A unique ID obtained from the database.
+            created:
+              type: string
+              format: date-time
+              description: Creation datetime.
+            updated:
+              type: string
+              format: date-time
+              description: Last modification datetime.
+            status:
+              type: string
+              enum:
+                - UP
+                - DOWN
+                - DISCONN
+            vlinkId:
+              type: integer
+              description: Link ID that carries the logical link.
+            srcVctpId:
+              type: integer
+              description: ID of the source CTP.
+            destVctpId:
+              type: integer
+              description: ID of the desctination CTP.
