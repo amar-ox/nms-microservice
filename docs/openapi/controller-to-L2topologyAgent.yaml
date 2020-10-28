@@ -824,7 +824,6 @@ components:
           required:
             - srcVltpId
             - destVltpId
-            - type
           properties:
             srcVltpId:
               type: integer
@@ -832,12 +831,6 @@ components:
             destVltpId:
               type: integer
               description: ID of the destination LTP.
-            type:
-              type: string
-              description: Whether the Link is inside a Subnet or connects two Subnets.
-              enum:
-                - IN
-                - OUT
     LinkConcise:
       description: Link object without contained logical links.
       allOf:
