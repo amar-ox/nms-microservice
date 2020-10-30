@@ -580,10 +580,10 @@ components:
             are integers.
         label:
           type: string
-          description: 'Client-defined string (e.g., switch1)'
+          description: 'Client-defined string (e.g., switch1).'
         description:
           type: string
-          description: 'Client-defined short text (e.g., switch of floor 1)'
+          description: 'Client-defined short text (e.g., switch of floor 1).'
         info:
           type: object
           description: JSON object that includes any additional info
@@ -624,6 +624,7 @@ components:
         - type: object
           required:
             - vsubnetId
+            - hwaddr
             - status
             - type
             - posx
@@ -633,6 +634,9 @@ components:
         vsubnetId:
           type: integer
           description: ID of the Subnet containing the Node.
+        hwaddr:
+          type: string
+          description: Premanent hardware address assigned by the manufacturer.
         status:
           type: string
           enum:
@@ -780,7 +784,7 @@ components:
           description: Last modification datetime.
         vlinkId:
           type: integer
-          description: ID of the Link that carries the connection (will change)
+          description: ID of the Link that carries the connection (will change).
         vltpId:
           type: integer
           description: ID of the LTP that carries the connection.
@@ -792,7 +796,6 @@ components:
           required:
             - srcVltpId
             - destVltpId
-            - type
           properties:
             srcVltpId:
               type: integer
@@ -800,12 +803,6 @@ components:
             destVltpId:
               type: integer
               description: ID of the destination LTP.
-            type:
-              type: string
-              description: Whether the Link is inside a Subnet or connects two Subnets.
-              enum:
-                - IN
-                - OUT
     LinkConcise:
       description: Link object without contained logical links.
       allOf:
@@ -900,4 +897,3 @@ components:
             destVctpId:
               type: integer
               description: ID of the desctination CTP.
-
