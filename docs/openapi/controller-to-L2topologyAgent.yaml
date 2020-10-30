@@ -212,7 +212,7 @@ paths:
   /topology/node/{nodeId}:
     get:
       tags:
-      - "ndoes"
+      - "nodes"
       description: Retrieve one Node.
       parameters:
         - name: nodeId
