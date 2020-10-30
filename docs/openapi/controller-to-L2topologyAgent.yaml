@@ -16,20 +16,20 @@ tags:
 - name: "subnets"
   description: "get and configure topology subnets."
   externalDocs:
-    description: "More info:"
+    description: "More info."
     url: "https://github.com/amar-ox/nms-microservice"
 - name: "nodes"
-  description: "get and update the list of L2 nodes of the topology"
+  description: "get and update the list of L2 nodes of the topology."
   externalDocs:
     description: "More info."
     url: "https://github.com/amar-ox/nms-microservice"
 - name: "Link Termination Point (LTP)"
-  description: "get and update inforamtion about the LTPs of each node"
+  description: "get and update inforamtion about the LTPs of each node."
   externalDocs:
     description: "More info."
     url: "https://github.com/amar-ox/nms-microservice"
 - name: "links"
-  description: "get and update physical links"
+  description: "get and update physical links."
   externalDocs:
     description: "More info."
     url: "https://github.com/amar-ox/nms-microservice"
@@ -600,19 +600,18 @@ components:
       properties:
         name:
           type: string
-          description: >-
-            A unique formatted name: "sX" for Subnet, "sX:nY" for Node,
+          description: 'A unique formatted name: "sX" for Subnet, "sX:nY" for Node,
             "sX:nY:lZ" for LTP, "sX:nY:lZ=sP:nQ:lR" for Link, where X,Y,Z,P,Q,R
-            are integers.
+            are integers.'
         label:
           type: string
-          description: 'Client-defined string (e.g., switch1)'
+          description: 'Client-defined string (e.g., switch1).'
         description:
           type: string
-          description: 'Client-defined short text (e.g., switch of floor 1)'
+          description: 'Client-defined short text (e.g., switch of floor 1).'
         info:
           type: object
-          description: JSON object that includes any additional info
+          description: JSON object that includes any additional info.
     Subnet:
       description: Minimal Subnet object for creation.
       allOf:
@@ -624,10 +623,10 @@ components:
           properties:
             address:
               type: string
-              description: subnet's ip address
+              description: subnet's ip address.
             mask:
               type: string
-              description: subnet mask
+              description: subnet mask.
     SubnetConcise:
       description: Subnet object without contained Nodes and Links.
       allOf:
@@ -669,7 +668,7 @@ components:
       properties:
         bia:
           type: string
-          description: Burnt in Address assigned by the manufacturer
+          description: Burnt in Address assigned by the manufacturer.
         status:
           type: string
           enum:
@@ -678,7 +677,7 @@ components:
             - DISCONN
         type:
           type: string
-          description: 'Type of the Node (switch, router, forwarder, etc.)'
+          description: 'Type of the Node (switch, router, forwarder, etc.).'
         posx:
           type: integer
           description: X position on the map.
@@ -817,7 +816,7 @@ components:
           description: Last modification datetime.
         vlinkId:
           type: integer
-          description: ID of the Link that carries the connection (will change)
+          description: ID of the Link that carries the connection (will change).
         vltpId:
           type: integer
           description: ID of the LTP that carries the connection.
