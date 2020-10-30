@@ -9,9 +9,9 @@ security:
   - bearerAuth: []
 tags:
 - name: "authentication"
-  description: "login and logout users"
+  description: "login and logout users."
   externalDocs:
-    description: "More info:"
+    description: "More info."
     url: "https://github.com/amar-ox/nms-microservice"
 - name: "subnets"
   description: "get and configure topology subnets."
@@ -21,22 +21,17 @@ tags:
 - name: "nodes"
   description: "get and update the list of L2 nodes of the topology"
   externalDocs:
-    description: "More info:"
+    description: "More info."
     url: "https://github.com/amar-ox/nms-microservice"
-- name: "interfaces"
-  description: "get and update inforamtion about interfaces of each node"
+- name: "Link Termination Point (LTP)"
+  description: "get and update inforamtion about the LTPs of each node"
   externalDocs:
-    description: "More info:"
+    description: "More info."
     url: "https://github.com/amar-ox/nms-microservice"
 - name: "links"
   description: "get and update physical links"
   externalDocs:
-    description: "More info:"
-    url: "https://github.com/amar-ox/nms-microservice"
-- name: "graphs"
-  description: "get and update the physical topology graph"
-  externalDocs:
-    description: "More info:"
+    description: "More info."
     url: "https://github.com/amar-ox/nms-microservice"
 paths:
   /login/agent:
@@ -285,6 +280,8 @@ paths:
           description: Node not found.
   /topology/ltp:
     post:
+      tags:
+      - "Link Termination Point (LTP)"
       description: Create a new Link Termination Point (LTP).
       requestBody:
         required: true
@@ -309,6 +306,8 @@ paths:
         '401':
           description: Authorization information is missing or invalid.
     get:
+      tags:
+      - "Link Termination Point (LTP)"
       description: Returns all existing LTPs.
       responses:
         '200':
@@ -323,6 +322,8 @@ paths:
           description: Authorization information is missing or invalid.
   /topology/ltp/{ltpId}:
     get:
+      tags:
+      - "Link Termination Point (LTP)"
       description: Retrieve one LTP.
       parameters:
         - name: ltpId
@@ -343,6 +344,8 @@ paths:
         '404':
           description: LTP not found.
     delete:
+      tags:
+      - "Link Termination Point (LTP)"
       description: Delete one LTP.
       parameters:
         - name: ltpId
@@ -357,6 +360,8 @@ paths:
         '401':
           description: Authorization information is missing or invalid.
     put:
+      tags:
+      - "Link Termination Point (LTP)"
       description: Modify existing LTP.
       parameters:
         - name: ltpId
@@ -538,7 +543,7 @@ paths:
   /topology/node/{nodeId}/ltps:
     get:
       tags:
-      - "link termination point"
+      - "Link Termination Point (LTP)"
       description: Retrieve all the LTPs of a Node.
       parameters:
         - name: nodeId
