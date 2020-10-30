@@ -616,17 +616,6 @@ components:
       description: Minimal Subnet object for creation.
       allOf:
         - $ref: '#/components/schemas/CommonFields'
-        - type:
-          required:
-            - address
-            - mask
-          properties:
-            address:
-              type: string
-              description: subnet's ip address.
-            mask:
-              type: string
-              description: subnet mask.
     SubnetConcise:
       description: Subnet object without contained Nodes and Links.
       allOf:
