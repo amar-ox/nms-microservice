@@ -659,16 +659,16 @@ components:
         - $ref: '#/components/schemas/CommonFields'
         - type: object
           required:
-            - bia
+            - hwaddr
             - status
             - type
             - posx
             - posy
             - location
       properties:
-        bia:
+        hwaddr:
           type: string
-          description: Burnt in Address assigned by the manufacturer.
+          description: Permanent hardware Address assigned by the manufacturer.
         status:
           type: string
           enum:
