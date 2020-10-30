@@ -896,4 +896,4 @@ components:
               description: ID of the source CTP.
             destVctpId:
               type: integer
-              description: ID of the desctination CTP.
+              description: ID of the destination CTP.
