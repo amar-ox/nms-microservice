@@ -636,7 +636,7 @@ components:
           description: ID of the Subnet containing the Node.
         hwaddr:
           type: string
-          description: Premanent hardware address assigned by the manufacturer.
+          description: Permanent hardware address assigned by the manufacturer.
         status:
           type: string
           enum:
