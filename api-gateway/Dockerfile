@@ -4,13 +4,15 @@ ENV VERTICLE_FILE target/api-gateway-fat.jar
 
 # Set the location of the verticles
 ENV VERTICLE_HOME /opt/verticles
+ENV SSL /opt/ssl
 
 EXPOSE 8787
-EXPOSE 8888
 
 COPY $VERTICLE_FILE $VERTICLE_HOME/
+
 COPY src/config/docker.json $VERTICLE_HOME/
 
+COPY src/main/resources/cert/*.pem $SSL/
 
 WORKDIR $VERTICLE_HOME
 ENTRYPOINT ["sh", "-c"]
