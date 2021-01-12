@@ -1,15 +1,9 @@
 #!/bin/bash
-MV_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-CONTROLLER_DIR=$MV_DIR/nms-microservice
-CONSOLE_DIR=$MV_DIR/nms-console
+cd $1
+mkdir certs ; cd certs ; mkdir ca ; mkdir controller ; mkdir console
 
-ROOT_CA=$MV_DIR/certs/mnms-rootCA.crt.pem
-CONTROLLER_CERT=$MV_DIR/certs/controller
-CONSOLE_CERT=$MV_DIR/certs/gui
-
-mkdir certs ; cd certs ; mkdir controller gui
-
+cd ca
 cat > req.conf <<EOF
 [req]
 distinguished_name = req_distinguished_name
@@ -19,24 +13,24 @@ prompt = no
 C = US
 ST = MD
 L = SomeCity
-O = MNMS
-CN = mnms
+O = MultiverseNMS
+CN = multiverse.com
 [v3_req]
 subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid:always,issuer:always
-basicConstraints = CA:true
+basicConstraints = CA:TRUE
 subjectAltName = @alt_names
 [alt_names]
-DNS.1 = mnms
+DNS.1 = multiverse.com
 EOF
 
 # generate self-signed certificate
-openssl genrsa -out mnms-rootCA.key.pem 4096
-openssl req -x509 -new -nodes -days 1024 -sha256 -key mnms-rootCA.key.pem -out mnms-rootCA.crt.pem -config req.conf -extensions 'v3_req'
+openssl genrsa -out MultiverseRootCA.key.pem 4096
+openssl req -x509 -new -nodes -days 1024 -sha256 -key MultiverseRootCA.key.pem -out MultiverseRootCA.crt.pem -config req.conf -extensions 'v3_req'
 
 rm req.conf
 
-cd ./controller
+cd ../controller
 
 cat > req.conf <<EOF
 [req]
@@ -47,24 +41,30 @@ prompt = no
 C = US
 ST = MD
 L = SomeCity
-O = MNMS
-CN = mnms.controller
+O = MultiverseNMS
+CN = controller.multiverse.com
 [req_ext]
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 subjectAltName = @alt_names
 [alt_names]
-IP.1 = 127.0.0.1
-DNS.1 = mnms.controller
+DNS.1 = controller.multiverse.com
+EOF
+
+cat > req.ext <<EOF
+subjectAltName=DNS:controller.multiverse.com
 EOF
 
 # generate controller certificate
-openssl req -out mnms.controller.csr -newkey rsa:2048 -nodes -keyout mnms.controller.key.pem -config req.conf
-# openssl req -noout -text -in mnms.controller.csr
-openssl x509 -req -days 365 -sha256 -extfile <(printf "subjectAltName=DNS:mnms.controller,IP:127.0.0.1") -in mnms.controller.csr -CA ../mnms-rootCA.crt.pem -CAkey ../mnms-rootCA.key.pem -CAcreateserial -out mnms.controller.crt.pem
-# openssl x509 -in mnms.controller.crt.pem -text -noout
+openssl req -out multiverse.controller.csr -newkey rsa:2048 -nodes -keyout multiverse.controller.key.pem -config req.conf
+# openssl req -noout -text -in multiverse.controller.csr
+openssl x509 -req -days 365 -sha256 -extfile req.ext -in multiverse.controller.csr -CA ../ca/MultiverseRootCA.crt.pem -CAkey ../ca/MultiverseRootCA.key.pem -CAcreateserial -out multiverse.controller.crt.pem
+# openssl x509 -in multiverse.controller.crt.pem -text -noout
 
-rm req.conf
+rm req.*
+rm *.csr
 
-cd ../gui
+cd ../console
 
 cat > req.conf << EOF
 [req]
@@ -75,28 +75,25 @@ prompt = no
 C = US
 ST = MD
 L = SomeCity
-O = MNMS
-CN = mnms.gui
+O = MultiverseNMS
+CN = console.multiverse.com
 [req_ext]
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 subjectAltName = @alt_names
 [alt_names]
-IP.1 = 127.0.0.1
-DNS.1 = mnms.gui
+DNS.1 = console.multiverse.com
+EOF
+
+cat > req.ext <<EOF
+subjectAltName=DNS:console.multiverse.com
 EOF
 
 # generate console certificate
-openssl req -out mnms.gui.csr -newkey rsa:2048 -nodes -keyout mnms.gui.key.pem -config req.conf
-# openssl req -noout -text -in mnms.gui.csr
-openssl x509 -req -days 365 -sha256 -extfile <(printf "subjectAltName=DNS:mnms.gui,IP:127.0.0.1") -in mnms.gui.csr -CA ../mnms-rootCA.crt.pem -CAkey ../mnms-rootCA.key.pem -CAcreateserial -out mnms.gui.crt.pem
-# openssl x509 -in mnms.gui.crt.pem -text -noout
+openssl req -out multiverse.console.csr -newkey rsa:2048 -nodes -keyout multiverse.console.key.pem -config req.conf
+# openssl req -noout -text -in multiverse.console.csr
+openssl x509 -req -days 365 -sha256 -extfile req.ext -in multiverse.console.csr -CA ../ca/MultiverseRootCA.crt.pem -CAkey ../ca/MultiverseRootCA.key.pem -CAcreateserial -out multiverse.console.crt.pem
+# openssl x509 -in multiverse.console.crt.pem -text -noout
 
-rm req.conf
-
-cp $ROOT_CA $CONTROLLER_DIR/ca
-cp $ROOT_CA $CONSOLE_DIR/docker/cert
-
-cp $CONTROLLER_CERT/*.pem $CONTROLLER_DIR/api-gateway/src/main/resources/cert
-cp $CONSOLE_CERT/*.pem $CONSOLE_DIR/docker/cert
-
-cd ../../
-rm -rf certs/
+rm req.*
+rm *.csr

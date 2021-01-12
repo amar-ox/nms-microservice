@@ -26,7 +26,7 @@ services:
     networks: 
       - nms
   account-microservice:
-    image: nms/account-microservice
+    image: account-microservice
     links:
       - mongo
     depends_on:
@@ -36,7 +36,7 @@ services:
     networks: 
       - nms
   telemetry-microservice:
-    image: nms/telemetry-microservice
+    image: telemetry-microservice
     links:
       - mongo
       - activemq
@@ -48,7 +48,7 @@ services:
     networks: 
       - nms
   notification-microservice:
-    image: nms/notification-microservice
+    image: notification-microservice
     links:
       - mongo
     depends_on:
@@ -58,7 +58,7 @@ services:
     networks: 
       - nms
   topology-microservice:
-    image: nms/topology-microservice
+    image: topology-microservice
     links:
       - mysql
       - notification-microservice
@@ -70,7 +70,7 @@ services:
     networks: 
       - nms
   configuration-microservice:
-    image: nms/configuration-microservice
+    image: configuration-microservice
     links:
       - mongo
       - topology-microservice
@@ -82,7 +82,7 @@ services:
     networks: 
       - nms
   api-gateway:
-    image: nms/api-gateway
+    image: api-gateway
     hostname: mnms.controller
     ports:
       - "8787:8787"
