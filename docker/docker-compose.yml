@@ -92,6 +92,8 @@ services:
       - "dockernet:${EXTERNAL_IP}"
     networks: 
       - nms
+    volumes:
+      - "${CONTROLLER_VOL}:/opt/data"
 networks:
   nms:
     driver: bridge

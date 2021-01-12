@@ -6,6 +6,9 @@ set -e
 IP=127.0.0.1
 export EXTERNAL_IP=$IP
 
+# export volume location
+export CONTROLLER_VOL=$1
+
 # Get this script directory (to find yml from any directory)
 export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
