@@ -4,9 +4,9 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-docker build -t "api-gateway" $DIR/../api-gateway
-docker build -t "telemetry-microservice" $DIR/../telemetry-microservice
-docker build -t "topology-microservice" $DIR/../topology-microservice
-docker build -t "notification-microservice" $DIR/../notification-microservice
-docker build -t "configuration-microservice" $DIR/../configuration-microservice
-docker build -t "account-microservice" $DIR/../account-microservice
+docker build -t "api-gateway" -f $DIR/../api-gateway/Dockerfile $DIR/../
+docker build -t "telemetry-microservice" -f $DIR/../telemetry-microservice/Dockerfile $DIR/../
+docker build -t "topology-microservice" -f $DIR/../topology-microservice/Dockerfile $DIR/../
+docker build -t "notification-microservice" -f $DIR/../notification-microservice/Dockerfile $DIR/../
+docker build -t "configuration-microservice" -f $DIR/../configuration-microservice/Dockerfile $DIR/../
+docker build -t "account-microservice" -f $DIR/../account-microservice/Dockerfile $DIR/../
