@@ -39,7 +39,7 @@ In order to build and run Multiverse, you need to generate and trust your own ce
 The following steps create the SSL keys and certificates used by Multiverse components:
 
 ```bash
-curl https://raw.githubusercontent.com/multiverse-nms/multiverse-controller/dev/main/gencerts.sh -o gencerts.sh
+curl https://raw.githubusercontent.com/multiverse-nms/multiverse-controller/master/gencerts.sh -o gencerts.sh
 chmod +x gencerts.sh
 ./gencerts.sh "<certs_location>"
 ```
