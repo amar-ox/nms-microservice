@@ -126,8 +126,8 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 				.setSsl(true)
 				.setPemKeyCertOptions(
     		            new PemKeyCertOptions()
-    		  		       .setKeyPath("cert/mnms.controller.key.pem")
-    		  		       .setCertPath("cert/mnms.controller.crt.pem"));
+    		  		       .setKeyPath("/opt/data/multiverse.controller.key.pem")
+    		  		       .setCertPath("/opt/data/multiverse.controller.crt.pem"));
 
 		// create http server
 		vertx.createHttpServer(httpServerOptions)

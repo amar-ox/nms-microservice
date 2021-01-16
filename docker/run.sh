@@ -2,17 +2,12 @@
 
 set -e
 
-# TODO: set env for docker-machine in Windows and OSX
-
-
-# export docker-machine IP
+# export IP
 IP=127.0.0.1
-unamestr=`uname`
-if [[ "$unamestr" != 'Linux' ]]; then
-  # Set docker-machine IP
-  IP="$(docker-machine ip)"
-fi
 export EXTERNAL_IP=$IP
+
+# export volume location
+export CONTROLLER_VOL=$1
 
 # Get this script directory (to find yml from any directory)
 export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
