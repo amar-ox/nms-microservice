@@ -1,19 +1,11 @@
 {
   "api.gateway.http.port": 8787,
-  "api.gateway.http.address": "localhost",
+  "api.gateway.http.address": "0.0.0.0",
+  "api.gateway.http.address.external": "localhost",
   "circuit-breaker": {
     "name": "api-gateway-cb",
     "timeout": 10000,
     "max-failures": 5
   },
-  "realm": "master",
-  "auth-server-url": "http://localhost:38080/auth",
-  "ssl-required": "external",
-  "resource": "nms",
-  "verify-token-audience": true,
-  "credentials": {
-    "secret": "e39b5ea9-b329-4472-a8f9-ec23989a2828"
-  },
-  "use-resource-role-mappings": true,
-  "confidential-port": 0
+  "nms.ui.http.port": 8888
 }

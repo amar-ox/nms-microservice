@@ -1,4 +1,10 @@
 {
   "api.name": "topology",
-  "topology.http.port": 8085
+  "topology.http.address": "127.0.0.1",
+  "topology.http.port": 8085,  
+  "url": "jdbc:mysql://localhost:3306/nms?characterEncoding=UTF-8&useSSL=false",
+  "driver_class": "com.mysql.cj.jdbc.Driver",
+  "user": "root",
+  "password": "rootpw",
+  "max_pool_size": 30 
 }

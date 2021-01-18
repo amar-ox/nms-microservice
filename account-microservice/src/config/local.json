@@ -1,4 +1,6 @@
 {
   "api.name": "account",
-  "account.http.port": 8083
+  "account.http.address": "127.0.0.1",
+  "account.http.port": 8083,  
+  "host": "localhost"
 }

@@ -122,12 +122,13 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 	    /*----------------------------------------------------------------*/
 
 		// enable HTTPS
+	    String certsPath = "/opt/data/";
 		HttpServerOptions httpServerOptions = new HttpServerOptions()
 				.setSsl(true)
 				.setPemKeyCertOptions(
     		            new PemKeyCertOptions()
-    		  		       .setKeyPath("/opt/data/multiverse.controller.key.pem")
-    		  		       .setCertPath("/opt/data/multiverse.controller.crt.pem"));
+    		  		       .setKeyPath(certsPath+"multiverse.controller.key.pem")
+    		  		       .setCertPath(certsPath+"multiverse.controller.crt.pem"));
 
 		// create http server
 		vertx.createHttpServer(httpServerOptions)

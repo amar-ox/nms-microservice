@@ -1,4 +1,6 @@
 {
   "api.name": "configuration",
-  "configuration.http.port": 8088
+  "configuration.http.address": "127.0.0.1",
+  "configuration.http.port": 8088,  
+  "host": "localhost"
 }

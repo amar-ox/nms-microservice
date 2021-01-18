@@ -1,0 +1,26 @@
+version: "2"
+services:
+  mysql:
+    image: mysql:5.7
+    restart: always
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpw
+      - MYSQL_DATABASE=nms
+  mongo:
+    image: mongo:latest
+    restart: always
+    expose:
+      - "27017"
+    ports:
+      - "27017:27017"
+  activemq:
+    image: rmohr/activemq
+    restart: always
+    expose:
+      - "5672"
+    ports:
+      - "5672:5672"

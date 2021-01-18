@@ -1,8 +1,11 @@
 {
   "api.name": "telemetry",
-  "url": "jdbc:mysql://localhost/vertx_blueprint?characterEncoding=UTF-8&useSSL=false",
-  "driver_class": "com.mysql.cj.jdbc.Driver",
-  "user": "vbpdb1",
-  "password": "666666*",
-  "max_pool_size": 30
+  "telemetry.http.address": "127.0.0.1",
+  "telemetry.http.port": 8082,
+  "host": "localhost",
+  "amqp":
+    {
+      "host" : "localhost",
+      "port" : 5672
+    }
 }
