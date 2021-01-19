@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+ps -ef | grep java | tr -s ' ' | cut -d " " -f3 | \
+while read pid; 
+do 
+    echo killing: $pid;
+    kill -9 $pid
+done
+sleep 5
+
 # Stop
 docker-compose -f docker-compose.yml stop
 
@@ -8,7 +16,7 @@ docker-compose -f docker-compose.yml up -d mysql mongo activemq
 echo "Waiting for persistence init..."
 sleep 30
 
-# mvn -f ../pom.xml clean install
+mvn -f ../pom.xml clean install
 
 # notification
 java -jar ../notification-microservice/target/notification-microservice-fat.jar -cluster -ha -conf ../notification-microservice/src/config/local.json &
