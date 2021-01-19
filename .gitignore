@@ -1,6 +1,9 @@
 # IntelliJ project files
 .idea
 *.iml
+.settings/
+.vscode/
+*.factorypath
 
 # build files
 build
