@@ -2,17 +2,17 @@ package io.nms.central.microservice.topology;
 
 import java.util.List;
 
-import io.nms.central.microservice.topology.model.Face;
+import io.nms.central.microservice.notification.model.Status.StatusEnum;
 import io.nms.central.microservice.topology.model.PrefixAnn;
 import io.nms.central.microservice.topology.model.Route;
+import io.nms.central.microservice.topology.model.Vconnection;
 import io.nms.central.microservice.topology.model.Vctp;
+import io.nms.central.microservice.topology.model.Vctp.ConnTypeEnum;
 import io.nms.central.microservice.topology.model.Vlink;
 import io.nms.central.microservice.topology.model.VlinkConn;
 import io.nms.central.microservice.topology.model.Vltp;
 import io.nms.central.microservice.topology.model.Vnode;
 import io.nms.central.microservice.topology.model.Vsubnet;
-import io.nms.central.microservice.topology.model.Vtrail;
-import io.nms.central.microservice.topology.model.Vxc;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;
@@ -43,6 +43,8 @@ public interface TopologyService {
 	String UI_ADDRESS = "nms.to.ui";
 	
 	String CONFIG_ADDRESS = "topology.to.config";
+
+	String EVENT_ADDRESS = "topology.event";
 	
 	
 	@Fluent	
@@ -117,6 +119,9 @@ public interface TopologyService {
 	TopologyService getAllVctps(Handler<AsyncResult<List<Vctp>>> resultHandler);
 	
 	@Fluent	
+	TopologyService getVctpsByType(String type, Handler<AsyncResult<List<Vctp>>> resultHandler);
+
+	@Fluent	
 	TopologyService getVctpsByVltp(String vltpId, Handler<AsyncResult<List<Vctp>>> resultHandler);
 	
 	@Fluent	
@@ -170,50 +175,27 @@ public interface TopologyService {
 	
 	@Fluent 
 	TopologyService updateVlinkConn(String id, VlinkConn vlinkConn, Handler<AsyncResult<Void>> resultHandler);
-	
-	
-	/* Vtrail */
+
+
+	/* VlinkConn */
 	@Fluent	
-	TopologyService addVtrail(Vtrail vtrail, Handler<AsyncResult<Integer>> resultHandler);
-	
-	@Fluent	
-	TopologyService getVtrail(String vtrailId, Handler<AsyncResult<Vtrail>> resultHandler);
+	TopologyService addVconnection(Vconnection vconnection, Handler<AsyncResult<Integer>> resultHandler);
 	
 	@Fluent	
-	TopologyService deleteVtrail(String vtrailId, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService getVconnection(String vconnectionId, Handler<AsyncResult<Vconnection>> resultHandler);
 	
-	@Fluent
-	TopologyService getAllVtrails(Handler<AsyncResult<List<Vtrail>>> resultHandler);
+	@Fluent	
+	TopologyService getAllVconnections(Handler<AsyncResult<List<Vconnection>>> resultHandler);
+		
+	@Fluent	
+	TopologyService getVconnectionsByVsubnet(String vsubnetId, Handler<AsyncResult<List<Vconnection>>> resultHandler);
 	
-	@Fluent
-	TopologyService getVtrailsByVsubnet(String vsubnetId, Handler<AsyncResult<List<Vtrail>>> resultHandler);
+	@Fluent	
+	TopologyService deleteVconnection(String vconnectionId, Handler<AsyncResult<Void>> resultHandler);
 	
 	@Fluent 
-	TopologyService updateVtrail(String id, Vtrail vtrail, Handler<AsyncResult<Void>> resultHandler);
-	
-	
-	/* Vxc */
-	@Fluent	
-	TopologyService addVxc(Vxc vxc, Handler<AsyncResult<Integer>> resultHandler);
-	
-	@Fluent	
-	TopologyService getVxc(String vxcId, Handler<AsyncResult<Vxc>> resultHandler);
-	
-	@Fluent	
-	TopologyService getAllVxcs(Handler<AsyncResult<List<Vxc>>> resultHandler);
-	
-	@Fluent	
-	TopologyService getVxcsByVtrail(String vtrailId, Handler<AsyncResult<List<Vxc>>> resultHandler);
-	
-	@Fluent
-	TopologyService getVxcsByVnode(String vnodeId, Handler<AsyncResult<List<Vxc>>> resultHandler);
-	
-	@Fluent	
-	TopologyService deleteVxc(String vxcId, Handler<AsyncResult<Void>> resultHandler);
-	
-	@Fluent 
-	TopologyService updateVxc(String id, Vxc vxc, Handler<AsyncResult<Void>> resultHandler);
-	
+	TopologyService updateVconnection(String id, Vconnection vconnection, Handler<AsyncResult<Void>> resultHandler);
+
 	
 	/* PrefixAnn */
 	@Fluent	
@@ -257,27 +239,23 @@ public interface TopologyService {
 	@Fluent	
 	TopologyService deleteRoute(String routeId, Handler<AsyncResult<Void>> resultHandler);
 	
-	/* Face */
-	@Fluent	
-	TopologyService addFace(Face face, Handler<AsyncResult<Integer>> resultHandler);	
-	
-	@Fluent	
-	TopologyService getFace(String faceId, Handler<AsyncResult<Face>> resultHandler);
-	
-	@Fluent	
-	TopologyService getAllFaces(Handler<AsyncResult<List<Face>>> resultHandler);
-	
-	@Fluent	
-	TopologyService getFacesByVsubnet(String vsubnetId, Handler<AsyncResult<List<Face>>> resultHandler);
-	
-	@Fluent	
-	TopologyService getFacesByNode(String nodeId, Handler<AsyncResult<List<Face>>> resultHandler);
-	
-	@Fluent	
-	TopologyService deleteFace(String faceId, Handler<AsyncResult<Void>> resultHandler);
-	
-	
-	/* Processing */
+
+	/* Status management */
 	@Fluent
-	TopologyService updateNodeStatus(int id, String status, Handler<AsyncResult<Void>> resultHandler);
+	TopologyService updateNodeStatus(int id, StatusEnum status, Handler<AsyncResult<Void>> resultHandler);
+
+	@Fluent
+	TopologyService updateLtpStatus(int id, StatusEnum status, String op, Handler<AsyncResult<Void>> resultHandler);
+
+	@Fluent
+	TopologyService updateCtpStatus(int id, ConnTypeEnum type, StatusEnum status, String op, Handler<AsyncResult<Void>> resultHandler);
+
+	@Fluent
+	TopologyService updateLinkStatus(int id, StatusEnum status, String op, Handler<AsyncResult<Void>> resultHandler);
+
+	@Fluent
+	TopologyService updateLcStatus(int id, StatusEnum status, String op, Handler<AsyncResult<Void>> resultHandler);
+
+	@Fluent
+	TopologyService updateConnectionStatus(int id, StatusEnum status, String op, Handler<AsyncResult<Void>> resultHandler);
 }

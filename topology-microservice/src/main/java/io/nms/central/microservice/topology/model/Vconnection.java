@@ -1,18 +1,17 @@
 package io.nms.central.microservice.topology.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import io.nms.central.microservice.common.functional.JSONUtils;
+import io.nms.central.microservice.notification.model.Status.StatusEnum;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 
 @DataObject(generateConverter = true)
-public class Vtrail {
-	
-	// in SQL table
+public class Vconnection {
+
 		// common fields
 	private int id;
 	private String name;
@@ -20,57 +19,48 @@ public class Vtrail {
 	private String description;
 	private String created;
 	private String updated;
-	private String status = "DOWN";
-	private Map<String, Object> info = new HashMap<String, Object>();	
+	private StatusEnum status;
+	private Map<String, Object> info = new HashMap<String, Object>();
 	
-		// vtrail fields
+		// Vconnection fields
 	private int srcVctpId;
 	private int destVctpId;
-
+	
 	// in object only
-	private List<Vxc> vxcs = new ArrayList<Vxc>();
-
-	
-	
+	private int srcVnodeId;
+	private int destVnodeId;
+		
 	/*-----------------------------------------------*/
-	public Vtrail() {}
-	
-	public Vtrail(int id) {
+
+	public Vconnection() {}
+	public Vconnection(int id) {
 		this.id = id;
 	}
+	public Vconnection(JsonObject json) {}
 	
-	public Vtrail(JsonObject json) {
-	    VtrailConverter.fromJson(json, this);
-	}
-	
-	public JsonObject toJson() {
-		JsonObject json = new JsonObject();
-		VtrailConverter.toJson(this, json);
-		return json;
-	}
+	/*-----------------------------------------------*/
 
+	public JsonObject toJson() {
+		return new JsonObject(JSONUtils.pojo2Json(this, false));
+	}
+	@Override
+	public String toString() {
+		return JSONUtils.pojo2Json(this, false);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		return Objects.equals(toString(), ((Vconnection) obj).toString());
+	}
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return Objects.equals(id, ((Vtrail) obj).id);
-	}
-
-	@Override
-	public String toString() {
-		return this.toJson().encodePrettily();
-	}
-	
-	
-	
 	/*-----------------------------------------------*/
+
 	public int getSrcVctpId() {
 		return srcVctpId;
 	}
-
 	public void setSrcVctpId(int srcVctpId) {
 		this.srcVctpId = srcVctpId;
 	}
@@ -78,7 +68,6 @@ public class Vtrail {
 	public int getDestVctpId() {
 		return destVctpId;
 	}
-
 	public void setDestVctpId(int destVctpId) {
 		this.destVctpId = destVctpId;
 	}
@@ -86,7 +75,6 @@ public class Vtrail {
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -94,7 +82,6 @@ public class Vtrail {
 	public String getLabel() {
 		return label;
 	}
-
 	public void setLabel(String label) {
 		this.label = label;
 	}
@@ -102,23 +89,20 @@ public class Vtrail {
 	public String getDescription() {
 		return description;
 	}
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	public String getStatus() {
+	public StatusEnum getStatus() {
 		return status;
 	}
-
-	public void setStatus(String status) {
+	public void setStatus(StatusEnum status) {
 		this.status = status;
 	}
 
 	public String getCreated() {
 		return created;
 	}
-
 	public void setCreated(String created) {
 		this.created = created;
 	}
@@ -126,7 +110,6 @@ public class Vtrail {
 	public String getUpdated() {
 		return updated;
 	}
-
 	public void setUpdated(String updated) {
 		this.updated = updated;
 	}
@@ -134,7 +117,6 @@ public class Vtrail {
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -142,25 +124,21 @@ public class Vtrail {
 	public Map<String, Object> getInfo() {
 		return info;
 	}
-
 	public void setInfo(Map<String, Object> info) {
 		this.info = info;
 	}
 
-	public List<Vxc> getVxcs() {
-		return vxcs;
+	public int getSrcVnodeId() {
+		return srcVnodeId;
+	}
+	public void setSrcVnodeId(int srcVnodeId) {
+		this.srcVnodeId = srcVnodeId;
 	}
 
-	public void setVxcs(List<Vxc> vxcs) {
-		this.vxcs = vxcs;
+	public int getDestVnodeId() {
+		return destVnodeId;
 	}
-	
-	
-	public void addVxc(Vxc vxc) {
-		vxcs.add(vxc);
-	}
-	
-	public void removeVxc(Vxc vxc) {
-		vxcs.remove(vxc);
+	public void setDestVnodeId(int destVnodeId) {
+		this.destVnodeId = destVnodeId;
 	}
 }

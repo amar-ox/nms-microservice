@@ -10,8 +10,10 @@ import io.nms.central.microservice.configuration.ConfigurationService;
 import io.nms.central.microservice.configuration.model.ConfigFace;
 import io.nms.central.microservice.configuration.model.ConfigObj;
 import io.nms.central.microservice.configuration.model.ConfigRoute;
-import io.nms.central.microservice.topology.model.Face;
+import io.nms.central.microservice.notification.model.Status.StatusEnum;
+import io.nms.central.microservice.topology.model.NdnConnInfo;
 import io.nms.central.microservice.topology.model.Route;
+import io.nms.central.microservice.topology.model.Vctp;
 import io.nms.central.microservice.topology.model.Vnode;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
@@ -158,28 +160,28 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	
 	/* processing */
 	@Override
-	public void computeConfigurations(List<Route> routes, List<Face> faces, List<Vnode> nodes, 
+	public void computeConfigurations(List<Route> routes, List<Vctp> faces, List<Vnode> nodes, 
 			Handler<AsyncResult<List<ConfigObj>>> resultHandler) {
-		
 		Map<Integer,ConfigObj> configsMap = new HashMap<Integer,ConfigObj>();
 		for (Vnode node : nodes) {
-				ConfigObj c = new ConfigObj();
-				c.setNodeId(node.getId());
-				configsMap.put(node.getId(), c);
+			ConfigObj c = new ConfigObj();
+			c.setNodeId(node.getId());
+			configsMap.put(node.getId(), c);
 		}
 		
-		for (Face face : faces) {
+		for (Vctp face : faces) {
 			int nodeId = face.getVnodeId();
-			if (!face.getStatus().equals("DOWN")) {
+			if (!face.getStatus().equals(StatusEnum.DOWN)) {
 				ConfigFace cFace = new ConfigFace();
 				cFace.setId(face.getId());
-				cFace.setLocal(face.getLocal());
-				cFace.setRemote(face.getRemote());
-				cFace.setScheme(face.getScheme());
+				cFace.setLocal(((NdnConnInfo) face.getConnInfo()).getLocal());
+				cFace.setRemote(((NdnConnInfo) face.getConnInfo()).getRemote());
+				cFace.setScheme(((NdnConnInfo) face.getConnInfo()).getScheme());
 				configsMap.get(nodeId).getConfig().addFace(cFace);
 			}
 		}
 		for (Route route : routes) {
+			// TODO: check Face existence
 			int nodeId = route.getNodeId();
 			ConfigRoute cRoute = new ConfigRoute();
 			cRoute.setPrefix(route.getPrefix());
@@ -222,7 +224,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	
 	
 	private JsonObject computePatched(JsonObject origin, JsonArray patch) throws IllegalArgumentException {
-		// TODO: filter for add, remove, replace
 		String sPatched = rawPatch(origin.encode(), patch.encode());
 		return new JsonObject(sPatched);
 	}

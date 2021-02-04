@@ -5,6 +5,7 @@ import java.util.Map;
 
 import io.nms.central.microservice.common.BaseMicroserviceVerticle;
 import io.nms.central.microservice.notification.model.Status;
+import io.nms.central.microservice.notification.model.Status.ResTypeEnum;
 import io.nms.central.microservice.notification.model.Status.StatusEnum;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
@@ -37,7 +38,6 @@ public class StatusHandler extends BaseMicroserviceVerticle {
 					if (ar.succeeded()) {
 						MessageConsumer<JsonObject> statusConsumer = ar.result();
 						statusConsumer.handler(message -> {
-							// Status status = new Status(message.body());
 							Status status = Json.decodeValue(message.body().encode(), Status.class);
 							initHandleStatus(status, message);
 						});
@@ -49,8 +49,9 @@ public class StatusHandler extends BaseMicroserviceVerticle {
 	}
 
 	private void initHandleStatus(Status status, Message<JsonObject> sender) {
-		if (!status.getResType().equals("node")) {
-			sender.fail(5000, "resource type not supported");
+		if (!status.getResType().equals(ResTypeEnum.NODE)) {
+			dispatchStatus(status);
+			sender.reply(new JsonObject());
 			return;
 		}
 		int resId = status.getResId();
@@ -75,30 +76,83 @@ public class StatusHandler extends BaseMicroserviceVerticle {
 			}
 		}
 		sender.reply(new JsonObject());
-	}	
+	}
 	private void dispatchStatus(Status status) {
-		String resType = status.getResType();
 		int resId = status.getResId();
-		String resStatus = status.getStatus().getValue();
+		StatusEnum resStatus = status.getStatus();
 
-		if (resType.equals("node")) {
-			topologyService.updateNodeStatus(resId, resStatus, ar -> {
-				if (ar.succeeded()) {
-					publishUpdateToUI();
-					notifyConfigService();
-				} else {
-					ar.cause().printStackTrace();
-				}
-			});
-		}
+		switch(status.getResType()) {
+			case NODE:
+				topologyService.updateNodeStatus(resId, resStatus, ar -> {
+					if (ar.succeeded()) {
+						publishUpdateToUI();
+						notifyConfigService();
+					} else {
+						ar.cause().printStackTrace();
+					}
+				});
+			break;
+			case LTP:
+				topologyService.updateLtpStatus(resId, resStatus, null, ar -> {
+					if (ar.succeeded()) {
+						publishUpdateToUI();
+						notifyConfigService();
+					} else {
+						ar.cause().printStackTrace();
+					}
+				});
+			break;
+			case CTP:
+				topologyService.updateCtpStatus(resId, null, resStatus, null, ar -> {
+					if (ar.succeeded()) {
+						publishUpdateToUI();
+						notifyConfigService();
+					} else {
+						ar.cause().printStackTrace();
+					}
+				});
+			break;
+			case LINK:
+				topologyService.updateLinkStatus(resId, resStatus, null, ar -> {
+					if (ar.succeeded()) {
+						publishUpdateToUI();
+						notifyConfigService();
+					} else {
+						ar.cause().printStackTrace();
+					}
+				});
+			break;
+			case LC:
+				topologyService.updateLcStatus(resId, resStatus, null, ar -> {
+					if (ar.succeeded()) {
+						publishUpdateToUI();
+						notifyConfigService();
+					} else {
+						ar.cause().printStackTrace();
+					}
+				});
+			break;
+			case CONNECTION:
+				topologyService.updateConnectionStatus(resId, resStatus, null, ar -> {
+					if (ar.succeeded()) {
+						publishUpdateToUI();
+						notifyConfigService();
+					} else {
+						ar.cause().printStackTrace();
+					}
+				});
+			break;
+			default:
+			break;
+		  }
 	}
 	
-	 private void publishUpdateToUI() {
+	private void publishUpdateToUI() {
 		 vertx.eventBus().publish(TopologyService.UI_ADDRESS, new JsonObject()
 				.put("service", TopologyService.SERVICE_ADDRESS));
-	 }
+	}
 	 
-	 private void notifyConfigService() {
+	private void notifyConfigService() {
 		vertx.eventBus().request(TopologyService.CONFIG_ADDRESS, new JsonObject(), reply -> {
 			if (reply.failed()) {
 				logger.warn("configuration service replies: ", reply.cause().getMessage());

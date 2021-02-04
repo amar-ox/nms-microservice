@@ -122,7 +122,8 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 	    /*----------------------------------------------------------------*/
 
 		// enable HTTPS
-	    String certsPath = "/opt/data/";
+		// String certsPath = "C:\\Users\\ana24\\Documents\\certs\\controller\\";
+		String certsPath = "/opt/data/";
 		HttpServerOptions httpServerOptions = new HttpServerOptions()
 				.setSsl(true)
 				.setPemKeyCertOptions(

@@ -11,6 +11,7 @@ import io.nms.central.microservice.notification.NotificationService;
 import io.nms.central.microservice.notification.model.Event;
 import io.nms.central.microservice.notification.model.Fault;
 import io.nms.central.microservice.notification.model.Status;
+import io.nms.central.microservice.notification.model.Status.ResTypeEnum;
 import io.nms.central.microservice.notification.model.Status.StatusEnum;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -90,7 +91,7 @@ public class NotificationServiceImpl implements NotificationService {
 	public void saveStatus(Status status, Handler<AsyncResult<Void>> resultHandler) {
 		JsonObject jStatus = new JsonObject()
 				.put("_id", status.getId())
-				.put("resType", status.getResType())
+				.put("resType", status.getResType().getValue())
 				.put("resId", status.getResId())
 				.put("status", status.getStatus().getValue())
 				.put("timestamp", status.getTimestamp().toString());
@@ -142,7 +143,7 @@ public class NotificationServiceImpl implements NotificationService {
 	private void setNodeStatus(int resId, StatusEnum se) {
 		Status status = new Status();
 		status.setResId(resId);
-		status.setResType("node");
+		status.setResType(ResTypeEnum.NODE);
 		status.setStatus(se);
 		status.setTimestamp(OffsetDateTime.now());
 		status.setId(String.valueOf(status.hashCode()));

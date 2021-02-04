@@ -4,8 +4,8 @@ import java.util.List;
 
 import io.nms.central.microservice.common.BaseMicroserviceVerticle;
 import io.nms.central.microservice.topology.TopologyService;
-import io.nms.central.microservice.topology.model.Face;
 import io.nms.central.microservice.topology.model.Route;
+import io.nms.central.microservice.topology.model.Vctp;
 import io.nms.central.microservice.topology.model.Vnode;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
@@ -34,11 +34,17 @@ public class ConfigHandler extends BaseMicroserviceVerticle {
 						eventConsumer.handler(message -> {
 							generateConfig(message);
 						});
-						promise.complete();
+						setTopologyEventListener(promise);
 					} else {
 						promise.fail(ar.cause());
 					}
 				});
+	}
+
+	private void setTopologyEventListener(Promise<Void> promise) {
+		vertx.eventBus().consumer("topology.event", message -> {
+		  System.out.println("I have received a message: " + message.body());
+		});
 	}
 
 	private void generateConfig(Message<JsonObject> sender) {
@@ -46,17 +52,17 @@ public class ConfigHandler extends BaseMicroserviceVerticle {
 			if (ar.succeeded()) {
 				TopologyService service = ar.result();
 				Promise<List<Route>> pRoute = Promise.promise();
-				Promise<List<Face>> pFace = Promise.promise();
+				Promise<List<Vctp>> pFace = Promise.promise();
 				Promise<List<Vnode>> pNode = Promise.promise();
 				service.getAllRoutes(pRoute);
-				service.getAllFaces(pFace);
+				service.getVctpsByType("NDN", pFace);
 				service.getAllVnodes(pNode);
-				CompositeFutureImpl.all(pRoute.future(), pFace.future(), pNode.future()).onComplete( res -> {
+				CompositeFutureImpl.all(pRoute.future(), pFace.future(), pNode.future()).onComplete(res -> {
 					if (res.succeeded()) {
 						List<Route> routes = pRoute.future().result();
-						List<Face> faces = pFace.future().result();
+						List<Vctp> faces = pFace.future().result();
 						List<Vnode> nodes = pNode.future().result();
-						configService.computeConfigurations(routes,faces, nodes, done -> {
+						configService.computeConfigurations(routes, faces, nodes, done -> {
 							if (done.succeeded()) {
 								configService.upsertCandidateConfigs(done.result(), r -> {
 									if (r.succeeded()) {

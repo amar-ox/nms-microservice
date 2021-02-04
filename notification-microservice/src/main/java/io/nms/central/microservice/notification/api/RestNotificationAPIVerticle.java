@@ -5,7 +5,7 @@ import io.nms.central.microservice.notification.NotificationService;
 import io.nms.central.microservice.notification.model.Event;
 import io.nms.central.microservice.notification.model.Fault;
 import io.nms.central.microservice.notification.model.Status;
-import io.nms.central.microservice.notification.model.Status.StatusEnum;
+import io.nms.central.microservice.notification.model.Status.ResTypeEnum;
 import io.vertx.core.Future;
 import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.Json;
@@ -56,7 +56,7 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 		router.get(API_VERSION).handler(this::apiVersion);
 
 		router.get(API_ALL_STATUS).handler(this::checkAdminRole).handler(this::apiGetAllStatus); 
-		router.put(API_ONE_STATUS).handler(this::checkAgentRole).handler(this::apiPutStatus);
+		router.put(API_ONE_STATUS).handler(this::apiPutStatus);
 		router.delete(API_ONE_STATUS).handler(this::checkAdminRole).handler(this::apiDeleteStatus);
 		
 		router.get(API_ALL_EVENT).handler(this::checkAdminRole).handler(this::apiGetAllEvents); 
@@ -93,27 +93,16 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 			badRequest(context, new Throwable("wrong or missing request body"));
 			return;
 		}
-		
-		if ((status.getStatus() == null || (status.getTimestamp() == null))) {
-			badRequest(context, new Throwable("status and/or timestamp are missing"));
-			return;
-		}
-		
-		if (status.getStatus().equals(StatusEnum.DISCONN)) {
-			badRequest(context, new Throwable("illegal status value"));
-			return;
-		}
-		
-		String statusId = context.request().getParam("statusId");
-		
+		status.setId(context.request().getParam("statusId"));
+
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
-		int resId = principal.getInteger("nodeId");
-		
-		status.setId(statusId);
-		status.setResId(resId);
-		status.setResType("node");
-		
-		service.processStatus(status, createdResultHandler(context));
+		// For NDN Agent only
+		if (principal.containsKey("nodeId")) {
+			status.setResId(principal.getInteger("nodeId"));
+			status.setResType(ResTypeEnum.NODE);
+		}
+
+		service.processStatus(status, resultVoidHandler(context, 201));
 	}
 
 	private void apiGetAllStatus(RoutingContext context) {		
@@ -160,7 +149,7 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 		event.setId(eventId);
 		event.setOrigin(origin);
 		
-		service.saveEvent(event, createdResultHandler(context));
+		service.saveEvent(event, resultVoidHandler(context, 201));
 	}
 
 	private void apiGetAllEvents(RoutingContext context) {		
@@ -204,7 +193,7 @@ public class RestNotificationAPIVerticle extends RestAPIVerticle {
 		fault.setId(faultId);
 		fault.setOrigin(origin);
 		
-		service.saveFault(fault, createdResultHandler(context));
+		service.saveFault(fault, resultVoidHandler(context, 201));
 	}
 
 	private void apiGetAllFaults(RoutingContext context) {		
