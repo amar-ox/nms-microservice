@@ -4,7 +4,7 @@ info:
   title: Multiverse controller API for topology
   description: The API provided by the controller to handle topology.
 servers:
-  - url: 'https://mnms.controller:8787/api'
+  - url: 'https://controller.multiverse.com:8787/api'
 security:
   - bearerAuth: []
 paths:
@@ -61,6 +61,12 @@ paths:
                 $ref: '#/components/schemas/BadRequestContent'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     get:
       tags:
         - Subnet
@@ -74,6 +80,12 @@ paths:
                 $ref: '#/components/schemas/SubnetArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/subnet/{subnetId}':
     get:
       tags:
@@ -97,6 +109,12 @@ paths:
           description: Authorization information is missing or invalid.
         '404':
           description: Subnet not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     delete:
       tags:
         - Subnet
@@ -113,6 +131,12 @@ paths:
           description: Subnet deleted.
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     put:
       tags:
         - Subnet
@@ -143,6 +167,12 @@ paths:
           description: Authorization information is missing or invalid.
         '404':
           description: Subnet not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   /topology/node:
     post:
       tags:
@@ -170,6 +200,12 @@ paths:
                 $ref: '#/components/schemas/BadRequestContent'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     get:
       tags:
         - Node
@@ -183,6 +219,12 @@ paths:
                 $ref: '#/components/schemas/NodeArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/node/{nodeId}':
     get:
       tags:
@@ -206,6 +248,12 @@ paths:
           description: Authorization information is missing or invalid.
         '404':
           description: Node not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     delete:
       tags:
         - Node
@@ -222,6 +270,12 @@ paths:
           description: Node deleted.
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     put:
       tags:
         - Node
@@ -252,6 +306,12 @@ paths:
           description: Authorization information is missing or invalid.
         '404':
           description: Node not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   /topology/ltp:
     post:
       tags:
@@ -279,6 +339,12 @@ paths:
                 $ref: '#/components/schemas/BadRequestContent'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     get:
       tags:
         - Link Termination Point (LTP)
@@ -292,6 +358,12 @@ paths:
                 $ref: '#/components/schemas/LtpArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/ltp/{ltpId}':
     get:
       tags:
@@ -315,6 +387,12 @@ paths:
           description: Authorization information is missing or invalid.
         '404':
           description: LTP not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     delete:
       tags:
         - Link Termination Point (LTP)
@@ -331,6 +409,12 @@ paths:
           description: LTP deleted.
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     put:
       tags:
         - Link Termination Point (LTP)
@@ -361,6 +445,12 @@ paths:
           description: Authorization information is missing or invalid.
         '404':
           description: LTP not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   /topology/link:
     post:
       tags:
@@ -388,6 +478,12 @@ paths:
                 $ref: '#/components/schemas/BadRequestContent'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     get:
       tags:
         - Link
@@ -401,6 +497,12 @@ paths:
                 $ref: '#/components/schemas/LinkArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/link/{linkId}':
     get:
       tags:
@@ -424,6 +526,12 @@ paths:
           description: Authorization information is missing or invalid.
         '404':
           description: Link not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     delete:
       tags:
         - Link
@@ -440,6 +548,12 @@ paths:
           description: Link deleted.
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     put:
       tags:
         - Link
@@ -470,6 +584,12 @@ paths:
           description: Authorization information is missing or invalid.
         '404':
           description: Link not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   /topology/ctp:
     post:
       tags:
@@ -497,6 +617,12 @@ paths:
                 $ref: '#/components/schemas/BadRequestContent'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     get:
       tags:
         - Connection Termination Point (CTP)
@@ -510,6 +636,12 @@ paths:
                 $ref: '#/components/schemas/CtpArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/ctp/{ctpId}':
     get:
       tags:
@@ -533,6 +665,12 @@ paths:
           description: Authorization information is missing or invalid.
         '404':
           description: CTP not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     delete:
       tags:
         - Connection Termination Point (CTP)
@@ -549,6 +687,12 @@ paths:
           description: CTP deleted.
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     put:
       tags:
         - Connection Termination Point (CTP)
@@ -579,6 +723,39 @@ paths:
           description: Authorization information is missing or invalid.
         '404':
           description: CTP not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
+  '/topology/ctp/type/{type}':
+    get:
+      tags:
+        - Connection Termination Point (CTP)
+      description: Retrieve CTPs by connection type.
+      parameters:
+        - name: type
+          description: One of authorized connType.
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ConnType'
+      responses:
+        '200':
+          description: CTPs retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CtpArray'
+        '401':
+          description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   /topology/lc:
     post:
       tags:
@@ -606,6 +783,12 @@ paths:
                 $ref: '#/components/schemas/BadRequestContent'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     get:
       tags:
         - Link Connection (LC)
@@ -619,6 +802,12 @@ paths:
                 $ref: '#/components/schemas/LcArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/lc/{lcId}':
     get:
       tags:
@@ -642,6 +831,12 @@ paths:
           description: Authorization information is missing or invalid.
         '404':
           description: LC not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     delete:
       tags:
         - Link Connection (LC)
@@ -658,6 +853,12 @@ paths:
           description: LC deleted.
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     put:
       tags:
         - Link Connection (LC)
@@ -688,6 +889,12 @@ paths:
           description: Authorization information is missing or invalid.
         '404':
           description: LC not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   /topology/connection:
     post:
       tags:
@@ -704,7 +911,7 @@ paths:
           description: Connection created.
           headers:
             Location:
-              description: Relative path to the created NDN Link.
+              description: Relative path to the created Connection.
               schema:
                 type: string
         '400':
@@ -715,10 +922,16 @@ paths:
                 $ref: '#/components/schemas/BadRequestContent'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     get:
       tags:
         - Connection
-      description: Returns all existing Connection.
+      description: Returns all existing Connections.
       responses:
         '200':
           description: Connections retrieved successfully.
@@ -728,6 +941,12 @@ paths:
                 $ref: '#/components/schemas/ConnectionArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/connection/{connId}':
     get:
       tags:
@@ -750,7 +969,13 @@ paths:
         '401':
           description: Authorization information is missing or invalid.
         '404':
-          description: Not found.
+          description: Connection not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     delete:
       tags:
         - Connection
@@ -767,6 +992,12 @@ paths:
           description: Connection deleted.
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
     put:
       tags:
         - Connection
@@ -796,7 +1027,13 @@ paths:
         '401':
           description: Authorization information is missing or invalid.
         '404':
-          description: Not found.
+          description: Connection not found.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/subnet/{subnetId}/nodes':
     get:
       tags:
@@ -811,13 +1048,19 @@ paths:
             type: integer
       responses:
         '200':
-          description: Successfully returned Nodes.
+          description: Nodes retrieved successfully.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/NodeArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/node/{nodeId}/ltps':
     get:
       tags:
@@ -832,13 +1075,19 @@ paths:
             type: integer
       responses:
         '200':
-          description: Successfully returned LTPs.
+          description: LTPs retrieved successfully.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/LtpArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/node/{nodeId}/ctps':
     get:
       tags:
@@ -853,13 +1102,19 @@ paths:
             type: integer
       responses:
         '200':
-          description: Successfully returned CTPs.
+          description: CTPs retrieved successfully.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CtpArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/node/{ltpId}/ctps':
     get:
       tags:
@@ -874,13 +1129,19 @@ paths:
             type: integer
       responses:
         '200':
-          description: Successfully returned CTPs.
+          description: CTPs retrieved successfully.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CtpArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/subnet/{subnetId}/links':
     get:
       tags:
@@ -895,13 +1156,19 @@ paths:
             type: integer
       responses:
         '200':
-          description: Successfully returned Links.
+          description: Links retrieved successfully.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/LinkArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/subnet/{subnetId}/lcs':
     get:
       tags:
@@ -916,18 +1183,24 @@ paths:
             type: integer
       responses:
         '200':
-          description: Successfully returned LCs.
+          description: LCs retrieved successfully.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/LcArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
   '/topology/subnet/{subnetId}/connections':
     get:
       tags:
         - Connection
-      description: Retrieve all NDN Links of a Subnet.
+      description: Retrieve all Connections of a Subnet.
       parameters:
         - name: subnetId
           description: Subnet assigned ID.
@@ -937,13 +1210,46 @@ paths:
             type: integer
       responses:
         '200':
-          description: Successfully returned NDN Links.
+          description: Connections retrieved successfully.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConnectionArray'
         '401':
           description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
+  '/topology/link/{linkId}/lcs':
+    get:
+      tags:
+        - Link Connection (LC)
+      description: Retrieve all LCs carried by a Link.
+      parameters:
+        - name: linkId
+          description: Link assigned ID.
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: LCs retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LcArray'
+        '401':
+          description: Authorization information is missing or invalid.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorContent'
 components:
   securitySchemes:
     bearerAuth:
@@ -973,6 +1279,11 @@ components:
       properties:
         message:
           type: string
+    ErrorContent:
+      type: object
+      properties:
+        error:
+          type: string
     CommonFields:
       type: object
       required:
@@ -993,10 +1304,10 @@ components:
           description: A unique formatted name.
         label:
           type: string
-          description: 'Client-defined string (e.g., switch1).'
+          description: 'Client-defined string.'
         description:
           type: string
-          description: 'Client-defined short text (e.g., switch of floor 1).'
+          description: 'Client-defined short text.'
         info:
           type: object
           description: JSON object that includes any additional info.
@@ -1049,8 +1360,8 @@ components:
         type:
           type: string
           enum:
-            - switch
-            - router
+            - ipSwitch
+            - ipRouter
             - ndnForwarder
             - endSystem
           description: Type of the Node.
@@ -1146,6 +1457,17 @@ components:
       description: List of Links.
       items:
         $ref: '#/components/schemas/Link'
+    ConnType:
+      type: string
+      enum:
+        - Ether
+        - VXEther
+        - IP
+        - UDP
+        - TCP
+        - NDN
+        - VXLAN
+      description: Protocol represented by a CTP.
     Ctp:
       description: Connection Termination Point (CTP) object.
       allOf:
@@ -1156,20 +1478,13 @@ components:
             - connType
             - connInfo
             - status
+            - vnodeId
           properties:
             parentId:
               type: integer
               description: ID of the LTP/CTP on which this CTP is created.
             connType:
-              type: string
-              enum:
-                - Ether
-                - IP
-                - UDP
-                - TCP
-                - NDN
-                - VXLAN
-              description: Protocol represented by this CTP.
+              $ref: '#/components/schemas/ConnType'
             connInfo:
               description: Protocol info of this CTP.
               oneOf:
@@ -1188,6 +1503,10 @@ components:
                 - DOWN
                 - DISCONN
               description: Status of this CTP (Follows LTP/CTP status).
+            vnodeId:
+              readOnly: true
+              type: integer
+              description: Node ID containing this CTP.
     CtpArray:
       type: array
       description: List of CTPs.
@@ -1304,15 +1623,6 @@ components:
         address:
           type: string
           description: MAC address.
-        vlan:
-          $ref: '#/components/schemas/VlanInfo'
-    VlanInfo:
-      description: VLAN info.
-      type: object
-      required:
-        - vlanId
-        - isNative
-      properties:
         vlanId:
           type: integer
         isNative:
@@ -1335,7 +1645,7 @@ components:
       required:
         - address
       properties:
-        ipAddress:
+        address:
           type: string
     UdpConnInfo:
       description: UDP endpoint info.
