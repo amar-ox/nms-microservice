@@ -162,6 +162,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public void computeConfigurations(List<Route> routes, List<Vctp> faces, List<Vnode> nodes, 
 			Handler<AsyncResult<List<ConfigObj>>> resultHandler) {
+		
 		Map<Integer,ConfigObj> configsMap = new HashMap<Integer,ConfigObj>();
 		for (Vnode node : nodes) {
 			ConfigObj c = new ConfigObj();
@@ -181,15 +182,20 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			}
 		}
 		for (Route route : routes) {
-			// TODO: check Face existence
 			int nodeId = route.getNodeId();
-			ConfigRoute cRoute = new ConfigRoute();
-			cRoute.setPrefix(route.getPrefix());
-			cRoute.setFaceId(route.getFaceId());
-			cRoute.setCost(route.getCost());
-			cRoute.setOrigin(route.getOrigin());
-			configsMap.get(nodeId).getConfig().addRoute(cRoute);
+			int faceId = route.getFaceId();
+			if (configsMap.get(nodeId).getConfig().hasFaceId(faceId)){
+				ConfigRoute cRoute = new ConfigRoute();
+				cRoute.setPrefix(route.getPrefix());
+				cRoute.setFaceId(faceId);
+				cRoute.setCost(route.getCost());
+				cRoute.setOrigin(route.getOrigin());
+				configsMap.get(nodeId).getConfig().addRoute(cRoute);
+			} else {
+				logger.warn("Route references nonexistent FaceId: " + faceId);
+			}
 		}
+
 		List<ConfigObj> config = new ArrayList<ConfigObj>(configsMap.values());
 		resultHandler.handle(Future.succeededFuture(config));
 	}

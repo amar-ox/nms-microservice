@@ -64,4 +64,13 @@ public class Config {
 		routes.add(route);
 	}
 
+	public boolean hasFaceId(int faceId) {
+		for(ConfigFace f : faces) {
+			if (f.getId() == faceId) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
