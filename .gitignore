@@ -16,4 +16,5 @@ target
 */.settings
 
 *.pem
+*.log
 /bin/
