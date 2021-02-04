@@ -3,17 +3,17 @@
     <Appenders>
 
         <Console name="console" target="SYSTEM_OUT">
-        <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
 
-        <Gelf name="gelf" host="udp:logstash" port="12201">
+        <!-- Gelf name="gelf" host="udp:logstash" port="12201">
             <Field name="level" pattern="%level"/>
             <Field name="facility" literal="api-gateway"/>
-        </Gelf>
+        </Gelf -->
 
-        <Async name="gelf_async">
+        <!-- Async name="gelf_async">
             <AppenderRef ref="gelf"/>
-        </Async>
+        </Async -->
 
     </Appenders>
     <Loggers>
