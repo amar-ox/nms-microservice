@@ -1,5 +1,5 @@
 # Build stage
-FROM maven:3.6.3-openjdk-8 as build
+FROM maven:3.6.3-jdk-11 as build
 
 COPY ./ /home/multiverse
 COPY ./pom.xml /home/multiverse
@@ -8,7 +8,7 @@ RUN mvn -f /home/multiverse/pom.xml -pl topology-microservice -am clean install 
 
 
 # Package stage
-FROM java:8-jre
+FROM openjdk:11.0.4-jre-slim
 
 COPY --from=build /home/multiverse/topology-microservice/target/topology-microservice-fat.jar /opt/verticles/topology-microservice.jar
 COPY --from=build /home/multiverse/topology-microservice/src/config/docker.json /opt/verticles/

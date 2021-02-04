@@ -1,5 +1,5 @@
 # Build stage
-FROM maven:3.6.3-openjdk-8 as build
+FROM maven:3.6.3-jdk-11 as build
 
 COPY ./ /home/multiverse
 COPY ./pom.xml /home/multiverse
@@ -8,7 +8,7 @@ RUN mvn -f /home/multiverse/pom.xml -pl api-gateway -am clean install -Dmaven.te
 
 
 # Package stage
-FROM java:8-jre
+FROM openjdk:11.0.4-jre-slim
 
 COPY --from=build /home/multiverse/api-gateway/target/api-gateway-fat.jar /opt/verticles/api-gateway.jar
 COPY --from=build /home/multiverse/api-gateway/src/config/docker.json /opt/verticles/
