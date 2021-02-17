@@ -747,7 +747,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 								if (res.result() != null) {
 									String status = res.result().getString("status");
 									JsonArray params = new JsonArray().add(pa.getName()).add(pa.getOriginId())
-											.add(!status.equals(StatusEnum.DOWN.getValue()));
+											.add(status.equals(StatusEnum.UP.getValue()));
 									globalInsert(params, ApiSql.INSERT_PA).onComplete(paId -> {
 										if (paId.succeeded()) {
 											// TODO: EVB to routing service
@@ -993,7 +993,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 								// Update PAs availability
 								Promise<Void> p = Promise.promise();
 								futures.add(p.future());
-								JsonArray updPAs = new JsonArray().add((!status.equals(StatusEnum.DOWN))).add(id);
+								JsonArray updPAs = new JsonArray().add(status.equals(StatusEnum.UP)).add(id);
 								globalExecute(updPAs, InternalSql.UPDATE_PA_STATUS_BY_NODE).onComplete(p);
 
 								CompositeFuture.all(futures).map((Void) null).onComplete(done -> {
@@ -1200,14 +1200,10 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 							String s0 = ar.result().get(0).getString("status");
 							String s1 = ar.result().get(1).getString("status");
 
-							if (s0.equals("DOWN") || s1.equals("DOWN")) {
-								linkStatus.complete("DOWN");
-							} else if (s0.equals("DISCONN") || s1.equals("DISCONN")) {
-								linkStatus.complete("DISCONN");
-							} else if (s0.equals("UP") && s1.equals("UP")) {
+							if (s0.equals("UP") && s1.equals("UP")) {
 								linkStatus.complete("UP");
 							} else {
-								linkStatus.fail("Unexpected LTPs status");
+								linkStatus.complete("DOWN");
 							}
 						} else {
 							linkStatus.fail("Failed to fetch LTPs by link");
@@ -1250,14 +1246,10 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 							String s0 = ar.result().get(0).getString("status");
 							String s1 = ar.result().get(1).getString("status");
 
-							if (s0.equals("DOWN") || s1.equals("DOWN")) {
-								lcStatus.complete("DOWN");
-							} else if (s0.equals("DISCONN") || s1.equals("DISCONN")) {
-								lcStatus.complete("DISCONN");
-							} else if (s0.equals("UP") && s1.equals("UP")) {
+							if (s0.equals("UP") && s1.equals("UP")) {
 								lcStatus.complete("UP");
 							} else {
-								lcStatus.fail("Unexpected CTPs status");
+								lcStatus.complete("DOWN");
 							}
 						} else {
 							lcStatus.fail("Failed to fetch CTPs by LC");
@@ -1300,14 +1292,10 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 							String s0 = ar.result().get(0).getString("status");
 							String s1 = ar.result().get(1).getString("status");
 
-							if (s0.equals("DOWN") || s1.equals("DOWN")) {
-								conStatus.complete("DOWN");
-							} else if (s0.equals("DISCONN") || s1.equals("DISCONN")) {
-								conStatus.complete("DISCONN");
-							} else if (s0.equals("UP") && s1.equals("UP")) {
+							if (s0.equals("UP") && s1.equals("UP")) {
 								conStatus.complete("UP");
 							} else {
-								conStatus.fail("Unexpected CTPs status");
+								conStatus.complete("DOWN");
 							}
 						} else {
 							conStatus.fail("Failed to fetch CTPs by Connection");

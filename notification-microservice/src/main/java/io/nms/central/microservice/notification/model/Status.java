@@ -3,8 +3,6 @@ package io.nms.central.microservice.notification.model;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
@@ -15,7 +13,8 @@ public class Status {
 	public enum StatusEnum {
 		UP("UP"),
 		DOWN("DOWN"),
-		DISCONN("DISCONN");
+		DISCONN("DISCONN"),
+		ADMIN_DOWN("ADMIN_DOWN");
 
 		private String value;
 		private StatusEnum(String value) { this.value = value; }

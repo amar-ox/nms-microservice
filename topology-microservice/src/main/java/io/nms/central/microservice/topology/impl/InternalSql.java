@@ -31,9 +31,9 @@ public class InternalSql {
 			+ "FROM ((Vconnection "
 			+ "INNER JOIN Vctp AS sCtp ON sCtp.id=Vconnection.srcVctpId) "
 			+ "INNER JOIN Vctp AS dCtp ON dCtp.id=Vconnection.destVctpId) "
-			+ "WHERE Vconnection.status != 'DOWN' AND sCtp.connType = 'NDN' AND dCtp.connType = 'NDN'";
+			+ "WHERE Vconnection.status = 'UP' AND sCtp.connType = 'NDN' AND dCtp.connType = 'NDN'";
 	// get info needed to compute routes: nodes
-	public static final String FETCH_ROUTEGEN_NODES = "SELECT id FROM Vnode WHERE status != 'DOWN'";
+	public static final String FETCH_ROUTEGEN_NODES = "SELECT id FROM Vnode WHERE status = 'UP'";
 	// get info needed to compute routes: all prefix announcements
 	public static final String FETCH_ROUTEGEN_ALL_PAS = "SELECT id, name, originId FROM PrefixAnn WHERE available IS true";
 	// get info needed to compute routes: prefix announcements by name
