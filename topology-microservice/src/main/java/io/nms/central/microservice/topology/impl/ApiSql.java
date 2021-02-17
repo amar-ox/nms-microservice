@@ -5,8 +5,8 @@ public class ApiSql {
 	/*-------------------- TABLE CREATION --------------------*/
 	public static final String CREATE_TABLE_VSUBNET = "CREATE TABLE IF NOT EXISTS `Vsubnet` (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60) NOT NULL,\n" + 
+			"    `name` VARCHAR(127) NOT NULL UNIQUE,\n" + 
+			"    `label` VARCHAR(255) NOT NULL,\n" + 
 			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
 			"    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,\n" + 
@@ -15,8 +15,8 @@ public class ApiSql {
 			")";
 	public static final String CREATE_TABLE_VNODE = "CREATE TABLE IF NOT EXISTS `Vnode` (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60) NOT NULL,\n" + 
+			"    `name` VARCHAR(127) NOT NULL UNIQUE,\n" + 
+			"    `label` VARCHAR(255) NOT NULL,\n" + 
 			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
 			"    `status` VARCHAR(10) NOT NULL,\n" +
@@ -27,7 +27,7 @@ public class ApiSql {
 			"    `location` VARCHAR(50),\n" + 
 			"    `type` VARCHAR(10) NOT NULL,\n" +
 			"    `vsubnetId` INT NOT NULL,\n" +
-			"    `hwaddr` VARCHAR(50) NOT NULL,\n" + 
+			"    `hwaddr` VARCHAR(50) NOT NULL UNIQUE,\n" + 
 			"    PRIMARY KEY (`id`),\n" +
 			"    FOREIGN KEY (`vsubnetId`)\n" + 
 			"    	REFERENCES Vsubnet(`id`)\n" + 
@@ -36,8 +36,8 @@ public class ApiSql {
 			")";
 	public static final String CREATE_TABLE_VLTP = "CREATE TABLE IF NOT EXISTS Vltp (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60) NOT NULL,\n" + 
+			"    `name` VARCHAR(127) NOT NULL UNIQUE,\n" + 
+			"    `label` VARCHAR(127) NOT NULL,\n" + 
 			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
 			"    `status` VARCHAR(10) NOT NULL,\n" +
@@ -56,8 +56,8 @@ public class ApiSql {
 			")";
 	public static final String CREATE_TABLE_VCTP = "CREATE TABLE IF NOT EXISTS Vctp (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60) NOT NULL,\n" + 
+			"    `name` VARCHAR(127) NOT NULL UNIQUE,\n" + 
+			"    `label` VARCHAR(127) NOT NULL,\n" + 
 			"    `description` VARCHAR(255),\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
 			"    `connType` VARCHAR(10) NOT NULL,\n" +
@@ -84,8 +84,8 @@ public class ApiSql {
 			")";
 	public static final String CREATE_TABLE_VLINK = "CREATE TABLE IF NOT EXISTS Vlink (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60) NOT NULL,\n" + 
+			"    `name` VARCHAR(127) NOT NULL UNIQUE,\n" + 
+			"    `label` VARCHAR(127) NOT NULL,\n" + 
 			"    `description` VARCHAR(255),\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
 			"    `status` VARCHAR(10) NOT NULL,\n" +
@@ -105,8 +105,8 @@ public class ApiSql {
 			")";
 	public static final String CREATE_TABLE_VLINKCONN = "CREATE TABLE IF NOT EXISTS VlinkConn (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60) NOT NULL,\n" + 
+			"    `name` VARCHAR(127) NOT NULL UNIQUE,\n" + 
+			"    `label` VARCHAR(127) NOT NULL,\n" + 
 			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
 			"    `status` VARCHAR(10) NOT NULL,\n" +
@@ -131,8 +131,8 @@ public class ApiSql {
 			")";
 	public static final String CREATE_TABLE_VCONNECTION = "CREATE TABLE IF NOT EXISTS Vconnection (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(60) NOT NULL UNIQUE,\n" + 
-			"    `label` VARCHAR(60) NOT NULL,\n" + 
+			"    `name` VARCHAR(127) NOT NULL UNIQUE,\n" + 
+			"    `label` VARCHAR(127) NOT NULL,\n" + 
 			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
 			"    `status` VARCHAR(10) NOT NULL,\n" +

@@ -145,6 +145,14 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService addVnode(Vnode vnode, Handler<AsyncResult<Integer>> resultHandler) {
 		vnode.setStatus(StatusEnum.DOWN);
+
+		String macAddr = validateAndConvertMAC(vnode.getHwaddr());
+		if (macAddr.isEmpty()) {
+				resultHandler.handle(Future.failedFuture("MAC address not valid"));
+				return this;
+		}
+		vnode.setHwaddr(macAddr);
+
 		JsonArray params = new JsonArray()
 				.add(vnode.getName())
 				.add(vnode.getLabel())
@@ -342,17 +350,22 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	public TopologyService addVctp(Vctp vctp, Handler<AsyncResult<Integer>> resultHandler) {
 		ConnTypeEnum ct = vctp.getConnType();
 		if (ct.equals(ConnTypeEnum.Ether)) {
-			if (!isValidMACAddress(((EtherConnInfo) vctp.getConnInfo()).getAddress())){
+			String macAddr = validateAndConvertMAC(((EtherConnInfo)vctp.getConnInfo()).getAddress());
+			if (macAddr.isEmpty()) {
 				resultHandler.handle(Future.failedFuture("MAC address not valid"));
 				return this;
 			}
+			((EtherConnInfo)vctp.getConnInfo()).setAddress(macAddr);
 		}
 		if (ct.equals(ConnTypeEnum.NDN)) {
-			if (!isValidMACAddress(((NdnConnInfo) vctp.getConnInfo()).getLocal()) ||
-					!isValidMACAddress(((NdnConnInfo) vctp.getConnInfo()).getRemote()) ){
+			String lMacAddr = validateAndConvertMAC(((NdnConnInfo) vctp.getConnInfo()).getLocal());
+			String rMacAddr = validateAndConvertMAC(((NdnConnInfo) vctp.getConnInfo()).getRemote());
+			if (lMacAddr.isEmpty() || rMacAddr.isEmpty()){
 				resultHandler.handle(Future.failedFuture("MAC address not valid"));
 				return this;
 			}
+			((NdnConnInfo) vctp.getConnInfo()).setLocal(lMacAddr);
+			((NdnConnInfo) vctp.getConnInfo()).setRemote(rMacAddr);
 		}
 		
 		vctp.setStatus(StatusEnum.DOWN);
@@ -1344,13 +1357,23 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		}
 	}
 
-	private boolean isValidMACAddress(String str) {
+	private String validateAndConvertMAC(String str) {
 		if (str == null) {
-			return false;
+			return "";
 		}
-		String regex = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$";
+		// String regex = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$";
+		String regex = "^([0-9A-Fa-f]{2}[:-])"
+                       + "{5}([0-9A-Fa-f]{2})|"
+                       + "([0-9a-fA-F]{4}\\."
+                       + "[0-9a-fA-F]{4}\\."
+                       + "[0-9a-fA-F]{4})$";
 		Pattern p = Pattern.compile(regex);
 		Matcher m = p.matcher(str);
-		return m.matches();
+		if (m.matches()){
+			String norm = str.replaceAll("[^a-fA-F0-9]", "");
+			return norm.replaceAll("(.{2})", "$1"+":").substring(0,17);
+		} else {
+			return "";
+		}
 	}
 }
