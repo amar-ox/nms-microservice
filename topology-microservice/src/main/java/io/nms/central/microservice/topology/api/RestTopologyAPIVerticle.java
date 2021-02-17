@@ -51,6 +51,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	private static final String API_ALL_CTPS = "/ctp";
 	private static final String API_CTPS_BY_TYPE = "/ctp/type/:type";
 	private static final String API_CTPS_BY_LTP = "/ltp/:ltpId/ctps";
+	private static final String API_CTPS_BY_CTP = "/ctp/:ctpId/ctps";
 	private static final String API_CTPS_BY_NODE = "/node/:nodeId/ctps";
 
 	private static final String API_ONE_LINK = "/link/:linkId";
@@ -64,6 +65,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 
 	private static final String API_ONE_CONNECTION = "/connection/:connectionId";
 	private static final String API_ALL_CONNECTIONS = "/connection";
+	private static final String API_CONNECTIONS_BY_TYPE = "/connection/type/:type";
 	private static final String API_CONNECTIONS_BY_SUBNET = "/subnet/:subnetId/connections";
 
 	private static final String API_PA = "/pa";
@@ -116,6 +118,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		router.post(API_ALL_CTPS).handler(this::checkAdminRole).handler(this::apiAddCtp);
 		router.get(API_CTPS_BY_TYPE).handler(this::checkAdminRole).handler(this::apiGetCtpsByType);
 		router.get(API_ALL_CTPS).handler(this::checkAdminRole).handler(this::apiGetAllCtps);
+		router.get(API_CTPS_BY_CTP).handler(this::checkAdminRole).handler(this::apiGetCtpsByCtp);
 		router.get(API_CTPS_BY_LTP).handler(this::checkAdminRole).handler(this::apiGetCtpsByLtp);
 		router.get(API_CTPS_BY_NODE).handler(this::checkAdminRole).handler(this::apiGetCtpsByNode);
 		router.get(API_ONE_CTP).handler(this::checkAdminRole).handler(this::apiGetCtp);
@@ -139,6 +142,7 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 
 		router.post(API_ALL_CONNECTIONS).handler(this::checkAdminRole).handler(this::apiAddConnection);
 		router.get(API_ALL_CONNECTIONS).handler(this::checkAdminRole).handler(this::apiGetAllConnections);
+		router.get(API_CONNECTIONS_BY_TYPE).handler(this::checkAdminRole).handler(this::apiGetConnectionsByType);
 		router.get(API_CONNECTIONS_BY_SUBNET).handler(this::checkAdminRole).handler(this::apiGetConnectionsBySubnet);
 		router.get(API_ONE_CONNECTION).handler(this::checkAdminRole).handler(this::apiGetConnection);
 		router.delete(API_ONE_CONNECTION).handler(this::checkAdminRole).handler(this::apiDeleteConnection);
@@ -291,6 +295,10 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 		String ctpId = context.request().getParam("ctpId");
 		service.getVctp(ctpId, resultHandlerNonEmpty(context));
 	}
+	private void apiGetCtpsByCtp(RoutingContext context) {
+		String ltpId = context.request().getParam("ctpId");		
+		service.getVctpsByVctp(ltpId, resultHandler(context, Json::encodePrettily));		
+	}
 	private void apiGetCtpsByLtp(RoutingContext context) {
 		String ltpId = context.request().getParam("ltpId");		
 		service.getVctpsByVltp(ltpId, resultHandler(context, Json::encodePrettily));		
@@ -396,6 +404,10 @@ public class RestTopologyAPIVerticle extends RestAPIVerticle {
 	}
 	private void apiGetAllConnections(RoutingContext context) {
 		service.getAllVconnections(resultHandler(context, Json::encodePrettily));
+	}
+	private void apiGetConnectionsByType(RoutingContext context) {
+		String type = context.request().getParam("type");		
+		service.getVconnectionsByType(type, resultHandler(context, Json::encodePrettily));		
 	}
 	private void apiGetConnectionsBySubnet(RoutingContext context) {	
 		String subnetId = context.request().getParam("subnetId");		

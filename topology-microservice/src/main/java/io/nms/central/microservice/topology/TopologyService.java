@@ -123,6 +123,9 @@ public interface TopologyService {
 
 	@Fluent	
 	TopologyService getVctpsByVltp(String vltpId, Handler<AsyncResult<List<Vctp>>> resultHandler);
+
+	@Fluent	
+	TopologyService getVctpsByVctp(String vctpId, Handler<AsyncResult<List<Vctp>>> resultHandler);
 	
 	@Fluent	
 	TopologyService getVctpsByVnode(String vnodeId, Handler<AsyncResult<List<Vctp>>> resultHandler);
@@ -177,7 +180,7 @@ public interface TopologyService {
 	TopologyService updateVlinkConn(String id, VlinkConn vlinkConn, Handler<AsyncResult<Void>> resultHandler);
 
 
-	/* VlinkConn */
+	/* Vconnection */
 	@Fluent	
 	TopologyService addVconnection(Vconnection vconnection, Handler<AsyncResult<Integer>> resultHandler);
 	
@@ -186,6 +189,9 @@ public interface TopologyService {
 	
 	@Fluent	
 	TopologyService getAllVconnections(Handler<AsyncResult<List<Vconnection>>> resultHandler);
+
+	@Fluent	
+	TopologyService getVconnectionsByType(String type, Handler<AsyncResult<List<Vconnection>>> resultHandler);
 		
 	@Fluent	
 	TopologyService getVconnectionsByVsubnet(String vsubnetId, Handler<AsyncResult<List<Vconnection>>> resultHandler);

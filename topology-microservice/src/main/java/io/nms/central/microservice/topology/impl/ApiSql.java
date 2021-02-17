@@ -265,6 +265,14 @@ public class ApiSql {
 			+ "INNER JOIN VlinkConn ON Vctp.id=VlinkConn.srcVctpId INNER JOIN Vctp as destCtp ON VlinkConn.destVctpId=destCtp.id "
 			+ "INNER JOIN Vltp AS destLtp ON destCtp.vltpId=destLtp.id "
 			+ "WHERE Vnode.vsubnetId = ?";
+	public static final String FETCH_VCONNECTIONS_BY_TYPE = "SELECT "
+			+ "Vconnection.id, Vconnection.name, Vconnection.label, Vconnection.description, Vconnection.info, Vconnection.status, "
+			+ "Vconnection.created, Vconnection.updated, Vconnection.srcVctpId, Vconnection.destVctpId, "
+			+ "sCtp.vnodeId AS srcVnodeId, dCtp.vnodeId AS destVnodeId "
+			+ "FROM ((Vconnection "
+			+ "INNER JOIN Vctp AS sCtp ON Vconnection.srcVctpId=sCtp.id) "
+			+ "INNER JOIN Vctp AS dCtp ON Vconnection.destVctpId=dCtp.id) "
+			+ "WHERE sCtp.connType = ?";
 	public static final String FETCH_VCONNECTIONS_BY_VSUBNET = "SELECT "
 			+ "Vconnection.id, Vconnection.name, Vconnection.label, Vconnection.description, Vconnection.info, Vconnection.status, Vconnection.created, Vconnection.updated, "
 			+ "Vconnection.srcVctpId, Vconnection.destVctpId, "
@@ -378,7 +386,7 @@ public class ApiSql {
 			+ "WHERE id = ?";
 	public static final String UPDATE_VNODE = "UPDATE Vnode "
 			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "
-			+ "posx=IFNULL(?, posx), posy=IFNULL(?, posy), location=IFNULL(?, location), type=IFNULL(?, type), hwaddr=IFNULL(?, hwaddr) "
+			+ "posx=IFNULL(?, posx), posy=IFNULL(?, posy), location=IFNULL(?, location), hwaddr=IFNULL(?, hwaddr) "
 			+ "WHERE id = ?";
 	public static final String UPDATE_VLTP = "UPDATE Vltp "
 			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "

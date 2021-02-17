@@ -233,7 +233,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vnode.getStatus().getValue())
 				.add(vnode.getPosx()).add(vnode.getPosy())
 				.add(vnode.getLocation())
-				.add(vnode.getType())
+				.add(vnode.getHwaddr())
 				.add(id);
 		executeNoResult(params, ApiSql.UPDATE_VNODE, resultHandler);
 		return this;
@@ -441,12 +441,17 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	public TopologyService getVctpsByVltp(String vltpId, Handler<AsyncResult<List<Vctp>>> resultHandler) {
 		JsonArray params = new JsonArray().add(vltpId);
 		this.retrieveMany(params, ApiSql.FETCH_VCTPS_BY_VLTP).map(rawList -> rawList.stream().map(row -> {
-			if (row.getInteger("vltpId") == null) {
-				row.remove("vltpId");
-			}
-			if (row.getInteger("vctpId") == null) {
-				row.remove("vctpId");
-			}
+			row.remove("vctpId");
+			return JSONUtils.json2Pojo(row.encode(), Vctp.class);
+		}).collect(Collectors.toList())).onComplete(resultHandler);
+		return this;
+	}
+
+	@Override
+	public TopologyService getVctpsByVctp(String vctpId, Handler<AsyncResult<List<Vctp>>> resultHandler) {
+		JsonArray params = new JsonArray().add(vctpId);
+		this.retrieveMany(params, ApiSql.FETCH_VCTPS_BY_VCTP).map(rawList -> rawList.stream().map(row -> {
+			row.remove("vltpId");
 			return JSONUtils.json2Pojo(row.encode(), Vctp.class);
 		}).collect(Collectors.toList())).onComplete(resultHandler);
 		return this;
@@ -688,6 +693,15 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService getAllVconnections(Handler<AsyncResult<List<Vconnection>>> resultHandler) {
 		this.retrieveAll(ApiSql.FETCH_ALL_VCONNECTIONS).map(rawList -> rawList.stream().map(row -> {
+			return JSONUtils.json2Pojo(row.encode(), Vconnection.class);
+		}).collect(Collectors.toList())).onComplete(resultHandler);
+		return this;
+	}
+
+	@Override
+	public TopologyService getVconnectionsByType(String type, Handler<AsyncResult<List<Vconnection>>> resultHandler) {
+		JsonArray params = new JsonArray().add(type);
+		this.retrieveMany(params, ApiSql.FETCH_VCONNECTIONS_BY_TYPE).map(rawList -> rawList.stream().map(row -> {
 			return JSONUtils.json2Pojo(row.encode(), Vconnection.class);
 		}).collect(Collectors.toList())).onComplete(resultHandler);
 		return this;
