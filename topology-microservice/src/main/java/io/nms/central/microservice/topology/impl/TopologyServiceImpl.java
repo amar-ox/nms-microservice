@@ -144,8 +144,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** Vnode **********/
 	@Override
 	public TopologyService addVnode(Vnode vnode, Handler<AsyncResult<Integer>> resultHandler) {
-		vnode.setStatus(StatusEnum.DOWN);
-
 		String macAddr = validateAndConvertMAC(vnode.getHwaddr());
 		if (macAddr.isEmpty()) {
 				resultHandler.handle(Future.failedFuture("MAC address not valid"));
@@ -250,7 +248,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** Vltp **********/
 	@Override
 	public TopologyService addVltp(Vltp vltp, Handler<AsyncResult<Integer>> resultHandler) {
-		vltp.setStatus(StatusEnum.DOWN);
 		JsonArray params = new JsonArray()
 				.add(vltp.getName())
 				.add(vltp.getLabel())
@@ -367,8 +364,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 			((NdnConnInfo) vctp.getConnInfo()).setLocal(lMacAddr);
 			((NdnConnInfo) vctp.getConnInfo()).setRemote(rMacAddr);
 		}
-		
-		vctp.setStatus(StatusEnum.DOWN);
 
 		String querryNode;
 		String querryInsert;
@@ -506,7 +501,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	/********** Vlink **********/
 	@Override
 	public TopologyService addVlink(Vlink vlink, Handler<AsyncResult<Integer>> resultHandler) {
-		vlink.setStatus(StatusEnum.DOWN);
 		JsonArray pVlink = new JsonArray()
 				.add(vlink.getName())
 				.add(vlink.getLabel())
@@ -612,7 +606,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService addVlinkConn(VlinkConn vlinkConn, Handler<AsyncResult<Integer>> resultHandler) {
 		// TODO: check CTPs type
-		vlinkConn.setStatus(StatusEnum.DOWN);
 		JsonArray params = new JsonArray()
 				.add(vlinkConn.getName())
 				.add(vlinkConn.getLabel())
@@ -682,7 +675,6 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 	@Override
 	public TopologyService addVconnection(Vconnection vconnection, Handler<AsyncResult<Integer>> resultHandler) {
 		// TODO: check CTPs type
-		vconnection.setStatus(StatusEnum.DOWN);
 		JsonArray params = new JsonArray()
 				.add(vconnection.getName())
 				.add(vconnection.getLabel())

@@ -15,7 +15,7 @@ public class ApiSql {
 			")";
 	public static final String CREATE_TABLE_VNODE = "CREATE TABLE IF NOT EXISTS `Vnode` (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(127) NOT NULL UNIQUE,\n" + 
+			"    `name` VARCHAR(127) NOT NULL,\n" + 
 			"    `label` VARCHAR(255) NOT NULL,\n" + 
 			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
@@ -29,6 +29,7 @@ public class ApiSql {
 			"    `vsubnetId` INT NOT NULL,\n" +
 			"    `hwaddr` VARCHAR(50) NOT NULL UNIQUE,\n" + 
 			"    PRIMARY KEY (`id`),\n" +
+			"    UNIQUE KEY (`name`, `vsubnetId`),\n" +
 			"    FOREIGN KEY (`vsubnetId`)\n" + 
 			"    	REFERENCES Vsubnet(`id`)\n" + 
 			"       ON DELETE CASCADE\n" + 
@@ -36,7 +37,7 @@ public class ApiSql {
 			")";
 	public static final String CREATE_TABLE_VLTP = "CREATE TABLE IF NOT EXISTS Vltp (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(127) NOT NULL UNIQUE,\n" + 
+			"    `name` VARCHAR(127) NOT NULL,\n" + 
 			"    `label` VARCHAR(127) NOT NULL,\n" + 
 			"    `description` VARCHAR(255) NOT NULL,\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
@@ -48,7 +49,8 @@ public class ApiSql {
 			"    `bandwidth` VARCHAR(100) NOT NULL,\n" +
 			"    `mtu` INT NOT NULL,\n" +
 			"    `busy` BOOLEAN NOT NULL,\n"+
-			"    PRIMARY KEY (`id`),\n" + 
+			"    PRIMARY KEY (`id`),\n" +
+			"    UNIQUE KEY (`name`, `vnodeId`),\n" +
 			"    FOREIGN KEY (`vnodeId`) \n" + 
 			"        REFERENCES Vnode(`id`)\n" + 
 			"        ON DELETE CASCADE\n" + 
@@ -56,7 +58,7 @@ public class ApiSql {
 			")";
 	public static final String CREATE_TABLE_VCTP = "CREATE TABLE IF NOT EXISTS Vctp (\n" +
 			"    `id` INT NOT NULL AUTO_INCREMENT,\n" +
-			"    `name` VARCHAR(127) NOT NULL UNIQUE,\n" + 
+			"    `name` VARCHAR(127) NOT NULL,\n" + 
 			"    `label` VARCHAR(127) NOT NULL,\n" + 
 			"    `description` VARCHAR(255),\n" +
 			"	 `info` JSON DEFAULT NULL,\n" +
@@ -69,6 +71,7 @@ public class ApiSql {
 			"    `vctpId` INT NULL,\n" +
 			"    `vnodeId` INT NOT NULL,\n" +
 			"    PRIMARY KEY (`id`),\n" + 
+			"    UNIQUE KEY (`name`, `vnodeId`),\n" +
 			"    FOREIGN KEY (`vltpId`) \n" + 
 			"       REFERENCES Vltp(`id`)\n" + 
 			"       ON DELETE CASCADE\n" + 
@@ -195,15 +198,38 @@ public class ApiSql {
 			")";
 	
 	/*-------------------- INSERT ITEMS --------------------*/	
-	public static final String INSERT_VSUBNET = "INSERT INTO Vsubnet (name, label, description, info) VALUES (?, ?, ?, ?)";
-	public static final String INSERT_VNODE = "INSERT INTO Vnode (name, label, description, info, status, posx, posy, location, type, vsubnetId, hwaddr) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	public static final String INSERT_VLTP = "INSERT INTO Vltp (name, label, description, info, status, vnodeId, port, bandwidth, mtu, busy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	public static final String INSERT_VCTP_VCTP = "INSERT INTO Vctp (name, label, description, info, connType, connInfo, status, vctpId, vnodeId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	public static final String INSERT_VCTP_VLTP = "INSERT INTO Vctp (name, label, description, info, connType, connInfo, status, vltpId, vnodeId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	public static final String INSERT_VLINK = "INSERT INTO Vlink (name, label, description, info, status, srcVltpId, destVltpId) VALUES (?, ?, ?, ?, ?, ?, ?)";
-	public static final String INSERT_VLINKCONN = "INSERT INTO VlinkConn (name, label, description, info, status, srcVctpId, destVctpId, vlinkId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-	public static final String INSERT_VCONNECTION = "INSERT INTO Vconnection (name, label, description, info, status, srcVctpId, destVctpId) VALUES (?, ?, ?, ?, ?, ?, ?)";
-	
+	public static final String INSERT_VSUBNET = "INSERT INTO Vsubnet (name, label, description, info) VALUES (?, ?, ?, ?) "
+			+ "ON DUPLICATE KEY UPDATE name = VALUES(name), label = VALUES(label), description = VALUES(description), info = VALUES(info), "
+			+ "id=LAST_INSERT_ID(id)";
+	public static final String INSERT_VNODE = "INSERT INTO Vnode (name, label, description, info, status, posx, posy, location, type, vsubnetId, hwaddr) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+			+ "ON DUPLICATE KEY UPDATE name = VALUES(name), label = VALUES(label), description = VALUES(description), info = VALUES(info), "
+			+ "status = VALUES(status), posx = VALUES(posx), posy = VALUES(posy), location = VALUES(location), type = VALUES(type), vsubnetId = VALUES(vsubnetId), hwaddr = VALUES(hwaddr), "
+			+ "id=LAST_INSERT_ID(id)";
+	public static final String INSERT_VLTP = "INSERT INTO Vltp (name, label, description, info, status, vnodeId, port, bandwidth, mtu, busy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+			+ "ON DUPLICATE KEY UPDATE name = VALUES(name), label = VALUES(label), description = VALUES(description), info = VALUES(info), "
+			+ "status = VALUES(status), vnodeId = VALUES(vnodeId), port = VALUES(port), bandwidth = VALUES(bandwidth), mtu = VALUES(mtu), busy = VALUES(busy), "
+			+ "id=LAST_INSERT_ID(id)";
+	public static final String INSERT_VCTP_VCTP = "INSERT INTO Vctp (name, label, description, info, connType, connInfo, status, vctpId, vnodeId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) "
+			+ "ON DUPLICATE KEY UPDATE name = VALUES(name), label = VALUES(label), description = VALUES(description), info = VALUES(info), "
+			+ "status = VALUES(status), connType = VALUES(connType), connInfo = VALUES(connInfo), vctpId = VALUES(vctpId), vnodeId = VALUES(vnodeId), "
+			+ "id=LAST_INSERT_ID(id)";
+	public static final String INSERT_VCTP_VLTP = "INSERT INTO Vctp (name, label, description, info, connType, connInfo, status, vltpId, vnodeId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) "
+			+ "ON DUPLICATE KEY UPDATE name = VALUES(name), label = VALUES(label), description = VALUES(description), info = VALUES(info), "
+			+ "status = VALUES(status), connType = VALUES(connType), connInfo = VALUES(connInfo), vltpId = VALUES(vltpId), vnodeId = VALUES(vnodeId), "
+			+ "id=LAST_INSERT_ID(id)";
+	public static final String INSERT_VLINK = "INSERT INTO Vlink (name, label, description, info, status, srcVltpId, destVltpId) VALUES (?, ?, ?, ?, ?, ?, ?) "
+			+ "ON DUPLICATE KEY UPDATE name = VALUES(name), label = VALUES(label), description = VALUES(description), info = VALUES(info), "
+			+ "status = VALUES(status), srcVltpId = VALUES(srcVltpId), destVltpId = VALUES(destVltpId), "
+			+ "id=LAST_INSERT_ID(id)";
+	public static final String INSERT_VLINKCONN = "INSERT INTO VlinkConn (name, label, description, info, status, srcVctpId, destVctpId, vlinkId) VALUES (?, ?, ?, ?, ?, ?, ?, ?) "
+			+ "ON DUPLICATE KEY UPDATE name = VALUES(name), label = VALUES(label), description = VALUES(description), info = VALUES(info), "
+			+ "status = VALUES(status), srcVctpId = VALUES(srcVctpId), destVctpId = VALUES(destVctpId), vlinkId = VALUES(vlinkId), "
+			+ "id=LAST_INSERT_ID(id)";
+	public static final String INSERT_VCONNECTION = "INSERT INTO Vconnection (name, label, description, info, status, srcVctpId, destVctpId) VALUES (?, ?, ?, ?, ?, ?, ?) "
+			+ "ON DUPLICATE KEY UPDATE name = VALUES(name), label = VALUES(label), description = VALUES(description), info = VALUES(info), "
+			+ "status = VALUES(status), srcVctpId = VALUES(srcVctpId), destVctpId = VALUES(destVctpId), "
+			+ "id=LAST_INSERT_ID(id)";
+
 	// insert ignore for PUT
 	public static final String INSERT_PA = "INSERT IGNORE INTO PrefixAnn (name, originId, available) VALUES (?, ?, ?)";
 	public static final String INSERT_ROUTE = "INSERT INTO Route (paId, nodeId, nextHopId, faceId, cost, origin) VALUES (?, ?, ?, ?, ?, ?)";
