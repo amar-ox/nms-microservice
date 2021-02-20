@@ -327,7 +327,7 @@ public class ApiSql {
 	public static final String FETCH_VCTPS_BY_VLTP = "SELECT "
 			+ "id, name, label, description, info, created, updated, connType, connInfo, status, vltpId, vnodeId FROM Vctp WHERE vltpId = ?";
 	public static final String FETCH_VCTPS_BY_VCTP = "SELECT "
-			+ "id, name, label, description, info, created, updated, connType, connInfo, status, vltpId, vnodeId FROM Vctp WHERE vctpId = ?";
+			+ "id, name, label, description, info, created, updated, connType, connInfo, status, vctpId, vnodeId FROM Vctp WHERE vctpId = ?";
 	public static final String FETCH_VCTPS_BY_VNODE = "SELECT "
 			+ "id, name, label, description, info, created, updated, connType, connInfo, status, vltpId, vctpId, vnodeId FROM Vctp WHERE vnodeId = ?";
 	public static final String FETCH_VLINKCONNS_BY_VLINK = "SELECT "
