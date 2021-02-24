@@ -41,6 +41,8 @@ public class TelemetryServiceImpl implements TelemetryService {
 	private final MongoClient client;
 	private final Vertx vertx;
 
+	private final long capsLifetimeMs = 60000 * 30;
+
 	public TelemetryServiceImpl(Vertx vertx, JsonObject config) {
 		this.vertx = vertx;
 		this.client = MongoClient.create(vertx, config);
@@ -90,7 +92,7 @@ public class TelemetryServiceImpl implements TelemetryService {
 		
 		JsonObject query = new JsonObject()
 			.put("role", role)
-			.put("_ts", new JsonObject().put("$gte", df.format(new Date().getTime() - 60000)));
+			.put("_ts", new JsonObject().put("$gte", df.format(new Date().getTime() - capsLifetimeMs)));
 		
 		JsonObject fields = new JsonObject().put("_id", 0).put("_ts", 0);
 		
