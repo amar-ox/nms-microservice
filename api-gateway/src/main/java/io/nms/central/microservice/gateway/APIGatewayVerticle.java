@@ -122,7 +122,6 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 	    /*----------------------------------------------------------------*/
 
 		// enable HTTPS
-		// String certsPath = "C:\\Users\\ana24\\Documents\\certs\\controller\\";
 		String certsPath = "/opt/data/";
 		HttpServerOptions httpServerOptions = new HttpServerOptions()
 				.setSsl(true)
@@ -145,6 +144,11 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 				promise.fail(ar.cause());
 			}
 		});
+
+		// dev only
+		/* vertx.createHttpServer()
+			.requestHandler(router)
+			.listen(8788, host); */
 	}
 
 	private void dispatchRequests(RoutingContext context) {

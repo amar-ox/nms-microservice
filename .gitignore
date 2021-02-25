@@ -9,6 +9,7 @@
 build
 target
 .vertx
+**/generated/
 
 .project
 */.externalToolBuilders
