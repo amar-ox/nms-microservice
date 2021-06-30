@@ -3,7 +3,7 @@ package io.nms.central.microservice.configuration;
 import java.util.List;
 
 import io.nms.central.microservice.configuration.model.ConfigObj;
-import io.nms.central.microservice.topology.model.Face;
+import io.nms.central.microservice.topology.model.Vctp;
 import io.nms.central.microservice.topology.model.Route;
 import io.nms.central.microservice.topology.model.Vnode;
 import io.vertx.codegen.annotations.ProxyGen;
@@ -50,7 +50,7 @@ public interface ConfigurationService {
 	
 		
 	/* Processing */
-	void computeConfigurations(List<Route> routes, List<Face> faces, List<Vnode> nodes, Handler<AsyncResult<List<ConfigObj>>> resultHandler);
+	void computeConfigurations(List<Route> routes, List<Vctp> faces, List<Vnode> nodes, Handler<AsyncResult<List<ConfigObj>>> resultHandler);
 	void upsertCandidateConfigs(List<ConfigObj> configs, Handler<AsyncResult<Void>> resultHandler);
 	
 }

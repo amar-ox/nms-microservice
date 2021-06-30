@@ -65,8 +65,7 @@ public class RestAccountAPIVerticle extends RestAPIVerticle {
 		String username = context.request().getParam("username");
 		Agent agent = Json.decodeValue(context.getBodyAsString(), Agent.class);
 		agent.setUsername(username);
-		JsonObject result = new JsonObject().put("message", "agent_added");
-		service.saveAgent(agent, resultVoidHandler(context, result));
+		service.saveAgent(agent, resultVoidHandler(context, 201));
 	}
 	private void apiGetAllAgents(RoutingContext context) {
 		service.retrieveAllAgents(resultHandler(context, Json::encodePrettily));

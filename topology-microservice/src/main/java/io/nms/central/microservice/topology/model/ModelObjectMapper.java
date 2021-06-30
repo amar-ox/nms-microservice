@@ -1,11 +1,7 @@
 package io.nms.central.microservice.topology.model;
 
-import java.util.List;
-
-import io.vertx.core.json.JsonObject;
-
 public class ModelObjectMapper {
-	public static Vnode toVnodeFromJsonRows(List<JsonObject> rows) {
+	/* public static Vnode toVnodeFromJsonRows(List<JsonObject> rows) {
 		if (rows.size() == 0) {
 			return new Vnode();
 		}
@@ -115,44 +111,5 @@ public class ModelObjectMapper {
 			vlink.addVlinkConn(vlc);
 		});
 		return vlink;
-	}
-	
-	public static Vtrail toVtrailFromJsonRows(List<JsonObject> rows) {
-		if (rows.size() == 0) {
-			return new Vtrail();
-		}
-		Vtrail vtrail = new Vtrail(rows.get(0).getInteger("id"));
-		vtrail.setName(rows.get(0).getString("name"));
-		vtrail.setLabel(rows.get(0).getString("label"));
-		vtrail.setDescription(rows.get(0).getString("description"));
-		vtrail.setInfo(new JsonObject(rows.get(0).getString("info")).getMap());
-		vtrail.setStatus(rows.get(0).getString("status"));				
-		vtrail.setCreated(rows.get(0).getString("created"));
-		vtrail.setUpdated(rows.get(0).getString("updated"));
-		vtrail.setSrcVctpId(rows.get(0).getInteger("srcVctpId"));
-		vtrail.setDestVctpId(rows.get(0).getInteger("destVctpId"));
-		
-		if (rows.get(0).getInteger("vxcId") == null) {
-			return vtrail;
-		}
-		
-		rows.forEach(row -> {
-			Vxc vxc = new Vxc(row.getInteger("vxcId"));
-			vxc.setName(rows.get(0).getString("vxcName"));
-			vxc.setLabel(row.getString("vxcLabel"));
-			vxc.setDescription(row.getString("vxcDescription"));
-			vxc.setInfo(new JsonObject(row.getString("vxcInfo")).getMap());			
-			vxc.setStatus(row.getString("vxcStatus"));
-			vxc.setCreated(row.getString("vxcCreated"));
-			vxc.setUpdated(row.getString("vxcUpdated"));
-			vxc.setType(row.getString("vxcType"));
-			vxc.setVtrailId(row.getInteger("vxcVtrailId"));
-			vxc.setSrcVctpId(row.getInteger("vxcSrcVctpId"));
-			vxc.setDestVctpId(row.getInteger("vxcDestVctpId"));
-			vxc.setDropVctpId(row.getInteger("vxcDropVctpId"));
-						
-			vtrail.addVxc(vxc);
-		});
-		return vtrail;
-	}
+	} */
 }

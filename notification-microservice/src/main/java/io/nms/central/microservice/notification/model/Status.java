@@ -1,17 +1,11 @@
 package io.nms.central.microservice.notification.model;
 
-import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Objects;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.json.jackson.DatabindCodec;
 
 @DataObject(generateConverter = true)
 public class Status {
@@ -19,10 +13,24 @@ public class Status {
 	public enum StatusEnum {
 		UP("UP"),
 		DOWN("DOWN"),
-		DISCONN("DISCONN");
+		DISCONN("DISCONN"),
+		ADMIN_DOWN("ADMIN_DOWN");
 
 		private String value;
 		private StatusEnum(String value) { this.value = value; }
+		public String getValue() { return this.value; }
+	};
+
+	public enum ResTypeEnum {
+		NODE("NODE"),
+		LTP("LTP"),
+		CTP("CTP"),
+		LINK("LINK"),
+		LC("LC"),
+		CONNECTION("CONECTION");
+
+		private String value;
+		private ResTypeEnum(String value) { this.value = value; }
 		public String getValue() { return this.value; }
 	};
 
@@ -30,11 +38,11 @@ public class Status {
 	
 	private StatusEnum status;
 	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	// @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private OffsetDateTime timestamp;
 	
 	private Integer resId;
-	private String resType;
+	private ResTypeEnum resType;
 
 	public Status() {}
 
@@ -82,11 +90,11 @@ public class Status {
 		this.resId = resId;
 	}
 
-	public String getResType() {
+	public ResTypeEnum getResType() {
 		return resType;
 	}
 
-	public void setResType(String resType) {
+	public void setResType(ResTypeEnum resType) {
 		this.resType = resType;
 	}
 

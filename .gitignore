@@ -9,6 +9,7 @@
 build
 target
 .vertx
+**/generated/
 
 .project
 */.externalToolBuilders
@@ -16,4 +17,5 @@ target
 */.settings
 
 *.pem
+*.log
 /bin/

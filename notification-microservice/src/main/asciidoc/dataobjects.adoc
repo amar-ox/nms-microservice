@@ -39,7 +39,7 @@
 ^|Name | Type ^| Description
 |[[id]]`@id`|`String`|-
 |[[resId]]`@resId`|`Number (int)`|-
-|[[resType]]`@resType`|`String`|-
+|[[resType]]`@resType`|`link:enums.html#ResTypeEnum[ResTypeEnum]`|-
 |[[status]]`@status`|`link:enums.html#StatusEnum[StatusEnum]`|-
 |===
 

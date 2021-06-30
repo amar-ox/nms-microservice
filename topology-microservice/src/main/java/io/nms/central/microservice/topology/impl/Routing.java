@@ -1,8 +1,6 @@
 package io.nms.central.microservice.topology.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,16 +10,11 @@ import java.util.Set;
 import java.util.Stack;
 
 import io.nms.central.microservice.topology.model.Edge;
-import io.nms.central.microservice.topology.model.Face;
-import io.nms.central.microservice.topology.model.Face.SchemeEnum;
 import io.nms.central.microservice.topology.model.Node;
 import io.nms.central.microservice.topology.model.PrefixAnn;
 import io.nms.central.microservice.topology.model.Route;
-import io.nms.central.microservice.topology.model.Vctp;
-import io.nms.central.microservice.topology.model.VlinkConn;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.core.json.JsonObject;
 
 public class Routing {
 	
@@ -91,7 +84,7 @@ public class Routing {
 		return promise.future();
 	}
 	
-	public Future<List<Face>> computeFaces(JsonObject info) {
+	/* public Future<List<Face>> computeFaces(JsonObject info) {
 		Promise<List<Face>> promise = Promise.promise();		
 		String sLtpPort = info.getString("sLtpPort");
 		String dLtpPort = info.getString("dLtpPort");
@@ -124,9 +117,9 @@ public class Routing {
 			promise.complete(faces);
 		}
 		return promise.future();
-	}
+	} */
 	
-	public Future<List<Vctp>> computeCtps(String lcName, JsonObject info) {
+	/* public Future<List<Vctp>> computeCtps(String lcName, JsonObject info) {
 		Promise<List<Vctp>> promise = Promise.promise();
 		
 		Integer sLtpId = info.getInteger("sLtpId", 0);
@@ -158,7 +151,7 @@ public class Routing {
 			promise.complete(ctps);
 		}
 		return promise.future();
-	}
+	} */
 }
 
 

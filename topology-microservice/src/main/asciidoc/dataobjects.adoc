@@ -15,25 +15,55 @@
 |[[srcNodeId]]`@srcNodeId`|`Number (int)`|-
 |===
 
-[[Face]]
-== Face
+[[EtherConnInfo]]
+== EtherConnInfo
 
 
 [cols=">25%,25%,50%"]
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[created]]`@created`|`String`|-
-|[[id]]`@id`|`Number (int)`|-
-|[[label]]`@label`|`String`|-
+|[[address]]`@address`|`String`|-
+|[[isNative]]`@isNative`|`Boolean`|-
+|[[native]]`@native`|`Boolean`|-
+|[[vlanId]]`@vlanId`|`Number (int)`|-
+|===
+
+[[Ipv4ConnInfo]]
+== Ipv4ConnInfo
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[address]]`@address`|`String`|-
+|[[netmask]]`@netmask`|`String`|-
+|===
+
+[[Ipv6ConnInfo]]
+== Ipv6ConnInfo
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[address]]`@address`|`String`|-
+|===
+
+[[NdnConnInfo]]
+== NdnConnInfo
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
 |[[local]]`@local`|`String`|-
 |[[remote]]`@remote`|`String`|-
 |[[scheme]]`@scheme`|`link:enums.html#SchemeEnum[SchemeEnum]`|-
-|[[status]]`@status`|`String`|-
-|[[updated]]`@updated`|`String`|-
-|[[vctpId]]`@vctpId`|`Number (int)`|-
-|[[vlinkConnId]]`@vlinkConnId`|`Number (int)`|-
-|[[vnodeId]]`@vnodeId`|`Number (int)`|-
+|[[vlan]]`@vlan`|`Number (int)`|-
 |===
 
 [[Node]]
@@ -83,8 +113,32 @@
 |[[updated]]`@updated`|`String`|-
 |===
 
-[[Vctp]]
-== Vctp
+[[TcpConnInfo]]
+== TcpConnInfo
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[destPort]]`@destPort`|`Number (int)`|-
+|[[srcPort]]`@srcPort`|`Number (int)`|-
+|===
+
+[[UdpConnInfo]]
+== UdpConnInfo
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[destPort]]`@destPort`|`Number (int)`|-
+|[[srcPort]]`@srcPort`|`Number (int)`|-
+|===
+
+[[Vconnection]]
+== Vconnection
 
 
 [cols=">25%,25%,50%"]
@@ -93,12 +147,35 @@
 ^|Name | Type ^| Description
 |[[created]]`@created`|`String`|-
 |[[description]]`@description`|`String`|-
+|[[destVctpId]]`@destVctpId`|`Number (int)`|-
+|[[destVnodeId]]`@destVnodeId`|`Number (int)`|-
 |[[id]]`@id`|`Number (int)`|-
 |[[label]]`@label`|`String`|-
 |[[name]]`@name`|`String`|-
+|[[srcVctpId]]`@srcVctpId`|`Number (int)`|-
+|[[srcVnodeId]]`@srcVnodeId`|`Number (int)`|-
+|[[status]]`@status`|`link:enums.html#StatusEnum[StatusEnum]`|-
 |[[updated]]`@updated`|`String`|-
-|[[vlinkId]]`@vlinkId`|`Number (int)`|-
-|[[vltpId]]`@vltpId`|`Number (int)`|-
+|===
+
+[[Vctp]]
+== Vctp
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[connType]]`@connType`|`link:enums.html#ConnTypeEnum[ConnTypeEnum]`|-
+|[[created]]`@created`|`String`|-
+|[[description]]`@description`|`String`|-
+|[[id]]`@id`|`Number (int)`|-
+|[[label]]`@label`|`String`|-
+|[[name]]`@name`|`String`|-
+|[[parentId]]`@parentId`|`Number (int)`|-
+|[[status]]`@status`|`link:enums.html#StatusEnum[StatusEnum]`|-
+|[[updated]]`@updated`|`String`|-
+|[[vnodeId]]`@vnodeId`|`Number (int)`|-
 |===
 
 [[Vlink]]
@@ -118,11 +195,8 @@
 |[[name]]`@name`|`String`|-
 |[[srcVltpId]]`@srcVltpId`|`Number (int)`|-
 |[[srcVnodeId]]`@srcVnodeId`|`Number (int)`|-
-|[[status]]`@status`|`String`|-
-|[[type]]`@type`|`String`|-
+|[[status]]`@status`|`link:enums.html#StatusEnum[StatusEnum]`|-
 |[[updated]]`@updated`|`String`|-
-|[[vlinkConns]]`@vlinkConns`|`Array of link:dataobjects.html#VlinkConn[VlinkConn]`|-
-|[[vsubnetId]]`@vsubnetId`|`Number (int)`|-
 |===
 
 [[VlinkConn]]
@@ -144,10 +218,9 @@
 |[[srcVctpId]]`@srcVctpId`|`Number (int)`|-
 |[[srcVltpId]]`@srcVltpId`|`Number (int)`|-
 |[[srcVnodeId]]`@srcVnodeId`|`Number (int)`|-
-|[[status]]`@status`|`String`|-
+|[[status]]`@status`|`link:enums.html#StatusEnum[StatusEnum]`|-
 |[[updated]]`@updated`|`String`|-
 |[[vlinkId]]`@vlinkId`|`Number (int)`|-
-|[[vsubnetId]]`@vsubnetId`|`Number (int)`|-
 |===
 
 [[Vltp]]
@@ -158,15 +231,17 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
+|[[bandwidth]]`@bandwidth`|`String`|-
 |[[busy]]`@busy`|`Boolean`|-
 |[[created]]`@created`|`String`|-
 |[[description]]`@description`|`String`|-
 |[[id]]`@id`|`Number (int)`|-
 |[[label]]`@label`|`String`|-
+|[[mtu]]`@mtu`|`Number (int)`|-
 |[[name]]`@name`|`String`|-
-|[[status]]`@status`|`String`|-
+|[[port]]`@port`|`String`|-
+|[[status]]`@status`|`link:enums.html#StatusEnum[StatusEnum]`|-
 |[[updated]]`@updated`|`String`|-
-|[[vctps]]`@vctps`|`Array of link:dataobjects.html#Vctp[Vctp]`|-
 |[[vnodeId]]`@vnodeId`|`Number (int)`|-
 |===
 
@@ -180,18 +255,17 @@
 ^|Name | Type ^| Description
 |[[created]]`@created`|`String`|-
 |[[description]]`@description`|`String`|-
+|[[hwaddr]]`@hwaddr`|`String`|-
 |[[id]]`@id`|`Number (int)`|-
 |[[label]]`@label`|`String`|-
 |[[location]]`@location`|`String`|-
 |[[name]]`@name`|`String`|-
-|[[posx]]`@posx`|`Number (Integer)`|-
-|[[posy]]`@posy`|`Number (Integer)`|-
-|[[status]]`@status`|`String`|-
-|[[type]]`@type`|`String`|-
+|[[posx]]`@posx`|`Number (int)`|-
+|[[posy]]`@posy`|`Number (int)`|-
+|[[status]]`@status`|`link:enums.html#StatusEnum[StatusEnum]`|-
+|[[type]]`@type`|`link:enums.html#TypeEnum[TypeEnum]`|-
 |[[updated]]`@updated`|`String`|-
-|[[vltps]]`@vltps`|`Array of link:dataobjects.html#Vltp[Vltp]`|-
 |[[vsubnetId]]`@vsubnetId`|`Number (int)`|-
-|[[vxcs]]`@vxcs`|`Array of link:dataobjects.html#Vxc[Vxc]`|-
 |===
 
 [[Vsubnet]]
@@ -207,53 +281,17 @@
 |[[id]]`@id`|`Number (int)`|-
 |[[label]]`@label`|`String`|-
 |[[name]]`@name`|`String`|-
-|[[status]]`@status`|`String`|-
 |[[updated]]`@updated`|`String`|-
-|[[vlinks]]`@vlinks`|`Array of link:dataobjects.html#Vlink[Vlink]`|-
-|[[vnodes]]`@vnodes`|`Array of link:dataobjects.html#Vnode[Vnode]`|-
 |===
 
-[[Vtrail]]
-== Vtrail
+[[VxlanConnInfo]]
+== VxlanConnInfo
 
 
 [cols=">25%,25%,50%"]
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[created]]`@created`|`String`|-
-|[[description]]`@description`|`String`|-
-|[[destVctpId]]`@destVctpId`|`Number (int)`|-
-|[[id]]`@id`|`Number (int)`|-
-|[[label]]`@label`|`String`|-
-|[[name]]`@name`|`String`|-
-|[[srcVctpId]]`@srcVctpId`|`Number (int)`|-
-|[[status]]`@status`|`String`|-
-|[[updated]]`@updated`|`String`|-
-|[[vxcs]]`@vxcs`|`Array of link:dataobjects.html#Vxc[Vxc]`|-
-|===
-
-[[Vxc]]
-== Vxc
-
-
-[cols=">25%,25%,50%"]
-[frame="topbot"]
-|===
-^|Name | Type ^| Description
-|[[created]]`@created`|`String`|-
-|[[description]]`@description`|`String`|-
-|[[destVctpId]]`@destVctpId`|`Number (int)`|-
-|[[dropVctpId]]`@dropVctpId`|`Number (int)`|-
-|[[id]]`@id`|`Number (int)`|-
-|[[label]]`@label`|`String`|-
-|[[name]]`@name`|`String`|-
-|[[srcVctpId]]`@srcVctpId`|`Number (int)`|-
-|[[status]]`@status`|`String`|-
-|[[type]]`@type`|`String`|-
-|[[updated]]`@updated`|`String`|-
-|[[vnodeId]]`@vnodeId`|`Number (int)`|-
-|[[vsubnetId]]`@vsubnetId`|`Number (int)`|-
-|[[vtrailId]]`@vtrailId`|`Number (int)`|-
+|[[vni]]`@vni`|`Number (int)`|-
 |===
 

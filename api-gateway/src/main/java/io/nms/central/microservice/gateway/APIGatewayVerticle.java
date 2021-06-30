@@ -122,7 +122,7 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 	    /*----------------------------------------------------------------*/
 
 		// enable HTTPS
-	    String certsPath = "/opt/data/";
+		String certsPath = "/opt/data/";
 		HttpServerOptions httpServerOptions = new HttpServerOptions()
 				.setSsl(true)
 				.setPemKeyCertOptions(
@@ -144,6 +144,11 @@ public class APIGatewayVerticle extends RestAPIVerticle {
 				promise.fail(ar.cause());
 			}
 		});
+
+		// dev only
+		/* vertx.createHttpServer()
+			.requestHandler(router)
+			.listen(8788, host); */
 	}
 
 	private void dispatchRequests(RoutingContext context) {

@@ -2,7 +2,7 @@ package io.nms.central.microservice.configuration.model;
 
 import java.util.Objects;
 
-import io.nms.central.microservice.topology.model.Face.SchemeEnum;
+import io.nms.central.microservice.topology.model.NdnConnInfo.SchemeEnum;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 

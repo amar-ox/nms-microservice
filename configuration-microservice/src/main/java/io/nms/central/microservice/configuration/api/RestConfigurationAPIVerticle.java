@@ -145,7 +145,7 @@ public class RestConfigurationAPIVerticle extends RestAPIVerticle {
 		}
 		JsonObject principal = new JsonObject(context.request().getHeader("user-principal"));
 		int nodeId = principal.getInteger("nodeId");
-		service.upsertRunningConfig(nodeId, config, createdResultHandler(context));
+		service.upsertRunningConfig(nodeId, config, resultVoidHandler(context, 201));
 	}
 	
 	private void apiPatchAgentRunningConfig(RoutingContext context) {
@@ -154,7 +154,7 @@ public class RestConfigurationAPIVerticle extends RestAPIVerticle {
 		try {
 			Object patch = Json.decodeValue(context.getBodyAsString());
 			if (patch instanceof JsonArray) {
-				service.updateRunningConfig(nodeId, (JsonArray) patch, createdResultHandler(context));
+				service.updateRunningConfig(nodeId, (JsonArray) patch, resultVoidHandler(context, 201));
 			} else {
 				badRequest(context, new IllegalStateException("json patch must be an array"));
 			}

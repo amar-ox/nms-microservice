@@ -28,14 +28,17 @@ public class JdbcRepositoryWrapper {
 	protected enum Entity {
 		NONE,
 	    NODE,
-	    LTP,
+		LTP,
+		CTP,
 	    LINK,
-	    LC,
+		LC,
+		CONNECTION,
 	    ROUTE,
 	    PA
 	}
 	private Entity currEntity = Entity.NONE;
 	private UUID currUUID = null;
+	private int counter = 0;
 
 	public JdbcRepositoryWrapper(Vertx vertx, JsonObject config) {
 		this.client = JDBCClient.create(vertx, config);
@@ -66,7 +69,7 @@ public class JdbcRepositoryWrapper {
 			connection.updateWithParams(sql, params, r -> {
 				if (r.succeeded()) {
 					UpdateResult updateResult = r.result();
-					if (updateResult.getUpdated() == 1) {
+					if (updateResult.getKeys().size() > 0) {
 						resultHandler.handle(Future.succeededFuture(updateResult.getKeys().getInteger(0)));
 					} else {
 						resultHandler.handle(Future.failedFuture("Not inserted"));
@@ -259,6 +262,7 @@ public class JdbcRepositoryWrapper {
 	protected Future<Void> beginTxnAndLock(Entity entity, UUID uuid, String sql) {
 		Promise<Void> promise = Promise.promise();
 		if ((currUUID != null) && uuid.equals(currUUID)) {
+			counter++;
 			promise.complete();
 		} else {
 			client.getConnection(ar -> {
@@ -270,6 +274,7 @@ public class JdbcRepositoryWrapper {
 									globalConn = ar.result();
 									currUUID = uuid;
 									currEntity = entity;
+									counter = 0;
 									promise.complete();
 								} else {
 									promise.fail(p.cause());
@@ -378,7 +383,7 @@ public class JdbcRepositoryWrapper {
 	
 	protected Future<Void> commitTxnAndUnlock(Entity entity, UUID uuid) {
 		Promise<Void> promise = Promise.promise();
-		if (currUUID.equals(uuid) && currEntity.equals(entity)) {
+		if (currUUID.equals(uuid) && currEntity.equals(entity) && (counter == 0)) {
 			globalConn.commit(ar -> {
 				if (ar.succeeded()) {
 					globalConn.execute("UNLOCK TABLES", done -> {
@@ -399,6 +404,7 @@ public class JdbcRepositoryWrapper {
 				}
 			});
 		} else {
+			counter--;
 			promise.complete();
 		}
 		return promise.future();

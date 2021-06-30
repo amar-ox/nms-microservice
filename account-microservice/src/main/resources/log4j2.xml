@@ -6,24 +6,20 @@
         	<PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
 
-        <Gelf name="gelf" host="udp:logstash" port="12201">
+        <!-- Gelf name="gelf" host="udp:logstash" port="12201">
             <Field name="level" pattern="%level"/>
             <Field name="facility" literal="account-microservice"/>
-        </Gelf>
+        </Gelf -->
 
-        <Async name="gelf_async">
+        <!-- Async name="gelf_async">
             <AppenderRef ref="gelf"/>
-        </Async>
+        </Async -->
 
     </Appenders>
     <Loggers>
         <Root level="INFO">
             <AppenderRef ref="console"/>
             <!-- AppenderRef ref="gelf_async"/ -->
-        </Root>
-        
-        <Root level="DEBUG">
-            <AppenderRef ref="console"/>         
         </Root>
     </Loggers>
 </Configuration>

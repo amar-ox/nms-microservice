@@ -10,9 +10,9 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 
 @DataObject(generateConverter = true)
-public class Vltp {
+public class Vconnection {
 
-	// common fields
+		// common fields
 	private int id;
 	private String name;
 	private String label;
@@ -21,24 +21,25 @@ public class Vltp {
 	private String updated;
 	private StatusEnum status;
 	private Map<String, Object> info = new HashMap<String, Object>();
-
-	// vltp fields
-	private int vnodeId;
-	private String bandwidth;
-	private int mtu;
-	private String port;  // "[switch number]:[line card]:module:port"
-	private boolean busy = false;
-
-	/*-----------------------------------------------*/
-
-	public Vltp() {}
-	public Vltp(int id) {
-		this.id = id;		
-	}
-	public Vltp(JsonObject json) {}
-
-	/*-----------------------------------------------*/
 	
+		// Vconnection fields
+	private int srcVctpId;
+	private int destVctpId;
+	
+	// in object only
+	private int srcVnodeId;
+	private int destVnodeId;
+		
+	/*-----------------------------------------------*/
+
+	public Vconnection() {}
+	public Vconnection(int id) {
+		this.id = id;
+	}
+	public Vconnection(JsonObject json) {}
+	
+	/*-----------------------------------------------*/
+
 	public JsonObject toJson() {
 		return new JsonObject(JSONUtils.pojo2Json(this, false));
 	}
@@ -48,7 +49,7 @@ public class Vltp {
 	}
 	@Override
 	public boolean equals(Object obj) {
-		return Objects.equals(toString(), ((Vltp) obj).toString());
+		return Objects.equals(toString(), ((Vconnection) obj).toString());
 	}
 	@Override
 	public int hashCode() {
@@ -56,26 +57,26 @@ public class Vltp {
 	}
 
 	/*-----------------------------------------------*/
+
+	public int getSrcVctpId() {
+		return srcVctpId;
+	}
+	public void setSrcVctpId(int srcVctpId) {
+		this.srcVctpId = srcVctpId;
+	}
+
+	public int getDestVctpId() {
+		return destVctpId;
+	}
+	public void setDestVctpId(int destVctpId) {
+		this.destVctpId = destVctpId;
+	}
 	
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public int getVnodeId() {
-		return vnodeId;
-	}
-	public void setVnodeId(int vnodeId) {
-		this.vnodeId = vnodeId;
-	}
-
-	public StatusEnum getStatus() {
-		return status;
-	}
-	public void setStatus(StatusEnum status) {
-		this.status = status;
 	}
 
 	public String getLabel() {
@@ -90,6 +91,13 @@ public class Vltp {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public StatusEnum getStatus() {
+		return status;
+	}
+	public void setStatus(StatusEnum status) {
+		this.status = status;
 	}
 
 	public String getCreated() {
@@ -120,31 +128,17 @@ public class Vltp {
 		this.info = info;
 	}
 
-	public boolean isBusy() {
-		return busy;
+	public int getSrcVnodeId() {
+		return srcVnodeId;
 	}
-	public void setBusy(boolean busy) {
-		this.busy = busy;
-	}
-
-	public String getPort() {
-		return port;
-	}
-	public void setPort(String port) {
-		this.port = port;
+	public void setSrcVnodeId(int srcVnodeId) {
+		this.srcVnodeId = srcVnodeId;
 	}
 
-	public int getMtu() {
-		return mtu;
+	public int getDestVnodeId() {
+		return destVnodeId;
 	}
-	public void setMtu(int mtu) {
-		this.mtu = mtu;
-	}
-
-	public String getBandwidth() {
-		return bandwidth;
-	}
-	public void setBandwidth(String bandwidth) {
-		this.bandwidth = bandwidth;
+	public void setDestVnodeId(int destVnodeId) {
+		this.destVnodeId = destVnodeId;
 	}
 }
