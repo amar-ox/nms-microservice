@@ -151,6 +151,11 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		}
 		vnode.setHwaddr(macAddr);
 
+		if (!checkCidrIp(vnode.getMgmtIp())) {
+			resultHandler.handle(Future.failedFuture("IP address not valid"));
+			return this;
+		}
+
 		JsonArray params = new JsonArray()
 				.add(vnode.getName())
 				.add(vnode.getLabel())
@@ -162,7 +167,8 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vnode.getLocation())
 				.add(vnode.getType())
 				.add(vnode.getVsubnetId())
-				.add(vnode.getHwaddr());
+				.add(vnode.getHwaddr())
+				.add(vnode.getMgmtIp());
 		insertAndGetId(params, ApiSql.INSERT_VNODE, resultHandler);
 		return this;
 	}
@@ -232,6 +238,18 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 
 	@Override
 	public TopologyService updateVnode(String id, Vnode vnode, Handler<AsyncResult<Void>> resultHandler) {
+		String macAddr = validateAndConvertMAC(vnode.getHwaddr());
+		if (macAddr.isEmpty()) {
+				resultHandler.handle(Future.failedFuture("MAC address not valid"));
+				return this;
+		}
+		vnode.setHwaddr(macAddr);
+
+		if (!checkCidrIp(vnode.getMgmtIp())) {
+			resultHandler.handle(Future.failedFuture("IP address not valid"));
+			return this;
+		}
+		
 		JsonArray params = new JsonArray()
 				.add(vnode.getLabel())
 				.add(vnode.getDescription())
@@ -240,6 +258,7 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 				.add(vnode.getPosx()).add(vnode.getPosy())
 				.add(vnode.getLocation())
 				.add(vnode.getHwaddr())
+				.add(vnode.getMgmtIp())
 				.add(id);
 		executeNoResult(params, ApiSql.UPDATE_VNODE, resultHandler);
 		return this;
@@ -1367,5 +1386,15 @@ public class TopologyServiceImpl extends JdbcRepositoryWrapper implements Topolo
 		} else {
 			return "";
 		}
+	}
+
+	private boolean checkCidrIp(String str) {
+		if (str == null) {
+			return false;
+		}
+		String regex = "^([0-9]{1,3}\\.){3}[0-9]{1,3}(\\/([0-9]|[1-2][0-9]|3[0-2]))$";
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(str);
+		return m.matches();
 	}
 }

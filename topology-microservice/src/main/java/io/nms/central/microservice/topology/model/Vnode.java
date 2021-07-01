@@ -40,6 +40,7 @@ public class Vnode {
 	private int vsubnetId;
 	private TypeEnum type;
 	private String hwaddr;
+	private String mgmtIp;
 
 	/*-----------------------------------------------*/
 
@@ -167,5 +168,12 @@ public class Vnode {
 	}
 	public void setHwaddr(String hwaddr) {
 		this.hwaddr = hwaddr;
+	}
+
+	public String getMgmtIp() {
+		return mgmtIp;
+	}
+	public void setMgmtIp(String mgmtIp) {
+		this.mgmtIp = mgmtIp;
 	}
 }

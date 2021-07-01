@@ -28,6 +28,7 @@ public class ApiSql {
 			"    `type` VARCHAR(10) NOT NULL,\n" +
 			"    `vsubnetId` INT NOT NULL,\n" +
 			"    `hwaddr` VARCHAR(50) NOT NULL UNIQUE,\n" + 
+			"    `mgmtIp` VARCHAR(20) NOT NULL UNIQUE,\n" + 
 			"    PRIMARY KEY (`id`),\n" +
 			"    UNIQUE KEY (`name`, `vsubnetId`),\n" +
 			"    FOREIGN KEY (`vsubnetId`)\n" + 
@@ -201,9 +202,9 @@ public class ApiSql {
 	public static final String INSERT_VSUBNET = "INSERT INTO Vsubnet (name, label, description, info) VALUES (?, ?, ?, ?) "
 			+ "ON DUPLICATE KEY UPDATE name = VALUES(name), label = VALUES(label), description = VALUES(description), info = VALUES(info), "
 			+ "id=LAST_INSERT_ID(id)";
-	public static final String INSERT_VNODE = "INSERT INTO Vnode (name, label, description, info, status, posx, posy, location, type, vsubnetId, hwaddr) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
-			+ "ON DUPLICATE KEY UPDATE name = VALUES(name), label = VALUES(label), description = VALUES(description), info = VALUES(info), "
-			+ "status = VALUES(status), posx = VALUES(posx), posy = VALUES(posy), location = VALUES(location), type = VALUES(type), vsubnetId = VALUES(vsubnetId), hwaddr = VALUES(hwaddr), "
+	public static final String INSERT_VNODE = "INSERT INTO Vnode (name, label, description, info, status, posx, posy, location, type, vsubnetId, hwaddr, mgmtIp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+			+ "ON DUPLICATE KEY UPDATE name = VALUES(name), label = VALUES(label), description = VALUES(description), info = VALUES(info), status = VALUES(status), "
+			+ "posx = VALUES(posx), posy = VALUES(posy), location = VALUES(location), type = VALUES(type), vsubnetId = VALUES(vsubnetId), hwaddr = VALUES(hwaddr), mgmtIp = VALUES(mgmtIp), "
 			+ "id=LAST_INSERT_ID(id)";
 	public static final String INSERT_VLTP = "INSERT INTO Vltp (name, label, description, info, status, vnodeId, port, bandwidth, mtu, busy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
 			+ "ON DUPLICATE KEY UPDATE name = VALUES(name), label = VALUES(label), description = VALUES(description), info = VALUES(info), "
@@ -238,7 +239,7 @@ public class ApiSql {
 	public static final String FETCH_ALL_VSUBNETS = "SELECT "
 			+ "id, name, label, description, info, created, updated FROM Vsubnet";
 	public static final String FETCH_ALL_VNODES = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, posx, posy, location, type, vsubnetId, hwaddr FROM Vnode";
+			+ "id, name, label, description, info, status, created, updated, posx, posy, location, type, vsubnetId, hwaddr, mgmtIp FROM Vnode";
 	public static final String FETCH_ALL_VLTPS = "SELECT "
 			+ "id, name, label, description, info, status, created, updated, vnodeId, port, bandwidth, mtu, busy FROM Vltp";
 	public static final String FETCH_ALL_VCTPS = "SELECT "
@@ -271,7 +272,7 @@ public class ApiSql {
 
 	/*-------------------- FETCH ITEMS BY ANOTHER --------------------*/
 	public static final String FETCH_VNODES_BY_VSUBNET = "SELECT "
-			+ "id, name, label, description, info, status, created, updated, posx, posy, location, type, vsubnetId, hwaddr "
+			+ "id, name, label, description, info, status, created, updated, posx, posy, location, type, vsubnetId, hwaddr, mgmtIp "
 			+ "FROM Vnode WHERE vsubnetId = ?";
 	public static final String FETCH_VLINKS_BY_VSUBNET = "SELECT "
 			+ "Vlink.id, Vlink.name, Vlink.label, Vlink.description, Vlink.info, Vlink.status, Vlink.created, Vlink.updated, "
@@ -353,7 +354,7 @@ public class ApiSql {
 			+ "WHERE id = ?";
 	public static final String FETCH_VNODE_BY_ID = "SELECT "
 			+ "id, name, label, description, info, status, created, updated, "
-			+ "posx, posy, location, type, vsubnetId, hwaddr "
+			+ "posx, posy, location, type, vsubnetId, hwaddr, mgmtIp "
 			+ "FROM `Vnode` WHERE Vnode.id = ?";
 	public static final String FETCH_VLTP_BY_ID = "SELECT "
 			+ "id, name, label, description, info, status, created, updated, vnodeId, port, bandwidth, mtu, busy "
@@ -412,7 +413,7 @@ public class ApiSql {
 			+ "WHERE id = ?";
 	public static final String UPDATE_VNODE = "UPDATE Vnode "
 			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "
-			+ "posx=IFNULL(?, posx), posy=IFNULL(?, posy), location=IFNULL(?, location), hwaddr=IFNULL(?, hwaddr) "
+			+ "posx=IFNULL(?, posx), posy=IFNULL(?, posy), location=IFNULL(?, location), hwaddr=IFNULL(?, hwaddr), mgmtIp=IFNULL(?, mgmtIp) "
 			+ "WHERE id = ?";
 	public static final String UPDATE_VLTP = "UPDATE Vltp "
 			+ "SET label=IFNULL(?, label), description=IFNULL(?, description), info=IFNULL(?, info), status=IFNULL(?, status), "

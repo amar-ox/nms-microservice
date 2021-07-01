@@ -1343,6 +1343,7 @@ components:
             - posx
             - posy
             - location
+            - mgmtIp
       properties:
         vsubnetId:
           type: integer
@@ -1374,6 +1375,9 @@ components:
         location:
           type: string
           description: Physical location label.
+        mgmtIp:
+          type: string
+          description: Management IP address.
     NodeArray:
       type: array
       description: List of Nodes.
