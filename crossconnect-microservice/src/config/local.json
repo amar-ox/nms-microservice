@@ -1,0 +1,10 @@
+{
+  "api.name": "crossconnect",
+  "crossconnect.http.address": "127.0.0.1",
+  "crossconnect.http.port": 8089,  
+  "url": "jdbc:mysql://localhost:3306/nms?characterEncoding=UTF-8&useSSL=false",
+  "driver_class": "com.mysql.cj.jdbc.Driver",
+  "user": "root",
+  "password": "rootpw",
+  "max_pool_size": 30 
+}

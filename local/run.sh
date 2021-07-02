@@ -30,6 +30,9 @@ sleep 20
 # topology
 java -Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory -jar ../topology-microservice/target/topology-microservice-fat.jar -cluster -ha -conf ../topology-microservice/src/config/local.json &
 sleep 20
+# crossconnect
+java -Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory -jar ../crossconnect-microservice/target/crossconnect-microservice-fat.jar -cluster -ha -conf ../crossconnect-microservice/src/config/local.json &
+sleep 20
 # configuration
 java -Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory -jar ../configuration-microservice/target/configuration-microservice-fat.jar -cluster -ha -conf ../configuration-microservice/src/config/local.json &
 sleep 20

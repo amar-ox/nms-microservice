@@ -69,6 +69,20 @@ services:
       - "8085"
     networks: 
       - nms
+  crossconnect-microservice:
+    image: crossconnect-microservice
+    links:
+      - mysql
+      - topology-microservice
+      - notification-microservice
+    depends_on:
+      - mysql
+      - topology-microservice
+      - notification-microservice
+    expose:
+      - "8089"
+    networks: 
+      - nms
   configuration-microservice:
     image: configuration-microservice
     links:

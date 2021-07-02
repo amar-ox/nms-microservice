@@ -14,12 +14,13 @@
     <module>microservice-nms-common</module>
     <module>api-gateway</module>
 
-    <!-- service components -->    
+    <!-- service components -->
     <module>telemetry-microservice</module>    
     <module>topology-microservice</module>
     <module>notification-microservice</module>
     <module>configuration-microservice</module>
     <module>account-microservice</module>
+    <module>crossconnect-microservice</module>
   </modules>
 
   <properties>

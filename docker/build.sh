@@ -10,3 +10,4 @@ docker build -t "topology-microservice" -f $DIR/../topology-microservice/Dockerf
 docker build -t "notification-microservice" -f $DIR/../notification-microservice/Dockerfile $DIR/../
 docker build -t "configuration-microservice" -f $DIR/../configuration-microservice/Dockerfile $DIR/../
 docker build -t "account-microservice" -f $DIR/../account-microservice/Dockerfile $DIR/../
+docker build -t "crossconnect-microservice" -f $DIR/../crossconnect-microservice/Dockerfile $DIR/../

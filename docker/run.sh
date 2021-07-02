@@ -38,6 +38,10 @@ sleep 20
 docker-compose -f $DIR/docker-compose.yml up -d topology-microservice
 sleep 20
 
+# crossconnect
+docker-compose -f $DIR/docker-compose.yml up -d crossconnect-microservice
+sleep 20
+
 # configuration
 docker-compose -f $DIR/docker-compose.yml up -d configuration-microservice
 sleep 20
